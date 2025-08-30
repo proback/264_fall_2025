@@ -1,0 +1,428 @@
+---
+title: "Strings: In-class Exercises (Part 1)"
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/10_strings_part1.qmd).  Just hit the Download Raw File button.
+
+This uses parts of R4DS Ch 14: Strings and Ch 15: Regular Expressions (both the first and second editions).
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+#spotify <- read_csv("Data/spotify.csv") 
+spotify <- read_csv("https://joeroith.github.io/264_spring_2025/Data/spotify.csv")
+
+spot_smaller <- spotify |>
+  select(
+    title, 
+    artist, 
+    album_release_date, 
+    album_name, 
+    subgenre, 
+    playlist_name
+  )
+
+spot_smaller <- spot_smaller[c(5, 32, 49, 52, 83, 175, 219, 231, 246, 265), ]
+spot_smaller
+```
+
+
+## A string is just a set of characters.
+
+```{r}
+single_string <- "this is a string!"
+single_string
+
+string_vector <- c("this", "is", "a", "vector", "of strings")
+string_vector
+
+# This is a tibble with many columns of "string variables", or "character variables"
+spot_smaller
+
+# Each column of the tibble is a vector of strings.
+spot_smaller$title
+
+# Each item in the tibble is a string.
+spot_smaller$title[1]
+```
+
+
+## Functions that start str_  do stuff to strings!
+
+### str_length()
+
+```{r}
+# when the input to str_length is a single string, the output is a single value:
+str_length("hi")
+
+str_length(single_string)
+
+# when the input to str_length is a vector, the output is a vector:
+str_length(string_vector)
+```
+
+str_length takes a vector input and creates a vector output (or a single value input and returns a single value output).... this makes it easy to use within a mutate!
+
+```{r}
+spot_smaller |>
+  select(title) |>
+  mutate(title_length = str_length(title))
+```
+
+
+### str_sub()
+
+This function creates substrings (shorter strings)
+
+```{r}
+# When the input is a single string, the output is a single string
+single_string
+str_sub(single_string, 1, 7)
+
+str_sub(single_string, 8, 9)
+
+str_sub(single_string, 9, 9)
+
+# When the input is a vector of strings, what do you think the output will be?
+string_vector
+str_sub(string_vector, 1, 2)
+```
+
+How can we use str_sub to get just the year of the album_release_date? Try it here! Then scroll down for solution.
+
+```{r}
+spot_smaller
+```
+
+
+.
+.
+.
+.
+.
+.
+.
+.
+```{r}
+spot_smaller |>
+  select(title, artist, album_release_date) |>
+  mutate(album_release_year = str_sub(album_release_date, 1, 4))
+```
+
+
+
+### str_c()
+
+This collapses multiple strings together into one string.
+
+```{r}
+str_c("is", "this output", "a", "single value", "or", "a vector", "?")
+
+# like unite and separate, we can specify the separator:
+
+str_c("is", "this output", "a", "single value", "or", "a vector", "?", 
+      sep = " ")
+```
+
+We can see that the input is a list of strings, and the output is a single string.
+
+So... why is this useful?
+```{r}
+x <- runif(1)
+x
+
+str_c("I can put other values, like", x, "in here!", sep = " ")
+
+spot_smaller
+
+song_count <- spot_smaller |> 
+  count(artist) |>
+  slice_max(n, n = 1)
+
+song_count
+song_count$artist
+song_count$n
+
+str_c("The artist with the most songs in spot_smaller is", song_count$artist, "with", song_count$n, "songs.", sep = " ")
+```
+
+
+
+We can use this in a tibble too.
+
+```{r}
+spot_smaller |>
+  select(artist, title) |>
+  mutate(song_by = str_c(title, "by", artist, sep = " ")) |>
+  select(song_by)
+```
+
+
+
+## str_to_lower(), str_to_upper(), str_to_title()
+
+These are pretty self explanatory.
+
+```{r}
+spot_smaller |>
+  select(title) |>
+  mutate(title_to_lower = str_to_lower(title),
+         title_to_upper = str_to_upper(title))
+
+# title is already in title case, so: 
+str_to_title("makes this into title case")
+```
+
+
+## Matching Patterns
+
+In addition to manipulating strings, we might want to search through them to find matches.  For example, can I find all the songs that start with M? The songs from 2016? The album titles that include a number? 
+
+
+### str_view()
+
+This function is helpful for viewing.  It returns rows that contain the pattern you're searching for, highlighting the pattern between <.> symbols and in a different color.
+
+The first input is the vector, and the second input is the string/substring/pattern you are looking for.
+```{r}
+str_view(spot_smaller$album_release_date, "2016")
+
+str_view(spot_smaller$title, "M")
+
+str_view(spot_smaller$subgenre, "pop")
+
+str_view(spot_smaller$subgenre, "hip hop")
+```
+
+
+### str_subset()
+
+str_subset() takes a vector input and returns a (usually shorter) vector output. Compare the output from str_view() and str_subset() here.  Both of these functions can be hard to work with in a tibble.
+```{r}
+str_view(spot_smaller$title, "M")
+
+str_subset(spot_smaller$title, "M")
+```
+
+### str_detect()
+
+str_detect takes a vector of strings (or single string) input and returns a vector of TRUE/FALSE (or single value).  This makes it easy to work with in tibbles, using mutate or filter.
+```{r}
+str_view(spot_smaller$title, "M")
+
+str_detect(spot_smaller$title, "M")
+
+str_detect("hello", "ll")
+
+
+spot_smaller |> 
+  select(title, album_name, artist) |>
+  mutate(includes_M = str_detect(title, "M"))
+
+spot_smaller |>  
+  select(title, album_name, artist) |>
+  filter(str_detect(title, "M"))
+
+spot_smaller |> 
+   select(title, album_name, artist, subgenre) |>
+   filter(str_detect(subgenre, "pop"))
+```
+
+### str_extract()
+
+str_extract() takes a vector (or single) of strings input and returns a vector (or single) string output
+```{r}
+single_string
+str_extract(single_string, "this")
+```
+
+str_extract() is more interesting when we want to identify a particular *pattern* to extract from the string.
+
+For instance:
+
+```{r}
+str_extract("find first vowel", "[aeiou]")
+
+str_extract("any numb3rs?", "\\d")
+
+numbers_here <- c("numb3rs", "ar3", "h1d1ing", "almost", "ev3ryw4ere")
+
+str_extract(numbers_here, "\\d")
+
+str_view(numbers_here, "\\d")
+```
+
+Because str_extract returns a vector of the same length as its input, it also can be used within a tibble.
+
+```{r}
+spot_smaller |>
+  select(title, artist, album_name) |>
+  mutate(numbers = str_extract(album_name, "\\d"))
+```
+
+The patterns we show here, "\\d" and "[aeiou]" are called regular expressions.
+
+
+## Regular Expressions
+
+*Regular expressions* are a way to write general patterns... for instance the string "\\d" will find any digit (number).  We can also specify whether we want the string to start or end with a certain letter. 
+
+Notice the difference between the regular expression "M" and "^M", "o" and "o$"
+
+```{r}
+str_view(spot_smaller$title, "M")
+str_view(spot_smaller$title, "^M")
+
+str_view(spot_smaller$title, "o")
+str_view(spot_smaller$title, "o$")
+```
+
+But how do I look for a dollar sign in my string? I use \ to "escape" the special behavior of `$`. But \ itself has special behavior... so I need two of them.
+```{r}
+str_view(spot_smaller$title, "\\$")
+```
+
+
+### Example problem
+
+Are there any album names that contain numbers?
+
+step 1: use str_view() to figure out an appropriate regular expression to use for searching.
+```{r}
+str_view(spot_smaller$album_name, "\\d")
+```
+
+
+step 2: what kind of output do I want?
+
+```{r}
+# A list of the album names?
+str_subset(spot_smaller$album_name, "\\d")
+
+# A tibble? 
+spot_smaller |>
+  filter(str_detect(album_name, "\\d"))
+```
+
+
+## More regular expressions
+
+[abc] - a, b, or c
+
+```{r}
+str_view(spot_smaller$subgenre, "[hp]op")
+
+str_view(spot_smaller$subgenre, "hip [hp]op")
+```
+
+[^abc] anything EXCEPT abc.
+
+```{r}
+str_view(spot_smaller$album_name, "[^\\d]")
+
+str_view(spot_smaller$album_name, "[^a-zA-Z ]")
+```
+
+
+## Bonus content not in the pre-class video
+
+### str_glue()
+
+This is a nice alternative to str_c(), where you only need a single set of quotes, and anything inside curly brackets {} is evaluated like it's outside the quotes.
+
+```{r}
+# Thus, this code from earlier...
+
+spot_smaller
+
+song_count <- spot_smaller |> 
+  count(artist) |>
+  slice_max(n, n = 1)
+song_count
+
+str_c("The artist with the most songs in spot_smaller is", song_count$artist, "with", song_count$n, "songs.", sep = " ")
+
+# ... becomes this:
+
+song_count |> mutate(statement = str_glue("The artist with the most songs in spot_smaller is {artist} with {n} songs."))
+
+# or 
+
+str_glue("The artist with the most songs in spot_smaller is {song_count$artist} with {song_count$n} songs.")
+```
+
+str_glue() can also be applied to an entire column vector:
+
+```{r}
+spot_smaller |>
+  mutate(statement = str_glue("{artist} released {album_name} on {album_release_date}.")) |>
+  select(statement)
+```
+
+And if you wanted to include {} in your statement, you can double up {} to serve as an escape character:
+
+```{r}
+spot_smaller |>
+  mutate(statement = str_glue("{artist} released {album_name} on {album_release_date} {{according to Spotify}}.")) |>
+  select(statement)
+```
+
+
+### separate_wider_delim() and its cousins
+
+When multiple variables are crammed together into a single string, the separate_ functions can be used to extract the pieces are produce additional rows (longer) or columns (wider).  We show one such example below, using the optional "too_few" setting to diagnose issues after getting a warning message the first time.
+
+```{r}
+spot_smaller |>
+  separate_wider_delim(
+    album_release_date,
+    delim = "-",
+    names = c("year", "month", "day"),
+    too_few = "debug"
+  ) |>
+  print(width = Inf)
+
+spot_smaller |>
+  separate_wider_delim(
+    album_release_date,
+    delim = "-",
+    names = c("year", "month", "day"),
+    too_few = "align_start"
+  )
+```
+
+If there is a definable pattern, but the pattern is a bit weird, we can often use `separate_wider_regex()` to extract the correct values and build a tidy data set:
+
+```{r}
+df <- tribble(
+  ~str,
+  "<Sheryl>-F_34",
+  "<Kisha>-F_45", 
+  "<Brandon>-N_33",
+  "<Sharon>-F_38", 
+  "<Penny>-F_58",
+  "<Justin>-M_41", 
+  "<Patricia>-F_84", 
+)
+
+df |> 
+  separate_wider_regex(
+    str,
+    patterns = c(
+      "<", 
+      name = "[A-Za-z]+", 
+      ">-", 
+      gender = ".",
+      "_",
+      age = "[0-9]+"
+    )
+  )
+
+```
+

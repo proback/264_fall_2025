@@ -1,0 +1,160 @@
+--- 
+title: "Ames housing"
+author: "Paul Roback"
+format: 
+  dashboard:
+    nav-buttons: [linkedin, twitter, github]
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: FALSE
+#| message: FALSE
+
+library(tidyverse) 
+library(knitr)
+ames <- read_csv("AmesHousing.csv")
+ames <- ames %>%
+  rename(LotShape = `Lot Shape`,
+         LandSlope = `Land Slope`,
+         HouseStyle = `House Style`,
+         PavedDrive = `Paved Drive`,
+         LotArea = `Lot Area`,
+         OverallQual = `Overall Qual`,
+         YearBuilt = `Year Built`,
+         SqFtAboveGrd = `Gr Liv Area`,
+         Bedrooms = `Bedroom AbvGr`)
+```
+
+# About {orientation="columns" scrolling="true"}
+
+## Column {width="67%"}
+
+#### Authors
+
+Paul Roback
+
+#### Background Information
+
+We examine the data in the AmesHousing package to find determinants of housing prices in Ames, IA, based on sales from 2006 to 2010.  2930 houses and 80 variables are included.
+
+#### Data Sources
+
++ Data from R's [AmesHousing package](https://cran.r-project.org/web/packages/AmesHousing/AmesHousing.pdf) 
++ Original article by [DeCock 2011](http://jse.amstat.org/v19n3/decock.pdf)
+
+
+## Column {width="33%"}
+
+```{r  fig.width = 4, fig.height = 4}
+include_graphics("Colorado1.jpg") 
+```
+
+
+# Categorical Predictors of Price
+
+## {.sidebar}
+
+```{r}
+      selectInput(inputId = "categ",
+                  label = h3("Boxplot categories"),
+                  choices = c("Lot Shape" = "LotShape", 
+                              "Land Slope" = "LandSlope", 
+                              "House Style" = "HouseStyle", 
+                              "Foundation" = "Foundation", 
+                              "Paved Drive" = "PavedDrive"),
+                  selected = "Foundation")
+
+      selectInput(inputId = "shape",
+                  label = h3("Lot shape"),
+                  choices = c("Reg" = "Reg", 
+                              "IR1" = "IR1"),
+                  selected = "Foundation")
+      
+      numericInput(inputId = "cutoff", 
+                   label = h3("Exclude prices above:"), 
+                   value = 500000)
+```
+
+## Column 
+
+```{r}
+#| title: Categorical predictors - boxplots
+
+plotOutput('plot1')
+
+```
+
+## Column 
+
+```{r}
+#| title: Categorical predictors - barplots
+
+plotOutput('plot2')
+
+```
+
+
+# Numerical Predictors of Price
+
+## {.sidebar}
+
+```{r}
+      selectInput(inputId = "numer",
+                  label = h3("Numeric predictors"),
+                  choices = c("Lot Area" = "LotArea", 
+                              "Overall Quality" = "OverallQual", 
+                              "Year Built" = "YearBuilt", 
+                              "Above Ground Sqft" = "SqFtAboveGrd", 
+                              "Bedrooms" = "Bedrooms"),
+                  selected = "Above Ground Sqft")
+      
+      numericInput(inputId = "cutoff2", 
+                   label = h3("Exclude prices above:"), 
+                   value = 500000)
+```
+
+## Row
+
+```{r}
+#| title: Numerical predictors - scatterplots
+
+plotOutput('plot3')
+
+```
+
+
+```{r}
+#| context: server
+ 
+output$plot1 <- renderPlot({
+    ames %>%
+      filter(LotShape == input$shape) %>%
+      filter(SalePrice < input$cutoff) %>%
+      select(input$categ, "SalePrice") %>%
+    ggplot(aes(x = .data[[input$categ]], y = SalePrice)) +
+      geom_boxplot() +
+      coord_flip() 
+})
+
+output$plot2 <- renderPlot({
+    ames %>% as_tibble() %>%
+      mutate(x = ames[[input$categ]]) %>%
+      group_by(x) %>%
+      summarise(meanprice = mean(SalePrice, na.rm = TRUE)) %>%
+      mutate(x = fct_reorder(x, meanprice)) %>%
+    ggplot(aes(x = x, y = meanprice)) +
+      geom_bar(stat = "identity") +
+      labs(x = input$categ)
+})
+
+output$plot3 <- renderPlot({
+    ames %>%
+      filter(SalePrice < input$cutoff2) %>%
+      select(input$numer, "SalePrice") %>%
+    ggplot(aes(x = .data[[input$numer]], y = SalePrice)) +
+      geom_point() +
+      geom_smooth() 
+})
+```

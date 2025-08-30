@@ -1,0 +1,51 @@
+---
+title: "R Tip of the Day"
+sidebar: false
+---
+  
+[Signup Sheet](https://docs.google.com/spreadsheets/d/1TXtECPHo-tuwEHmoOHzaJA7clLAPMKNg4mX0waqmvZg/edit?usp=sharing)
+
+[How to create cool presentations using Quarto](https://rconnect.stolaf.edu/content/68441b10-fe0d-409f-9807-0464b35a6120)
+
+[Code for creating the presentation above](https://github.com/joeroith/264_spring_2025/blob/main/quarto_presentations/revealjs-demo.qmd)
+
+[My example of an RTD presentation with revealjs in quarto](https://rconnect.stolaf.edu/content/efd3944a-efcc-40cb-9e63-bf30780114a9)
+
+[Code for my example](https://github.com/joeroith/264_spring_2025/blob/main/quarto_presentations/rtd_example.qmd)
+
+[RTD rubric](https://drive.google.com/file/d/1W-IpuJvUS0x94iNdJfEmomo4tziPtvxA/view?usp=sharing)
+
+
+> TIP: Create your presentation in a new project (separate from the one you created for class). You can run the presentation from your own machine OR you can publish it to the RStudio/Posit Connect server. To do this:
+
+1. Render your presentation.
+
+2. Click the 'Publish' icon in the upper right corner of the screen.
+
+3. Select Posit Connect as the server to publish to.
+
+4. Choose to publish the finished product only.
+
+5. At this point if you are doing it for the first time, you will be asked to connect to an account. Choose Posit Connect.
+
+6. Enter "https://rconnect.stolaf.edu" as the URL then click next.
+
+7. At this point you will be redirected to a webpage to sign in. Use your stolaf account to log in and follow the instructions to connect your RStudio to the server. Go back to your desktop RStudio and click 'Connect Account'.
+
+8. Now you are ready to publish the document. Give it a good name and click 'Publish'.
+
+9. After a minute or two, you will again be redirected to a browser where your document is now available. Edit the Share settings appropriately (Anyone - no login required is fine, but be aware that others will be able to see your work). Copy the Content URL to share. 
+
+
+::: {layout-ncol=2}
+![](images/Posit_connect.jpg){width=50%}
+
+![](images/publish_finished.jpg){width=50%}
+
+![](images/posit_connect2.jpg){width=50%}
+
+![](images/rconnect_url.jpg){width=50%}
+
+![](images/last_step.jpg){width=50%}
+:::
+

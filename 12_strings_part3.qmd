@@ -1,0 +1,108 @@
+---
+title: "Strings: Extra Practice (Part 3)"
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+  
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/12_strings_part3.qmd).  Just hit the Download Raw File button.
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(rvest)
+library(httr)
+```
+
+
+## On Your Own - Extra practice with strings and regular expressions
+
+1. Describe the equivalents of ?, +, * in {m,n} form.
+
+
+2. Describe, in words, what the expression "(.)(.)\\2\\1" will match, and provide a word or expression as an example.
+
+
+3. Produce an R string which the regular expression represented by "\\..\\..\\.." matches.  In other words, find a string `y` below that produces a TRUE in `str_detect`.
+
+
+4. Solve with `str_subset()`, using the words from `stringr::words`:
+
+- Find all words that start or end with x.
+- Find all words that start with a vowel and end with a consonant.
+- Find all words that start and end with the same letter
+
+
+5. What words in `stringr::words` have the highest number of vowels? What words have the highest proportion of vowels? (Hint: what is the denominator?)  Figure this out using the tidyverse and piping, starting with `as_tibble(words) |>`.
+
+
+6. From the Harvard sentences data, use `str_extract` to produce a tibble with 3 columns:  the sentence, the first word in the sentence, and the first word ending in "ed" (NA if there isn't one).
+
+
+7. Find and output all contractions (words with apostrophes) in the Harvard sentences, assuming no sentence has multiple contractions.
+
+
+8. *Carefully* explain what the code below does, both line by line and in general terms.
+
+```{r}
+temp <- str_replace_all(words, "^([A-Za-z])(.*)([a-z])$", "\\3\\2\\1")
+as_tibble(words) |>
+  semi_join(as_tibble(temp)) |>
+  print(n = Inf)
+```
+
+
+## Coco and Rotten Tomatoes
+
+We will check out the Rotten Tomatoes page for the 2017 movie Coco, scrape information from that page (we'll get into web scraping in a few weeks!), clean it up into a usable format, and answer some questions using strings and regular expressions.
+
+```{r}
+#| eval: false
+
+# used to work
+# coco <- read_html("https://www.rottentomatoes.com/m/coco_2017")
+
+# robotstxt::paths_allowed("https://www.rottentomatoes.com/m/coco_2017")
+
+library(polite)
+coco <- "https://www.rottentomatoes.com/m/coco_2017" |>
+  bow() |> 
+  scrape()
+
+top_reviews <- 
+  "https://www.rottentomatoes.com/m/coco_2017/reviews?type=top_critics" |> 
+  bow() |> 
+  scrape()
+top_reviews <- html_nodes(top_reviews, ".review-text")
+top_reviews <- html_text(top_reviews)
+
+user_reviews <- 
+  "https://www.rottentomatoes.com/m/coco_2017/reviews?type=user" |> 
+  bow() |> 
+  scrape()
+user_reviews <- html_nodes(user_reviews, ".js-review-text")
+user_reviews <- html_text(user_reviews)
+```
+
+
+9. `top_reviews` is a character vector containing the 20 most recent critic reviews (along with some other junk) for Coco, while `user_reviews` is a character vector with the 10 most recent user reviews.
+
+a) Explain how the code below helps clean up both `user_reviews` and `top_reviews` before we start using them.
+
+```{r}
+#| eval: false
+
+user_reviews <- str_trim(user_reviews)
+top_reviews <- str_trim(top_reviews)
+```
+
+b) Print out the critic reviews where the reviewer mentions "emotion" or "cry".  Think about various forms ("cried", "emotional", etc.)  You may want to turn reviews to all lower case before searching for matches.
+
+c) In critic reviews, replace all instances where "Pixar" is used with its full name: "Pixar Animation Studios".
+
+d) Find out how many times each user uses "I" in their review.  Remember that it could be used as upper or lower case, at the beginning, middle, or end of a sentence, etc.
+
+e) Do critics or users have more complex reviews, as measured by average number of commas used?  Be sure your code weeds out commas used in numbers, such as "12,345".

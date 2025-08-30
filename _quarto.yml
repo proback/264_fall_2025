@@ -1,0 +1,84 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - "*.qmd"
+    - "!DS2_preview_work/"
+    - "!SQLcode/"
+    - "!spring2024/"
+    - "!quarto_presentations/"
+    - "!AERapp/"
+    - "!Ames_example/"
+    - "!more_shiny/"
+    - "!SQL_code/"
+  resources:
+    - "Data/*.csv"
+    - "Data/"
+
+website:
+  title: "SDS 264: Data Science 2"
+  navbar:
+    background: primary
+    search: true
+    left:
+      - file: index.qmd
+        text: "Home"
+      - sidebar:tech_notes
+      - sidebar:activities
+      - sidebar:projects
+      - file: rtipoftheday.qmd
+        text: "R Tip of the Day"
+
+  sidebar:
+    - id: tech_notes
+      title: "Tech Notes"
+      contents:
+        - tech_setup.qmd
+        - why_quarto.qmd
+        - github_intro.qmd
+        - github_links.qmd
+
+    - id: activities
+      title: "Activities"
+      contents:
+        - 01_review164.qmd
+        - 02_maps.qmd
+        - 03_functions.qmd
+        - 04_code_quality.qmd
+        - 05_iteration.qmd
+        - 06_data_types.qmd
+        - 07_apis.qmd
+        - 08_table_scraping.qmd
+        - 09_web_scraping.qmd
+        - 10_strings_part1.qmd
+        - 11_strings_part2.qmd
+        - 12_strings_part3.qmd
+        - 13_text_analysis.qmd
+        - 14_first_shiny_instructions.qmd
+        - 16_SQL_exercises.qmd
+        
+    - id: projects
+      title: "Projects"
+      contents:
+        - miniproject1.qmd
+        - miniproject2.qmd
+        - miniproject3.qmd
+        - miniproject4.qmd
+        - finalproject.qmd
+
+
+  page-footer:
+    left: |
+      &copy; Joe Roith, 2025<br>
+      All content licensed under ![](https://static.thenounproject.com/png/70967-200.png){height=20px} ([CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/))
+    right: |
+      Site built with [Quarto](https://quarto.org/)
+
+format:
+  html:
+    theme: sandstone
+    css: styles.css
+    toc: true
+    code-overflow: wrap
+
+editor: source

@@ -1,0 +1,74 @@
+---
+title: "Shiny: Ames housing"
+runtime: shiny
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+library(tidyverse)
+ames <- read_csv("AmesHousing.csv")
+ames <- ames %>%
+  rename(LotShape = `Lot Shape`,
+         LandSlope = `Land Slope`,
+         HouseStyle = `House Style`,
+         PavedDrive = `Paved Drive`,
+         LotArea = `Lot Area`,
+         OverallQual = `Overall Qual`,
+         YearBuilt = `Year Built`,
+         SqFtAboveGrd = `Gr Liv Area`,
+         Bedrooms = `Bedroom AbvGr`)
+```
+
+
+```{r, echo=FALSE}
+titlePanel("Cool Shiny App on Ames Housing Data")
+
+inputPanel(
+      selectInput(inputId = "categ",
+                  label = h3("Boxplot categories"),
+                  choices = c("Lot Shape" = "LotShape", 
+                              "Land Slope" = "LandSlope", 
+                              "House Style" = "HouseStyle", 
+                              "Foundation" = "Foundation", 
+                              "Paved Drive" = "PavedDrive"),
+                  selected = "Foundation"),
+      numericInput(inputId = "cutoff", 
+                   label = h3("Exclude prices above:"), 
+                   value = 500000)
+)
+
+renderPlot({
+    ames %>%
+      filter(SalePrice < input$cutoff) %>%
+      select(input$categ, "SalePrice") %>%
+    ggplot(aes(x = .data[[input$categ]], y = SalePrice)) +
+      geom_boxplot() +
+      coord_flip() 
+})
+```
+
+```{r, echo=FALSE}
+inputPanel(
+      selectInput(inputId = "numer",
+                  label = h3("Numeric predictors"),
+                  choices = c("Lot Area" = "LotArea", 
+                              "Overall Quality" = "OverallQual", 
+                              "Year Built" = "YearBuilt", 
+                              "Above Ground Sqft" = "SqFtAboveGrd", 
+                              "Bedrooms" = "Bedrooms"),
+                  selected = "Above Ground Sqft"),
+      numericInput(inputId = "cutoff2", 
+                   label = h3("Exclude prices above:"), 
+                   value = 500000)
+)
+
+renderPlot({
+    ames %>%
+      filter(SalePrice < input$cutoff2) %>%
+      select(input$numer, "SalePrice") %>%
+    ggplot(aes(x = .data[[input$numer]], y = SalePrice)) +
+      geom_point() +
+      geom_smooth() 
+})
+```
+

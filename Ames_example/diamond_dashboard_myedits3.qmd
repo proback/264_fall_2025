@@ -1,0 +1,129 @@
+---
+title: "Diamonds Explorer"
+author: "Barkamian Analytics"
+format: dashboard
+server: shiny
+---
+
+```{r}
+#| context: setup
+
+# Must changes to data based on user input be made inside a reactive??
+#   YES, but here you wouldn't want to since all plots should be made
+#   with the same random data set
+
+library(tidyverse)
+library(knitr)
+dataset <- diamonds
+```
+
+# About Page {orientation="columns" scrolling="true"}
+
+## Column {width="75%"}
+
+Stuff about the data source, purpose, and authors...
+
+## Column {width="25%"}
+
+::: card
+![](diamond_image.png) 
+Creator: Vectorportal \| Credit: Getty Images/iStockphoto
+
+Can't get the image to show up!
+:::
+
+# Plot
+
+##  {.sidebar}
+
+```{r}
+sliderInput('sampleSize', 'Sample Size', 
+            min=1, max=nrow(dataset),
+            value=min(1000, nrow(dataset)), 
+            step=500, round=0)
+br()
+checkboxInput('jitter', 'Jitter')
+checkboxInput('smooth', 'Smooth')
+```
+
+```{r}
+selectInput('x', 'X', names(dataset)) 
+selectInput('y', 'Y', names(dataset), names(dataset)[[2]])
+selectInput('color', 'Color', c('None', names(dataset)))
+```
+
+```{r}
+selectInput('facet_row', 'Facet Row',
+  c(None='.', names(diamonds[sapply(diamonds, is.factor)])))
+selectInput('facet_col', 'Facet Column',
+  c(None='.', names(diamonds[sapply(diamonds, is.factor)])))
+```
+
+## Column {.tabset}
+
+```{r}
+#| title: Interactive
+
+plotOutput('plot')
+```
+
+```{r}
+#| title: Static
+
+plotOutput('plot2')
+```
+
+# Data
+
+## Row {height="80%"}
+
+```{r}
+#| title: Diamond Data
+
+tableOutput('data')
+```
+
+## Row {height="20%"}
+
+::: card
+Discussion of the data
+:::
+
+```{r}
+#| context: server
+
+output$plot <- renderPlot({
+  
+  p <- diamonds[sample(nrow(diamonds), input$sampleSize),] |>
+    ggplot(aes_string(x=input$x, y=input$y)) + 
+    geom_point()
+  
+  if (input$color != 'None')
+    p <- p + aes_string(color=input$color)
+  
+  facets <- paste(input$facet_row, '~', input$facet_col)
+  if (facets != '. ~ .')
+    p <- p + facet_grid(facets)
+  
+  if (input$jitter)
+    p <- p + geom_jitter()
+  if (input$smooth)
+    p <- p + geom_smooth()
+  
+  p
+  
+})
+
+output$plot2 <- renderPlot({
+  
+  diamonds[sample(nrow(diamonds), input$sampleSize),] |>
+    ggplot(aes(x=carat, y=price, color=cut)) +
+    geom_jitter() +
+    geom_smooth(se = FALSE)
+  
+})
+
+output$data <- renderTable({
+  diamonds[sample(nrow(diamonds), input$sampleSize),]
+})
+```

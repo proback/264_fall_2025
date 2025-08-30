@@ -1,0 +1,110 @@
+---
+title: "Shiny: NMES1988"
+runtime: shiny
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+library(AER)
+library(tidyverse)
+data("NMES1988")
+
+NMES1988 <- NMES1988 |>
+    sample_n(500)    # use smaller data so shiny app runs faster
+```
+
+
+First create shiny app to color points by Private Insurance or not.  Note the use of `if` and `else if` to make use of the `checkboxInput`.
+
+```{r, echo=FALSE, warning=FALSE}
+inputPanel(
+  checkboxInput("type_check", "Include private insurance?", value = FALSE)
+)
+
+renderPlot({
+     if (input$type_check) 
+        ggplot(NMES1988, aes(x = age, y = chronic))  + 
+          geom_jitter(aes(color = insurance), size = 0.9, alpha = 0.4) +
+          scale_color_manual(values=c("orange","blue"))
+     else if (!input$type_check)      
+        ggplot(NMES1988, aes(x = age, y = chronic))  + 
+          geom_jitter(size = 0.9, alpha = 0.4) +
+          scale_color_manual(values=c("orange","blue"))
+})
+```
+
+Next create a shiny app that allows you to choose explanatory variables.  Note that we have to use enclose input variable names inside .data[[.]]; inputs are saved as strings (with quotes) but the tidyverse uses tidy evaluation (no quotes), so essentially the .data[[.]] strips off the quotes so that the variable can be recognized in the tidyverse.
+
+```{r, echo=FALSE}
+titlePanel("Predictors of physician visits in NMES1988 data")
+
+inputPanel(
+  selectInput("x", label = "x-axis variable:",
+    choices = c("Family income" = "income",
+                "Age (years/10)" = "age",
+                "Chronic conditions" = "chronic")),
+  checkboxInput("type_check2","Include private insurance?",value=FALSE)
+)
+
+renderPlot({
+     if (input$type_check2) 
+        ggplot(NMES1988, aes(x = .data[[input$x]], y = visits, 
+                                    color = insurance)) +   
+          scale_color_manual(values=c("orange","blue")) + 
+          geom_jitter(size = 0.9, alpha = 0.4) 
+     else if (!input$type_check2)      
+        ggplot(NMES1988, aes(x = .data[[input$x]], y = visits)) +   
+          scale_color_manual(values=c("orange","blue")) + 
+          geom_jitter(size = 0.9, alpha = 0.4)
+})
+```
+
+Try shiny app with a slider.  Slider inputs are treated as numeric.
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  sliderInput("size", label = "Point size",
+              min = 0.2, max = 2, value = 0.9, step = 0.1),
+  sliderInput("alpha", label = "Point transparency",
+              min = 0.01, max = 1, value = 0.4, step = 0.1),
+  checkboxInput("type_check4","Include private insurance?",value=FALSE)
+)
+
+renderPlot({
+     if (input$type_check4) 
+        ggplot(NMES1988, aes(x = age, y = chronic))  + 
+          geom_jitter(aes(color = insurance), 
+                          size = input$size, alpha = input$alpha) +
+          scale_color_manual(values=c("orange","blue"))
+     else if (!input$type_check4)      
+        ggplot(NMES1988, aes(x = age, y = chronic))  + 
+          geom_jitter(size = input$size, alpha = input$alpha) +
+          scale_color_manual(values=c("orange","blue"))
+})
+
+```
+
+
+One more example featuring a boxplot:
+
+```{r, echo = FALSE}
+inputPanel(
+  selectInput("boxplotx", label = "x-axis variable:",
+    choices = c("Marital Status" = "married",
+                "Health Status" = "health",
+                "Private Insurance" = "insurance"))
+)
+
+
+
+renderPlot({
+  ggplot(NMES1988, aes(y = visits, x = .data[[input$boxplotx]] )) + 
+    geom_boxplot()
+})
+```
+
+```{r}
+
+```
+
+

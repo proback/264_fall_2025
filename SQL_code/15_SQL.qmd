@@ -1,0 +1,757 @@
+---
+title: "Database querying using SQL"
+format:
+  html: default
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+#| no longer needed:
+#| knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/SQL_code/15_SQL.qmd).  Just hit the Download Raw File button.
+
+In this activity, we will follow closely to Ch 15 in MDSR.  When doing database queries I often allow chunk output to occur inline.
+
+
+```{r}
+library(tidyverse)
+library(mdsr)
+library(dbplyr)
+library(DBI)
+```
+
+Connect to St. Olaf's database server, where the flight_data database lives:
+
+```{r}
+library(RMariaDB)
+con <- dbConnect(
+  MariaDB(), host = "mdb.stolaf.edu",
+  user = "ruser", password = "ruserpass", 
+  dbname = "flight_data"
+)
+```
+
+Right now there is only one "table" called `flightdata` in the `flight_data` database.  Notice that this is actually a SQL chunk which uses SQL commands...
+
+```{sql, connection = con}
+SHOW TABLES;
+```
+
+```{sql, connection = con}
+DESCRIBE airlines;
+```
+
+```{sql, connection = con}
+SELECT * FROM planes LIMIT 0,10;
+```
+
+You can treat flights like a df or tbl, but it is not, in fact, a data frame.  Note that `dim(flights)` is reported as NA x 111; there are actually 35 million flights between 2019 and 2024 that would take over 10 GB as a csv file!
+
+```{r}
+flights <- tbl(con, "flightdata")
+dim(flights)
+class(flights)
+airports <- tbl(con, "airports")
+```
+
+We can analyze flights data like we would any other R data frame, but we can also use `show_query` to see what an SQL query might look like (although if we were to write it from scratch it'd be a bit more readable)
+
+```{r}
+# Section 15.1: From dplyr to SQL (skipping joins for now)
+
+q <- flights |>
+  filter(
+    Year == 2019 & Month == 9, 
+    dest == "JFK"
+  ) |>
+  group_by(Reporting_Airline) |>
+  summarize(
+    N = n(), 
+    pct_ontime = sum(ArrDelay <= 15) / n()
+  ) |>
+  filter(N >= 100) |>
+  arrange(desc(pct_ontime))
+head(q, 4)
+
+# for a MySQL database, dplyr translates pipeline to SQL
+show_query(q)
+```
+
+However, there is no chunk preview option with SQL code, so you have to (a) knit the document to check that it works, or (b) select "chunk output inline" under the settings button to get a "run chunk" button in the sql chunk.  The code below will show sql results if you leave off output.var, otherwise you need to actually print mydataframe in an R chunk.  
+
+This post is helpful:  https://irene.rbind.io/post/using-sql-in-rstudio/
+
+```{sql, connection = con, output.var = "mydataframe"}
+SELECT 
+  Reporting_Airline,
+  SUM(1) AS N, 
+  SUM(ArrDelay <= 15) / SUM(1) AS pct_ontime
+FROM flightdata AS f
+WHERE year = 2019 AND month = 9
+  AND dest = 'JFK'
+GROUP BY Reporting_Airline 
+HAVING N >= 100
+ORDER BY pct_ontime DESC
+LIMIT 0,4;
+```
+
+```{r}
+mydataframe
+```
+
+Now you can use `mydataframe` as you would any other R data frame!
+
+```{r}
+ggplot(mydataframe, aes(x = N, y = pct_ontime)) +
+  geom_point() +
+  xlab("Total flights") +
+  ylab("Percent ontime flights") +
+  ggtitle("Top 4 airlines")
+```
+
+Can also insert SQL code inside dbGetQuery() - note the extra \ in front of the single quotes in `dest`
+
+```{r}
+test2 <- dbGetQuery(con,'
+SELECT 
+  Reporting_Airline,
+  SUM(1) AS N, 
+  SUM(ArrDelay <= 15) / SUM(1) AS pct_ontime
+FROM flightdata AS f
+WHERE year = 2019 AND month = 9
+  AND dest = \'JFK\'
+GROUP BY Reporting_Airline 
+HAVING N >= 100
+ORDER BY pct_ontime DESC
+LIMIT 0,4;
+')
+
+test2
+```
+
+
+```{r, error = FALSE}
+# how basic mathematical ideas are translated:
+translate_sql(mean(ArrDelay, na.rm = TRUE),
+              con = con)
+
+# translation does not always work, but can pass unknown functions through
+my_paste <- paste0
+translate_sql(my_paste("this", "is", "a", "string"),
+              con = con)
+
+# will throw an error even though a valid R expression
+flights %>%
+  mutate(dest_code = my_paste(dest, "(", destcityname, ")"))
+
+# how to make it work - use CONCAT, the MySQL equivalent to paste0, or
+# use collect to break the MySQL connection and return a tbl_df
+class(flights)
+
+flights %>%
+  mutate(dest_code = CONCAT(dest, "(", destcityname, ")"))
+
+# Not working - flights too big to collect?
+#flights %>%
+#  collect() %>%
+#  mutate(dest_code = my_paste(dest, "(", destcityname, ")"))
+```
+
+
+### Section 15.2: Flat-file databases
+
+Objects take up MUCH less space in memory when still lives on the server vs. collected into R
+
+```{r}
+airports %>%
+  object.size() %>%
+  print(units = "Kb") 
+
+airports %>%
+  collect() %>%
+  object.size() %>%
+  print(units = "Kb")
+
+# data sets get big quickly - already 3/4 Gb
+n <- 100 * 1e6
+x <- matrix(runif(n), ncol = 100)
+dim(x)
+print(object.size(x), units = "Mb")
+rm(x)
+
+# Section 15.4.1: The SQL data manipulation language
+
+# We are actually focusing on RMariaDB, which is replacing RMySQL
+```
+
+
+Every query needs SELECT and FROM...
+
+```{sql, connection = con}
+SELECT * FROM flightdata LIMIT 0,10;
+```
+
+```{sql, connection = con}
+SELECT Year, Month, DayofMonth, deptime, crsdeptime, DepDelay, origin
+FROM flightdata 
+LIMIT 0, 10;
+```
+
+### Section 15.4.1: SELECT...FROM
+
+Be sure to set limit so it doesn't run forever
+
+```{sql, connection = con}
+SELECT origin origincityname FROM flightdata
+LIMIT 0, 100;
+```
+
+Combine origin and dest columns
+
+```{sql, connection = con}
+SELECT 
+  flight_number_reporting_airline, 
+  CONCAT('(', origin, ' to ', dest, ')') 
+FROM flightdata
+LIMIT 0, 6;
+```
+
+Make (origin, dest) column name less unwieldy but changing column names in resulting data set
+
+```{sql, connection = con}
+SELECT 
+  flight_number_reporting_airline AS flight_num, 
+  CONCAT('(', origin, ' to ', dest, ')') AS path
+FROM flightdata
+LIMIT 0, 6;
+```
+
+### Section 15.4.2: WHERE
+
+First 6 flights that left Bradley Intl Airport on June 26, 2019
+
+```{sql, connection = con}
+SELECT 
+  Year, Month, DayofMonth, origin, dest,
+  flight_number_reporting_airline AS flight_num, 
+  Reporting_Airline AS carrier
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+Create date variable from year, month, day
+
+Would produce an error if tried to use:  WHERE theDate = '2019-06-26' since WHERE only operates on the original table
+
+Could try to use:  WHERE STR_TO_DATE(CONCAT(Year, '-', Month, '-', DayofMonth), '%Y-%m-%d') = '2019-06-26', but this is extremely slow (and might crash R) since it doesn't take advantages of pre-existing indices on year, month, and day
+
+```{sql, connection = con}
+SELECT 
+  STR_TO_DATE(CONCAT(Year, '-', Month, '-', DayofMonth), '%Y-%m-%d') AS theDate,
+  origin,
+  flight_number_reporting_airline AS flight_num, 
+  Reporting_Airline AS carrier
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+Introduce BETWEEN and DISTINCT.
+
+```{sql, connection = con}
+SELECT
+  DISTINCT STR_TO_DATE(CONCAT(Year, '-', Month, '-', DayofMonth), '%Y-%m-%d') AS theDate
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth BETWEEN 26 and 30
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+Substitute IN for BETWEEN.  Only get dates specifically listed in parentheses.
+
+```{sql, connection = con}
+SELECT
+  DISTINCT STR_TO_DATE(CONCAT(Year, '-', Month, '-', DayofMonth), '%Y-%m-%d') AS theDate
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth IN (26, 30)
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+Be careful with parentheses.  If run the code below without parentheses, you'll probably crash R, as it tries to return a ton of records. Do NOT try this at home! 
+
+```{sql, connection = con}
+/* returns 154 records  */
+SELECT 
+  COUNT(*) AS N
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth IN (26, 30)
+  AND origin = 'BDL'
+```
+
+### Section 15.4.3: GROUP BY
+
+The GROUP BY clause allows one to aggregate multiple rows according to some criteria. The challenge when using GROUP BY is specifying how multiple rows of data should be reduced into a single value. Aggregate functions (e.g., COUNT(), SUM(), MAX(), and AVG()) are necessary.
+
+```{sql, connection = con}
+SELECT 
+  Reporting_Airline AS carrier, 
+  COUNT(*) AS numFlights,
+  SUM(1) AS numFlightsAlso
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'BDL'
+GROUP BY carrier;
+```
+
+Add MIN as an aggregate function
+
+```{sql, connection = con}
+SELECT 
+  Reporting_Airline AS carrier, 
+  COUNT(*) AS numFlights,
+  MIN(deptime)
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'BDL'
+GROUP BY carrier;
+```
+
+Turn departure time variable into an actual time
+
+```{sql, connection = con}
+SELECT 
+  Reporting_Airline AS carrier, 
+  COUNT(*) AS numFlights,
+  MAKETIME(
+    IF(LENGTH(MIN(deptime)) = 3, 
+      LEFT(MIN(deptime), 1), 
+      LEFT(MIN(deptime), 2)
+    ), 
+    RIGHT(MIN(deptime), 2), 
+    0
+    ) AS firstDepartureTime
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'BDL'
+GROUP BY carrier
+LIMIT 0, 6;
+```
+
+Can use multiple grouping variables, but must make sure we get single value of dep_time for each carrier/dest combo.  Note that SQL is NOT case-sensitive!
+
+```{sql, connection = con}
+SELECT 
+  reporting_airline AS carrier, 
+  dest,
+  COUNT(*) AS numFlights,
+  MAKETIME(
+    IF(LENGTH(MIN(deptime)) = 3, 
+      LEFT(MIN(deptime), 1), 
+      LEFT(MIN(deptime), 2)
+    ), 
+    RIGHT(MIN(deptime), 2), 
+    0
+    ) AS firstDepartureTime
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'BDL'
+GROUP BY carrier, dest
+LIMIT 0, 6;
+```
+
+### Section 15.4.4: ORDER BY
+
+Order by does not execute until all data are retrieved, thus it operates on the result set.
+
+```{sql, connection = con}
+SELECT 
+  dest, SUM(1) AS numFlights
+FROM flightdata
+WHERE Year = 2019
+  AND origin = 'BDL'
+GROUP BY dest
+ORDER BY numFlights DESC
+LIMIT 0, 6;
+```
+
+Add in average arrival delay and sort by that new variable
+
+```{sql, connection = con}
+SELECT 
+  dest, 
+  SUM(1) AS numFlights,
+  AVG(ArrDelay) AS avg_arr_delay
+FROM flightdata
+WHERE Year = 2019
+  AND origin = 'BDL'
+GROUP BY dest
+ORDER BY avg_arr_delay ASC
+LIMIT 0, 6;
+```
+
+### Section 15.4.5: HAVING
+
+Add requirement that destinations have at least 2 flights per day.  Note that you can use derived columns in HAVING, but if you tried to move numFlights > 365*2 into WHERE, you'd get an error because WHERE operates on the original data.
+
+Still, put clauses into WHERE instead of HAVING wherever possible to maximize efficiency (so don't have to search entire database)
+
+```{sql, connection = con}
+SELECT 
+  dest, 
+  SUM(1) AS numFlights,
+  AVG(ArrDelay) AS avg_arr_delay
+FROM flightdata
+WHERE Year = 2019
+  AND origin = 'BDL'
+GROUP BY dest
+HAVING numFlights > 365 * 2
+ORDER BY avg_arr_delay ASC
+LIMIT 0, 6;
+```
+
+### Section 15.4.6: LIMIT
+
+We've been using LIMIT often to reduce what is returned/printed.  The code below returns the 4th through 7th airports in our list
+
+```{sql, connection = con}
+SELECT 
+  dest, 
+  SUM(1) AS numFlights,
+  AVG(ArrDelay) AS avg_arr_delay
+FROM flightdata
+WHERE year = 2019
+  AND origin = 'BDL'
+GROUP BY dest
+HAVING numFlights > 365*2
+ORDER BY avg_arr_delay ASC
+LIMIT 3,4;
+```
+
+### Section 15.4.7: JOIN
+
+Note that SELECT contains variables from both datasets (hold off until we expand the tables in our database)
+
+```{sql, connection = con}
+SELECT 
+  origin, 
+  dest, 
+  name AS dest_name,
+  flight_number_reporting_airline AS flight_num, 
+  Reporting_Airline AS carrier
+FROM flightdata
+JOIN airports ON flightdata.dest = airports.faa
+WHERE Year = 2019 AND Month = 6 AND DayOfMonth = 26 AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+This will also work - use table aliases to reduce typing and improve readability:
+
+```{sql, connection = con}
+SELECT 
+  f.origin, 
+  f.dest, 
+  a.name AS dest_name,
+  f.flight_number_reporting_airline AS flight_num, 
+  f.Reporting_Airline AS carrier
+FROM flightdata AS f
+JOIN airports AS a ON f.dest = a.faa
+WHERE Year = 2019 AND Month = 6 AND DayOfMonth = 26 AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+```{sql, connection = con}
+SELECT *
+FROM airports
+LIMIT 0, 6;
+```
+
+```{sql, connection = con}
+SELECT *
+FROM flightdata
+LIMIT 0, 6;
+```
+
+Join in carrier info as well
+
+```{sql, connection = con}
+#SELECT 
+#  dest, a.name AS dest_name,
+#  o.carrier, c.name AS carrier_name
+#FROM flights AS o
+#JOIN airports AS a ON o.dest = a.faa
+#JOIN carriers AS c ON o.carrier = c.carrier
+#WHERE year = 2013 AND month = 6 AND day = 26
+#  AND origin = 'BDL'
+#IMIT 0, 6;
+```
+
+Join onto same table more than once to get both airports.  
+
+See book for nice discussion about why it's much more efficient to store things in multiple data sets connected by keys
+
+```{sql, connection = con}
+#SELECT 
+#  flight,
+#  a2.name AS orig_name,
+#  a1.name AS dest_name,
+#  c.name AS carrier_name
+#FROM flights AS o
+#OIN airports AS a1 ON o.dest = a1.faa
+#JOIN airports AS a2 ON o.origin = a2.faa
+#JOIN carriers AS c ON o.carrier = c.carrier
+#WHERE year = 2013 AND month = 6 AND day = 26
+# AND origin = 'BDL'
+#LIMIT 0, 6;
+```
+
+The result from a LEFT JOIN is always a superset of the result of a (inner, regular, natural) JOIN - every row in the first data set is returned.  Here we find which flights have airports without info in the airports dataset.
+
+```{sql, connection = con}
+#SELECT 
+#  year, month, day, origin, dest, 
+#  a.name AS dest_name,
+#  flight, carrier
+#FROM flights AS o
+#LEFT JOIN airports AS a ON o.dest = a.faa
+#WHERE year = 2013 AND month = 6 AND day = 26
+#  AND a.name is null
+#LIMIT 0, 6;
+```
+
+### Section 15.4.8: UNION
+
+Use UNION to combine two separate queries, just like bind_rows()
+
+```{sql, connection = con}
+(SELECT 
+  Year, Month, DayofMonth, origin, dest, 
+  flight_number_reporting_airline AS flight, 
+  Reporting_Airline AS carrier
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'BDL' AND dest = 'MSP')
+UNION 
+(SELECT 
+  Year, Month, DayofMonth, origin, dest, 
+  flight_number_reporting_airline AS flight, 
+  Reporting_Airline AS carrier
+FROM flightdata
+WHERE Year = 2019 AND Month = 6 AND DayofMonth = 26
+  AND origin = 'JFK' AND dest = 'ORD')
+LIMIT 0,10;
+```
+
+### Section 15.4.9: Subqueries
+
+Treat the table from an initial query as a database for the next query (note that these are often inefficient in their use of indices)
+
+```{sql, connection = con}
+SELECT IATA, Timezone, City, `Airport Name` AS name 
+FROM airports AS a
+WHERE Timezone < -6
+LIMIT 0, 6;
+```
+
+Use the query from above (airports in Mountain time zone or further west) as subquery below in determining how many carriers go from Bradley to those airports
+
+```{sql, connection = con}
+SELECT 
+  dest, 
+  a.`Airport Name` AS dest_name, 
+  SUM(1) AS N, 
+  COUNT(distinct Reporting_Airline) AS numCarriers
+FROM flightdata AS f
+LEFT JOIN airports AS a ON f.origin = a.IATA
+WHERE Year = 2019 
+  AND dest = 'BDL' 
+  AND origin IN 
+  (SELECT IATA
+    FROM airports
+    WHERE Timezone < -6)
+GROUP BY origin;
+```
+
+Below is another way to have done the same query
+
+```{sql, connection = con}
+SELECT 
+  dest, 
+  a.`Airport Name` AS dest_name, 
+  SUM(1) AS N, 
+  COUNT(distinct Reporting_Airline) AS numCarriers
+FROM flightdata AS f
+LEFT JOIN airports AS a ON f.origin = a.IATA
+WHERE Year = 2019 
+  AND dest = 'BDL' 
+  AND Timezone < -6
+GROUP BY origin;
+```
+
+
+### Section 15.5: Extended example - FiveThirtyEight flights
+
+Verify basic claims in the article, but for 2024 instead of 2014
+
+```{sql, connection = con}
+SELECT
+  SUM(1) AS numFlights,
+  SUM(IF(ArrDelay < 15, 1, 0)) / SUM(1) AS ontimePct,
+  SUM(IF(ArrDelay < 0, 1, 0)) / SUM(1) AS earlyPct,
+  SUM(ArrDelay) / 1e6 AS netMinLate,
+  SUM(IF(ArrDelay > 0, ArrDelay, 0)) / 1e6 AS minLate,
+  SUM(IF(ArrDelay < 0, ArrDelay, 0)) / 1e6 AS minEarly
+FROM flightdata AS o
+WHERE year = 2024
+LIMIT 0, 6;
+```
+
+Get better estimate of total number of delay hours by making assumptions about cost of cancelled flights
+
+```{sql, connection = con}
+SELECT
+  SUM(1) AS numFlights,
+  SUM(IF(ArrDelay < 15, 1, 0)) / SUM(1) AS ontimePct,
+  SUM(IF(ArrDelay < 0, 1, 0)) / SUM(1) AS earlyPct,
+  SUM(IF(cancelled = 1, 270, ArrDelay)) / 1e6 AS netMinLate,
+  SUM(
+    IF(cancelled = 1, 270, IF(ArrDelay > 0, ArrDelay, 0))
+  ) / 1e6 AS minLate,
+  SUM(IF(ArrDelay < 0, ArrDelay, 0)) / 1e6 AS minEarly
+FROM flightdata AS o
+WHERE year = 2024
+LIMIT 0, 6;
+```
+
+Recreate data for first bar plot in the article
+
+```{sql, connection = con}
+SELECT Reporting_Airline, 
+  SUM(1) AS numFlights,
+  SUM(IF(ArrDelay > 15 AND ArrDelay <= 119, 1, 0)) AS shortDelay,
+  SUM(
+    IF(ArrDelay >= 120 OR cancelled = 1 OR diverted = 1, 1, 0)
+  ) AS longDelay
+FROM
+  flightdata AS o
+WHERE year = 2024
+GROUP BY Reporting_Airline
+ORDER BY shortDelay DESC
+```
+
+Use results from query above in R to reproduce 538 plot
+
+```{r}
+res <- dbGetQuery(con, '
+SELECT Reporting_Airline, 
+  SUM(1) AS numFlights,
+  SUM(IF(ArrDelay > 15 AND ArrDelay <= 119, 1, 0)) AS shortDelay,
+  SUM(
+    IF(ArrDelay >= 120 OR cancelled = 1 OR diverted = 1, 1, 0)
+  ) AS longDelay
+FROM
+  flightdata AS o
+WHERE year = 2024
+GROUP BY Reporting_Airline
+ORDER BY shortDelay DESC
+')
+
+# Remove extra junk from carrier names
+#res <- res %>%
+#  as_tibble() %>%
+#  mutate(
+#    name = str_remove_all(name, "Air(lines|ways| Lines)"),
+#    name = str_remove_all(name, "(Inc\\.|Co\\.|Corporation)"),
+#    name = str_remove_all(name, "\\(.*\\)"),
+#    name = str_remove_all(name, " *$")
+#  )
+#res %>%
+#  pull(name)
+
+# Handle carrier name changes then calculate proportions for plot
+carriers_2024 <- res %>%
+#  mutate(
+#    groupName = case_when(
+#      name %in% c("Envoy Air", "American Eagle") ~ "American",
+#      name == "AirTran" ~ "Southwest", 
+#      TRUE ~ name
+#    )
+#  ) %>%
+  group_by(Reporting_Airline) %>%
+  summarize(
+    numFlights = sum(numFlights), 
+    wShortDelay = sum(shortDelay), 
+    wLongDelay = sum(longDelay)
+  ) %>%
+  mutate(
+    wShortDelayPct = wShortDelay / numFlights,
+    wLongDelayPct = wLongDelay / numFlights,
+    delayed = wShortDelayPct + wLongDelayPct,
+    ontime = 1 - delayed
+  )
+carriers_2024
+
+# tidy using pivot_longer before plotting
+# carriers_2024 is 15x8 (one row per carrier) while carriers_tidy is 30x4
+# (one row per carrier and delay type)
+carriers_tidy <- carriers_2024 %>%
+  select(Reporting_Airline, wShortDelayPct, wLongDelayPct, delayed) %>%
+  pivot_longer(
+    -c(Reporting_Airline, delayed), 
+    names_to = "delay_type", 
+    values_to = "pct"
+  )
+delay_chart <- ggplot(
+  data = carriers_tidy, 
+  aes(x = reorder(Reporting_Airline, pct, max), y = pct)) + 
+  geom_col(aes(fill = delay_type)) +
+  scale_fill_manual(
+    name = NULL, 
+    values = c("red", "gold"), 
+    labels = c(
+      "Flights Delayed 120+ Minutes\ncancelled or Diverted", 
+      "Flights Delayed 15-119 Minutes"
+    )
+  ) + 
+  scale_y_continuous(limits = c(0, 1)) + 
+  coord_flip() + 
+  labs(
+    title = "Republic's Delays Are Short; Frontier's Are Long", 
+    subtitle = "As share of scheduled flights, 2024"
+  ) + 
+  ylab(NULL) + 
+  xlab(NULL) + 
+  ggthemes::theme_fivethirtyeight() + 
+  theme(
+    plot.title = element_text(hjust = 1),
+    plot.subtitle = element_text(hjust = -0.2)
+  )
+
+delay_chart +
+  geom_text(
+    data = filter(carriers_tidy, delay_type == "wShortDelayPct"), 
+    aes(label = paste0(round(pct * 100, 1), "% ")), 
+    hjust = "right",
+    size = 2
+  ) + 
+  geom_text(
+    data = filter(carriers_tidy, delay_type == "wLongDelayPct"), 
+    aes(y = delayed - pct, label = paste0(round(pct * 100, 1), "% ")),
+    hjust = "left", 
+    nudge_y = 0.01,
+    size = 2
+  )
+```

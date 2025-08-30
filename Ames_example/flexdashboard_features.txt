@@ -1,0 +1,11 @@
+flexdashboard features to consider: 
+
+- layouts
+- tabsets
+- plotly
+- valueBox / gauges
+- fig.width and fig.height
+- themes
+- adding text
+- storyboards
+- shiny inputs and outputs

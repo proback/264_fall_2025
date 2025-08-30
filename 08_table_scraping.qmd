@@ -1,0 +1,442 @@
+---
+title: "Table Scraping in R"
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+  
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/08_table_scraping.qmd).  Just hit the Download Raw File button.
+
+
+```{r}
+#| include: FALSE
+
+library(tidyverse)
+library(stringr)
+library(rvest)
+library(polite)
+library(sf)
+library(maps)
+library(viridis)
+library(leaflet)
+library(htmltools)
+
+```
+
+
+# Using rvest for web scraping
+
+If you would like to assemble data from a website with no API, you can often acquire data using more brute force methods commonly called web scraping.  Typically, this involves finding content inside HTML (Hypertext markup language) code used for creating webpages and web applications and the CSS (Cascading style sheets) language for customizing the appearance of webpages. 
+We are used to reading data from .csv files.... but most websites have it stored in XML (like html, but for data). You can read more about it here if you're interested: https://www.w3schools.com/xml/default.asp
+
+XML has a sort of tree or graph-like structure... so we can identify information by which `node` it belongs to (`html_nodes`) and then convert the content into something we can use in R (`html_text` or `html_table`).
+
+
+Here's one quick example of web scraping.  First check out the webpage https://www.cheese.com/by_type and then select Semi-Soft.  We can drill into the html code for this webpage and find and store specific information (like cheese names)
+
+```{r}
+session <- bow("https://www.cheese.com/by_type", force = TRUE)
+result <- scrape(session, query=list(t="semi-soft", per_page=100)) |>
+  html_node("#main-body") |> 
+  html_nodes("h3") |> 
+  html_text()
+head(result)
+#> [1] "3-Cheese Italian Blend"  "Abbaye de Citeaux"      
+#> [3] "Abbaye du Mont des Cats" "Adelost"                
+#> [5] "ADL Brick Cheese"        "Ailsa Craig"
+```
+
+
+## Four steps to scraping data with functions in the `rvest` library:
+
+0. `robotstxt::paths_allowed()` Check if the website allows scraping, and then make sure we scrape "politely"
+1. `read_html()`.  Input the URL containing the data and turn the html code into an XML file (another markup format that's easier to work with).
+2. `html_nodes()`.  Extract specific nodes from the XML file by using the CSS path that leads to the content of interest. (use css="table" for tables.)
+3. `html_text()`.  Extract content of interest from nodes.  Might also use `html_table()` etc.
+
+
+## Data scraping ethics
+
+Before scraping, we should always check first whether the website allows scraping.  We should also consider if there's any personal or confidential information, and we should be considerate to not overload the server we're scraping from.
+
+[Chapter 24 in R4DS](https://r4ds.hadley.nz/webscraping#scraping-ethics-and-legalities) provides a nice overview of some of the important issues to consider.  A couple of highlights:
+
+- be aware of terms of service, and, if available, the `robots.txt` file that some websites will publish to clarify what can and cannot be scraped and other constraints about scraping.
+- use the [`polite` package](https://github.com/dmi3kno/polite) to scrape public, non-personal, and factual data in a respectful manner
+- scrape with a good purpose and request only what you need; in particular, be extremely wary of personally identifiable information
+
+See [this article](https://towardsdatascience.com/ethics-in-web-scraping-b96b18136f01) for more perspective on the ethics of data scraping.
+
+
+## When the data is already in table form:
+
+In this example, we will scrape climate data from [this website](https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503)
+
+The website already contains data in table form, so we use `html_nodes(. , css = "table")` and `html_table()`
+
+```{r}
+# check that scraping is allowed (Step 0)
+robotstxt::paths_allowed("https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503")
+
+# Step 1: read_html()
+mpls <- read_html("https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503")
+
+# 2: html_nodes()
+tables <- html_nodes(mpls, css = "table") 
+tables  # have to guesstimate which table contains climate info
+
+# 3: html_table()
+html_table(tables, header = TRUE, fill = TRUE)    # find the right table
+mpls_data1 <- html_table(tables, header = TRUE, fill = TRUE)[[1]]  
+mpls_data1
+mpls_data2 <- html_table(tables, header = TRUE, fill = TRUE)[[2]]  
+mpls_data2
+```
+
+Now we wrap the 4 steps above into the `bow` and `scrape` functions from the `polite` package:
+
+```{r}
+session <- bow("https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes(css = "table") |> 
+  html_table(header = TRUE, fill = TRUE)
+mpls_data1 <- result[[1]]
+mpls_data2 <- result[[2]]
+```
+
+
+Even after finding the correct tables, there may still be a lot of work to make it tidy!!!  
+
+**[Pause to Ponder:]** What is each line of code doing below?
+
+```{r}
+bind_cols(mpls_data1, mpls_data2) |>
+  as_tibble() |> 
+  select(-`...8`) |>
+  mutate(`...1` = str_extract(`...1`, "[^ ]+ [^ ]+ [^ ]+")) |>
+  pivot_longer(cols = c(`JanJa`:`DecDe`), 
+               names_to = "month", values_to = "weather") |>
+  pivot_wider(names_from = `...1`, values_from = weather) |>
+  mutate(month = str_sub(month, 1, 3))  |>
+  rename(avg_high = "Average high in",
+         avg_low = "Average low in")
+
+# Probably want to rename the rest of the variables too!
+```
+
+
+### Leaflet mapping example with data in table form
+
+Let's return to our example from `02_maps.qmd` where we recreated an [interactive choropleth map](https://rstudio.github.io/leaflet/articles/choropleths.html) of population densities by US state.  Recall how that plot was very suspicious?  The population density data that came with the state geometries from [our source](https://rstudio.github.io/leaflet/json/us-states.geojson) seemed incorrect. 
+
+Let's see if we can use our new web scraping skills to scrape the correct population density data and repeat that plot!  Can we go out and find the real statewise population densities, create a tidy data frame, merge that with our state geometry shapefiles, and then regenerate our plot?
+
+A quick wikipedia search yields [this webpage](https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density) with more reasonable population densities in a nice table format.  Let's see if we can grab this data using our 4 steps to `rvest`ing data!
+
+```{r}
+# check that scraping is allowed (Step 0)
+robotstxt::paths_allowed("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density")
+
+# Step 1: read_html()
+pop_dens <- read_html("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density")
+
+# 2: html_nodes()
+tables <- html_nodes(pop_dens, css = "table") 
+tables  # have to guesstimate which table contains our desired info
+
+# 3: html_table()
+html_table(tables, header = TRUE, fill = TRUE)    # find the right table
+density_table <- html_table(tables, header = TRUE, fill = TRUE)[[1]]  
+density_table
+
+
+# Perform Steps 0-3 using the polite package
+session <- bow("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes(css = "table") |> 
+  html_table(header = TRUE, fill = TRUE)
+density_table <- result[[1]]
+density_table
+```
+
+Even after grabbing our table from wikipedia and setting it in a nice tibble format, there is still some cleaning to do before we can merge this with our state geometries:
+
+```{r}
+density_data <- density_table |>
+  select(1, 2, 4, 5) |>
+  filter(!row_number() == 1) |>
+  rename(Land_area = `Land area`) |>
+  mutate(state_name = str_to_lower(as.character(Location)),
+         Density = parse_number(Density),
+         Population = parse_number(Population),
+         Land_area = parse_number(Land_area)) |>
+  select(-Location)
+density_data
+```
+
+As before, we get core geometry data to draw US states and then we'll make sure we can merge our new density data into the core files.
+
+```{r}
+#| message: false
+#| warning: false
+
+# Get info to draw US states for geom_polygon (connect the lat-long points)
+states_polygon <- as_tibble(map_data("state")) |>
+  select(region, group, order, lat, long)
+
+# See what the state (region) levels look like in states_polygon
+unique(states_polygon$region)
+
+
+# Get info to draw US states for geom_sf and leaflet (simple features
+#   object with multipolygon geometry column)
+states_sf <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
+  select(name, geometry)
+
+# See what the state (name) levels look like in states_sf
+unique(states_sf$name)
+
+
+# See what the state (state_name) levels look like in density_data
+unique(density_data$state_name)   
+# all lower case plus some extraneous rows
+```
+
+
+```{r}
+# Make sure all keys have the same format before joining: all lower case
+
+states_sf <- states_sf |>
+  mutate(name = str_to_lower(name))
+```
+
+
+```{r}
+# Now we can merge data sets together for the static and the interactive plots
+
+# Merge with states_polygon (static)
+density_polygon <- states_polygon |>
+  left_join(density_data, by = c("region" = "state_name"))
+density_polygon
+
+# Looks like merge worked for 48 contiguous states plus DC
+density_polygon |>
+  group_by(region) |>
+  summarise(mean = mean(Density)) |>
+  print(n = Inf)
+
+# Remove DC since such an outlier
+density_polygon <- density_polygon |>
+  filter(region != "district of columbia")
+
+
+# Merge with states_sf (static or interactive)
+density_sf <- states_sf |>
+  left_join(density_data, by = c("name" = "state_name")) |>
+  filter(!(name %in% c("alaska", "hawaii")))
+
+# Looks like merge worked for 48 contiguous states plus DC and PR
+class(density_sf)
+print(density_sf, n = Inf)
+
+# Remove DC and PR
+density_sf <- density_sf |>
+  filter(name != "district of columbia" & name != "puerto rico")
+```
+
+
+Numeric variable (static plot):
+
+```{r}
+density_polygon |>
+  ggplot(mapping = aes(x = long, y = lat, group = group)) + 
+    geom_polygon(aes(fill = Density), color = "black") + 
+    labs(fill = "Population density in 2023 \n (people per sq mile)") +
+    coord_map() + 
+    theme_void() +  
+    scale_fill_viridis() 
+```
+
+Remember that the original plot classified densities into our own pre-determined bins before plotting - this might look better!
+
+```{r}
+density_polygon <- density_polygon |>
+  mutate(Density_intervals = cut(Density, n = 8,
+          breaks = c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)))
+
+density_polygon |>
+  ggplot(mapping = aes(x = long, y = lat, group = group)) + 
+    geom_polygon(aes(fill = Density_intervals), color = "white",
+                 linetype = 2) + 
+    labs(fill = "Population Density (per sq mile)") +
+    coord_map() + 
+    theme_void() +  
+    scale_fill_brewer(palette = "YlOrRd") 
+```
+
+We could even create a static plot using `geom_sf()` using `density_sf`:
+
+```{r}
+density_sf <- density_sf |>
+  mutate(Density_intervals = cut(Density, n = 8,
+          breaks = c(0, 10, 20, 50, 100, 200, 500, 1000, Inf))) 
+
+ggplot(data = density_sf) + 
+  geom_sf(aes(fill = Density_intervals), colour = "white", linetype = 2) + 
+  theme_void() +  
+  scale_fill_brewer(palette = "YlOrRd") 
+```
+
+But... why not make an interactive plot instead?
+
+```{r}
+density_sf <- density_sf |>
+  mutate(labels = str_c(name, ": ", Density, " people per sq mile in 2023"))
+
+labels <- lapply(density_sf$labels, HTML)
+pal <- colorNumeric("YlOrRd", density_sf$Density)
+
+leaflet(density_sf) |>
+  setView(-96, 37.8, 4) |>
+  addTiles() |>
+  addPolygons(
+    weight = 2,
+    opacity = 1,
+    color = ~ pal(density_sf$Density),
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlightOptions = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")) 
+# should use addLegend() but not trivial without pre-set bins
+```
+
+Here's an interactive plot with our own bins:
+
+```{r}
+#| warning: false
+
+# Create our own category bins for population densities
+#   and assign the yellow-orange-red color palette
+bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", domain = density_sf$Density, bins = bins)
+
+# Create labels that pop up when we hover over a state.  The labels must
+#   be part of a list where each entry is tagged as HTML code.
+density_sf <- density_sf |>
+  mutate(labels = str_c(name, ": ", Density, " people / sq mile"))
+labels <- lapply(density_sf$labels, HTML)
+
+# If want more HTML formatting, use these lines instead of those above:
+# states <- states |>
+#   mutate(labels = glue("<strong>{name}</strong><br/>{density} people / 
+#   mi<sup>2</sup>"))
+# labels <- lapply(states$labels, HTML)
+
+leaflet(density_sf) |>
+  setView(-96, 37.8, 4) |>
+  addTiles() |>
+  addPolygons(
+    fillColor = ~pal(Density),
+    weight = 2,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlightOptions = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")) |>
+  addLegend(pal = pal, values = ~Density, opacity = 0.7, title = NULL,
+    position = "bottomright")
+```
+
+
+### On Your Own
+
+1. Use the `rvest` package and `html_table` to read in the table of data found at the link [here](https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population) and create a scatterplot of land area versus the 2022 estimated population.  I give you some starter code below; fill in the "???" and be sure you can explain what EVERY line of code does and why it's necessary.
+
+```{r}
+#| eval: FALSE
+
+city_pop <- read_html("https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population")
+
+pop <- html_nodes(???, ???)
+html_table(pop, header = TRUE, fill = TRUE)  # find right table
+pop2 <- html_table(pop, header = TRUE, fill = TRUE)[[???]]
+pop2
+
+# perform the steps above with the polite package
+session <- bow("https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes(???) |>
+  html_table(header = TRUE, fill = TRUE)
+pop2 <- result[[???]]
+pop2
+
+pop3 <- as_tibble(pop2[,c(1:6,8)]) |>
+  slice(???) |>
+  rename(`State` = `ST`,
+         `Estimate2023` = `2023estimate`,
+         `Census` = `2020census`,
+         `Area` = `2020 land area`,
+         `Density` = `2020 density`) |>
+  mutate(Estimate2023 = parse_number(Estimate2023),
+         Census = parse_number(Census),
+         Change = ???   # get rid of % but preserve +/-,
+         Area = parse_number(Area),
+         Density = parse_number(Density)) |> 
+  mutate(City = str_replace(City, "\\[.*$", ""))
+pop3
+
+# pick out unusual points
+outliers <- pop3 |> 
+  filter(Estimate2023 > ??? | Area > ???)
+
+# This will work if don't turn variables from chr to dbl, but in that 
+#  case notice how axes are just evenly spaced categorical variables
+ggplot(pop3, aes(x = ???, y = ???)) +
+  geom_point()  +
+  geom_smooth() +
+  ggrepel::geom_label_repel(data = ???, aes(label = ???))
+```
+
+
+2. We would like to create a tibble with 4 years of data (2001-2004) from the Minnesota Wild hockey team.  Specifically, we are interested in the "Scoring Regular Season" table from [this webpage](https://www.hockey-reference.com/teams/MIN/2001.html) and the similar webpages from 2002, 2003, and 2004.  Your final tibble should have 6 columns:  player, year, age, pos (position), gp (games played), and pts (points).
+
+You should (a) write a function called `hockey_stats` with inputs for team and year to scrape data from the "scoring Regular Season" table, and (b) use iteration techniques to scrape and combine 4 years worth of data.  Here are some functions you might consider:
+
+- `row_to_names(row_number = 1)` from the `janitor` package
+- `clean_names()` also from the `janitor` package
+- `bow()` and `scrape()` from the `polite` package
+- `str_c()` from the `stringr` package (for creating urls with user inputs)
+- `map2()` and `list_rbind()` for iterating and combining years
+
+Try following these steps:
+
+1) Be sure you can find and clean the correct table from the 2021 season.
+
+2) Organize your `rvest` code from (1) into functions from the `polite` package.
+
+3) Place the code from (2) into a function where the user can input a team and year.  You would then adjust the url accordingly and produce a clean table for the user.
+
+4) Use `map2` and `list_rbind` to build one data set containing Minnesota Wild data from 2001-2004.
