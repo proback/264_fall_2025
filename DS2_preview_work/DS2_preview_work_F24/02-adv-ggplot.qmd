@@ -1,0 +1,151 @@
+# Learning goals
+
+After this lesson, you should be able to:
+
+- Navigate the [ggplot2 reference page](https://ggplot2.tidyverse.org/reference/) to find the functions needed to create a desired visualization
+- Use the information on a function help page to construct desired plot features
+    - Scan the information in the **Usage** section to identify function arguments that must be set
+    - Understand how the function arguments work by using information in the **Arguments** section
+    - Use the information in the the **Aesthetics** and **Examples** sections to control plot appearance
+- Identify when it would be necessary to use different `data` arguments within the `ggplot()` and `geom_()` layers
+
+
+
+
+
+# Case study: recreating a NYT visualization
+
+We are going to recreate [this NYT visualization](https://www.nytimes.com/interactive/2016/02/19/us/2015-year-in-weather-temperature-precipitation.html) on record setting temperatures by expanding our `ggplot2` toolbox using data from San Francisco (SFO) in 2011.
+
+First load the `tidyverse` package, and read in the data.
+
+```{r}
+library(tidyverse)
+weather <- read_csv("https://lmyint.github.io/212_fall_2023/data/sfo_weather.csv")
+```
+
+**Class exercise 1:** Examine the temperature visualization. What variables underlie the visualization, and how do they map to visual elements (e.g., position, size, shape, and color of the glyphs)?
+
+------------------------------------------------------------------------
+
+We can explore the "Geoms" section of the [ggplot2 reference page](https://ggplot2.tidyverse.org/reference/) to find a `geom` that corresponds to the visual elements in the temperature plot.
+
+**Class exercise 2:** Using both the small example visuals on the right and the names of the `geom`'s, brainstorm some possibilities for `geom`'s we might use to recreate the temperature visualization.
+
+------------------------------------------------------------------------
+
+We need to explore further by opening up the `geom` reference pages to understand if a particular `geom` is suitable for our task. We'll look at the `geom_point` [documentation page](https://ggplot2.tidyverse.org/reference/geom_point.html) to learn the process for reading a documentation page.
+
+Using the process that we just learned, let's use the `geom_linerange` [documentation page](https://ggplot2.tidyverse.org/reference/geom_linerange.html) to start off our temperature visualization with the record lows and highs:
+
+```{r}
+ggplot(weather) +
+    geom_linerange(aes(x = dateInYear, ymin = RecordLow, ymax = RecordHigh),
+                   color = "#ECEBE3", linewidth = 1.5) +
+    theme_classic()
+```
+
+**Class exercise 3:** Add to your temperature visualization to also display the usual temperatures (`NormalLow` and `NormalHigh`), and actual 2011 temperatures (`Low` and `High`). The tan color for the usual temperatures is `"#C8B8BA"`, and the red color for the actual temperatures is `"#A90248"`.
+
+```{r}
+# Code for updated plot
+```
+
+------------------------------------------------------------------------
+
+Let's now try to recreate the visual demarcations of the months by adding vertical lines separating the months.
+
+**Class exercise 4:** Brainstorm with your groups how we might draw those vertical lines. What `geom` might we use? What subset of the data might we use in that `geom` layer to draw lines only at the month divisions? One person from your group should write your ideas on the board.
+
+Once ideas are up on the board, we'll work through this together as a class.
+
+```{r}
+# Code for updated plot
+```
+
+------------------------------------------------------------------------
+
+Now let's change the x-axis labels so that the month names display in the center of each month's slice of the plot. (Note that R has built-in variables called `month.abb` and `month.name` that contain abbreviated and full month names.)
+
+**Class exercise 5:** We will split into 3 groups to explore different approaches to this problem. After finding tentative solutions, each group should try out the solution in the temperature plot. Elect one speaker to summarize the group's process and results.
+
+- **AI group:** This group will use [ChatGPT](https://chat.openai.com/) and/or [Google Bard](https://bard.google.com/). Record the chat prompts used and output given. 
+
+- **Google group:** This group will just use Google search. Record search queries and your thought process in selecting which search results to look at first.
+
+- **Documentation group:** This group will only use the [ggplot2 documentation page](https://ggplot2.tidyverse.org/reference/index.html). You might use Ctrl-F or Command-F to search for relevant text on the main function reference page or use the "Search for" box in the top right.
+
+After each group reports out, we will finalize this part of the plot together.
+
+```{r}
+# Code for updated plot
+```
+
+
+# Practice
+
+In pairs (randomly formed), you will go through the same steps as above for the precipitation data. Here, and throughout the course, we will be using the **pair programming** technique.
+
+## Your task
+
+**Before diving in to plot creation,** get to know your partner by telling each other about the general themes in your 12 favorite problems (FPs). Try to find some overlap in your themes and share one of your FPs that relates to that overlapping theme.
+
+Work together until your precipitation plot looks as below.
+
+- The `culmPrec` variable contains cumulative precipitation for the month up to the given day.
+- The `recordP` variable is a TRUE/FALSE indicator of whether a day was a precipitation record. These are marked by the downward pointing triangles.
+- The numbers on the plot indicate the total precipitation for the month. Do some searching about the `hjust` and `vjust` options to adjust the alignment of the numbers.
+- The blue and tan colors are `"#32a3d8"` and `"#ebeae2"`.
+
+```{r}
+# Code for updated plot
+```
+
+**When should the Driver and Navigator switch roles?** For this exercise, you will switch roles once a particular plot layer (one `geom`) has been implemented correctly. You can send code back and forth via email or a direct message on Slack.
+
+## Reflecting on pair programming
+
+As you pair program, be aware of your comforts and discomforts in the roles of driver and navigator. Pay attention to the comforts and discomforts of your partner. What could you do to support them in becoming more comfortable and confident in both roles?
+
+**Write your reflections in your "Process and Reflection Log" Google Doc.**
+
+
+## Making note of new errors
+
+Every time you run into a new error, record the error message and your process for fixing the error in the "Error Log" section here:
+
+```
+PASTE ERROR MESSAGE HERE
+```
+
+> **Add notes on how you figured out how to address the error.**
+
+# Homework 1
+
+**Task:** Using `ggplot` and other functions in R, recreate the original NY Times graphic to the greatest extent possible for you (which may be different for each of you).
+
+- You will need to use reference pages and documentation to discover necessary tools. For example, you may want to Google search "ggplot multiple plots". When looking through results, check publication dates and use newer references.
+
+The following variables will be needed:
+
+- `Record`: A TRUE/FALSE indicator of whether a day was a temperature record
+- `RecordText`: A text description of the record temperature, if there was one (e.g., "Record High: 84")
+- `RecordP`: A TRUE/FALSE indicator of whether a day was a precipitation record
+
+**Minimum requirements for your graph:** Create a graphic close to the one shown [here](https://lmyint.github.io/212_fall_2023/02-adv-ggplot.html#homework). In your knitted HTML, the figure size should be big enough to see details, and the figure should have alt text.
+
+
+```{r fig.width=12, fig.height=8, fig.alt="ALT TEXT FOR YOUR PLOT"}
+# Put the code for your final plot here
+# Adjust the fig.width, fig.height chunk options above to make sure that your plot displays nicely in the knitted HTML (Check your knitted HTML before submitting)
+# Also enter alt text for your plot by modifying the fig.alt chunk option.
+# Delete these comments in your homework submission
+```
+
+**Submission details:** Click the "Render" button to create an HTML report from this Quarto file. Open the HTML in your web browser and save the webpage as a PDF (Ctrl-P/Command P, choose "Save as PDF" as the Destination). Submit the PDF of the `02-adv-ggplot.qmd` template from class on [Moodle](https://moodle.macalester.edu/mod/assign/view.php?id=35697) by midnight on Wednesday, 9/13.
+
+**How to cite AI and other resources:** If you use AI tools like ChatGPT or Google Bard, please copy and paste all prompts and output into an "Appendix" section of this assignment. If you use an AI tool, also list one environmentally-friendly action you could adopt (that you don't already do) to offset the energy usage. Also list any websites used in this Appendix.
+
+**Extra:** If you'd like further practice, recreate the legend in the temperature graph that shows how the tan and red lines relate to record, normal, and actual highs and lows. (Note: I do not have a hidden expectation that you do this when I give feedback on your work.)
+
+

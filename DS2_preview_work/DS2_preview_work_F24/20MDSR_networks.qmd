@@ -1,0 +1,394 @@
+---
+title: "MDSR2e Ch 20: Network science"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# no longer needed:
+# knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Goals
+
+-   To
+
+# Required reading
+
+-   [Chapter 5](https://openintro-ims.netlify.app/explore-numerical.html) of your textbook
+
+# New Code
+
+-   `mosaic::favstats(dataset$var)`, provides summary statistics for variable `var` from `dataset`
+
+# Before class
+
+Let's start by loading a subset of data used for the story by doing the following command in R
+
+```{r}
+# Section 20.1: Introduction to network science
+
+# Section 20.1.2: A brief history of network science
+
+library(tidyverse)
+library(mdsr)
+library(tidygraph)
+library(ggraph)
+library(dbplyr)
+library(DBI)
+
+# Erdos and Renyi showed that there tends to be a phase transition 
+# (a threshold where the graph changes quickly from empty to complete)
+# for random graphs (fixed number of vertices, random probability
+# of edge connecting any two vertices)
+
+set.seed(21)
+n <- 100
+p_star <- log(n)/n   # threshold value
+
+# simulate behavior of random graphs with different p's (prob
+# that two vertices are connected)
+plot_er <- function(n, p) {
+  g <- play_erdos_renyi(n, p, directed = FALSE)
+  ggraph(g) + 
+    geom_edge_fan(width = 0.1) + 
+    geom_node_point(size = 3, color = "dodgerblue") + 
+    labs(
+      title = "Erdős--Rényi random graph", 
+      subtitle = paste0("n = ", n, ", p = ", round(p, 4))
+    ) + 
+    theme_void()
+}
+plot_er(n, p = 0.8 * p_star)
+plot_er(n, p = 1.2 * p_star)
+
+n <- 1000
+p_star <- log(n)/n
+p <- rep(seq(from = 0, to = 2 * p_star, by = 0.001), each = 100)
+
+sims <- tibble(n, p) %>%
+  mutate(
+    g = map2(n, p, play_erdos_renyi, directed = FALSE), 
+    is_connected = map_int(g, ~with_graph(., graph_is_connected()))
+  )
+
+ggplot(data = sims, aes(x = p, y = is_connected)) + 
+  geom_vline(xintercept = p_star, color = "darkgray") + 
+  geom_text(
+    x = p_star, y = 0.9, label = "Threshold value", hjust = "right"
+  ) + 
+  labs(
+    x = "Probability of edge existing", 
+    y = "Probability that random graph is connected"
+  ) +
+  geom_count() + 
+  geom_smooth()
+
+# Barabasi and Albert add preferential attachment to produce
+# power law degree distribution - models reality better than
+# random graphs of Erdos and Renyi
+
+g <- play_smallworld(n_dim = 2, dim_size = 10, order = 5, p_rewire = 0.05)
+g1 <- play_erdos_renyi(n, p = log(n)/n, directed = FALSE)
+g2 <- play_barabasi_albert(n, power = 1, growth = 3, directed = FALSE)
+summary(g1)
+summary(g2)
+
+d <- tibble(
+  type = c("Erdos-Renyi", "Barabasi-Albert"),
+  graph = list(g1, g2)
+) %>%
+  mutate(node_degree = map(graph, ~with_graph(., centrality_degree()))) %>%
+  unnest(node_degree)
+
+ggplot(data = d, aes(x = node_degree, color = type)) + 
+  geom_density(size = 2) + 
+  scale_x_continuous(limits = c(0, 25))
+
+
+# Section 20.2: Extended example - six degrees of Kristen Stewart
+
+# Section 20.2.1: Collecting Hollywood data
+
+db <- dbConnect_scidb("imdb")
+
+# actually need SQL code here.  Restrict to top-20 credited roles in popular (150000 ratings) feature films in 2012.  The SQL code here finds all edges, pairs of actors in the same film
+E <- dbGetQuery(db, '
+SELECT a.person_id AS src, b.person_id AS dest, 
+    a.movie_id, 
+    a.nr_order * b.nr_order AS weight, 
+    t.title, idx.info AS ratings
+  FROM imdb.cast_info AS a 
+    CROSS JOIN imdb.cast_info AS b USING (movie_id)
+    LEFT JOIN imdb.title AS t ON a.movie_id = t.id
+    LEFT JOIN imdb.movie_info_idx AS idx ON idx.movie_id = a.movie_id
+  WHERE t.production_year = 2012 AND t.kind_id = 1
+    AND info_type_id = 100 AND idx.info > 150000
+    AND a.nr_order <= 20 AND b.nr_order <= 20
+    AND a.role_id IN (1,2) AND b.role_id IN (1,2)
+    AND a.person_id < b.person_id
+  GROUP BY src, dest, movie_id
+')
+  
+# weight based on order actors appear in credits (lower = more screen time)
+E <- E %>%
+  mutate(ratings = parse_number(ratings))
+glimpse(E)
+
+E %>%
+  summarize(
+    num_rows = n(), 
+    num_titles = n_distinct(title)
+  )
+
+movies <- E %>%
+  group_by(movie_id) %>%
+  summarize(title = max(title), N = n(), numRatings = max(ratings)) %>%
+  arrange(desc(numRatings))
+movies
+
+# V = info on actors (vertices)
+actor_ids <- unique(c(E$src, E$dest))
+V <- db %>%
+  tbl("name") %>%
+  filter(id %in% actor_ids) %>%
+  select(actor_id = id, actor_name = name) %>%
+  collect() %>%
+  arrange(actor_id) %>%
+  mutate(id = row_number())
+glimpse(V)
+
+# Section 20.2.2 Building the Hollywood network
+
+# info on all 10223 edges
+edges <- E %>%
+  left_join(select(V, from = id, actor_id), by = c("src" = "actor_id")) %>%
+  left_join(select(V, to = id, actor_id), by = c("dest" = "actor_id"))
+
+g <- tbl_graph(nodes = V, directed = FALSE, edges = edges)
+summary(g)
+
+ggraph(g, 'drl') +
+  geom_edge_fan(width = 0.1) + 
+  geom_node_point(color = "dodgerblue") + 
+  theme_void()
+
+# find number of connections by actor (degree centrality)
+g <- g %>%
+  mutate(degree = centrality_degree())
+g %>%
+  as_tibble() %>%
+  arrange(desc(degree)) %>%
+  head()
+
+# find movies Bryan Cranston was in
+show_movies <- function(g, id) {
+  g %>%
+    activate(edges) %>%
+    as_tibble() %>%
+    filter(src == id | dest == id) %>%
+    group_by(movie_id) %>%
+    summarize(title = first(title), num_connections = n())
+}
+show_movies(g, 502126)
+
+# density plot of degree (connections) per actor
+ggplot(data = enframe(igraph::degree(g)), aes(x = value)) + 
+  geom_density(size = 2)
+
+# Hollywood network for popular 2012 movies, where degree = color, weight = line thickness and transparency, most connected actors labeled
+hollywood <- ggraph(g, layout = 'drl') +
+  geom_edge_fan(aes(alpha = weight), color = "lightgray") +
+  geom_node_point(aes(color = degree), alpha = 0.6) +
+  scale_edge_alpha_continuous(range = c(0, 1)) + 
+  scale_color_viridis_c() + 
+  theme_void()
+
+hollywood + 
+  geom_node_label(
+    aes(
+      filter = degree > 40, 
+      label = str_replace_all(actor_name, ", ", ",\n")
+    ), 
+    repel = TRUE
+  )
+
+# 20.2.3 Building a Kristen Stewart oracle
+
+# Kristen Stewart has highest betweenness centrality, which accounts for weights and attempts to measure how likely a vertice is in the shortest path
+g <- g %>%
+  mutate(btw = centrality_betweenness(weights = weight, normalized = TRUE))
+g %>%
+  as_tibble() %>%
+  arrange(desc(btw)) %>%
+  head(10)
+
+show_movies(g, 3945132)
+
+# Theron's Stewart number is 1, since they were in Snow White together
+ks <- V %>%
+  filter(actor_name == "Stewart, Kristen")
+ct <- V %>%
+  filter(actor_name == "Theron, Charlize")
+
+g %>%
+  convert(to_shortest_path, from = ks$id, to = ct$id)
+
+# Gordon-Levitt has larger Stewart number of 5
+set.seed(47)
+jgl <- V %>%
+  filter(actor_name == "Gordon-Levitt, Joseph")
+
+h <- g %>%
+  convert(to_shortest_path, from = jgl$id, to = ks$id, weights = NA)
+
+h %>%
+  ggraph('gem') +
+  geom_node_point() + 
+  geom_node_label(aes(label = actor_name)) + 
+  geom_edge_fan2(aes(label = title)) + 
+  coord_cartesian(clip = "off") + 
+  theme(plot.margin = margin(6, 36, 6, 36))
+
+# Plot above is not unique - there are 5 paths from JGL to KS
+igraph::all_shortest_paths(g, from = ks$id, to = jgl$id, weights = NA) %>%
+  pluck("res") %>%
+  length()
+
+# distance between 2 most distant actors
+igraph::diameter(g, weights = NA)
+
+# no actor more than 6 hops from KS
+g %>%
+  mutate(eccentricity = node_eccentricity()) %>%
+  filter(actor_name == "Stewart, Kristen")
+
+
+# Section 20.4: Extended example - 1996 men's college basketball
+
+# Data can be downloaded from: https://www.kaggle.com/competitions/march-machine-learning-mania-2015/data
+
+teams <- read_csv("~/R/DS2/data/teams.csv")
+games <- read_csv("~/R/DS2/data/regular_season_compact_results.csv") %>%
+  filter(season == 1996)
+dim(games)
+
+# edge weight is ratio of winning team's score to losing team's score
+E <- games %>%
+  mutate(score_ratio = wscore/lscore) %>%
+  select(lteam, wteam, score_ratio)
+V <- teams %>%
+  filter(team_id %in% unique(c(E$lteam, E$wteam)))
+
+g <- igraph::graph_from_data_frame(E, directed = TRUE, vertices = V) %>%
+  as_tbl_graph() %>%
+  mutate(team_id = parse_number(name))
+summary(g)
+
+# use Google's PageRank algorithm to rank teams - eigenvector centrality based on stationary distribution - and show how it differs from winning percentage
+g <- g %>%
+  mutate(pagerank = centrality_pagerank())
+g %>%
+  as_tibble() %>%
+  arrange(desc(pagerank)) %>%
+  head(20)
+
+wins <- E %>%
+  group_by(wteam) %>%
+  summarize(W = n())
+losses <- E %>%
+  group_by(lteam) %>%
+  summarize(L = n())
+
+g <- g %>%
+  left_join(wins, by = c("team_id" = "wteam")) %>%
+  left_join(losses, by = c("team_id" = "lteam")) %>%
+  mutate(win_pct = W / (W + L))
+g %>%
+  as_tibble() %>%
+  arrange(desc(win_pct)) %>%
+  head(20)
+
+g %>%
+  as_tibble() %>%
+  summarize(pr_wpct_cor = cor(pagerank, win_pct, use = "complete.obs"))
+
+# Texas Tech vs Kentucky - early season games given equal weight
+E %>%
+  filter(wteam == 1269 & lteam == 1246)
+
+# UMass vs George Washington
+E %>%
+  filter(lteam %in% c(1203, 1269) & wteam %in% c(1203, 1269))
+
+# focus on teams in the Atlantic 10 conference
+A_10 <- c("Massachusetts", "Temple", "G Washington", "Rhode Island", 
+          "St Bonaventure", "St Joseph's PA", "Virginia Tech", "Xavier", 
+          "Dayton", "Duquesne", "La Salle", "Fordham")
+
+a10 <- g %>%
+  filter(team_name %in% A_10) %>%
+  mutate(pagerank = centrality_pagerank())
+summary(a10)
+
+ggraph(a10, layout = 'kk') +
+  geom_edge_arc(
+    aes(alpha = score_ratio), color = "lightgray", 
+    arrow = arrow(length = unit(0.2, "cm")), 
+    end_cap = circle(1, 'cm'), 
+    strength = 0.2
+  ) +
+  geom_node_point(aes(size = pagerank, color = pagerank), alpha = 0.6) +
+  geom_node_label(aes(label = team_name), repel = TRUE) + 
+  scale_alpha_continuous(range = c(0.4, 1)) + 
+  scale_size_continuous(range = c(1, 10)) + 
+  guides(
+    color = guide_legend("PageRank"), 
+    size = guide_legend("PageRank")
+  ) + 
+  theme_void()
+
+# compute PageRank using matrix manipulation
+P <- a10 %>%
+  igraph::as_adjacency_matrix(sparse = FALSE, attr = "score_ratio") %>%
+  t()
+
+P <- scale(P, center = FALSE, scale = colSums(P))
+round(P, 2)
+
+num_vertices <- nrow(as_tibble(a10))
+v0 <- rep(1, num_vertices) / num_vertices
+v0
+
+v <- v0
+for (i in 1:20) {
+  v <- P %*% v
+}
+as.vector(v)
+
+igraph::page_rank(a10)$vector
+
+# add damping and random restarts to avoid sinks / spider traps
+igraph::page_rank(a10, damping = 1)$vector
+
+w <- v0
+d <- 0.85
+for (i in 1:20) {
+  w <- d * P %*% w + (1 - d) * v0
+}
+as.vector(w)
+
+igraph::page_rank(a10, damping = 0.85)$vector
+
+```

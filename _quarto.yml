@@ -4,13 +4,11 @@ project:
   render:
     - "*.qmd"
     - "!DS2_preview_work/"
-    - "!SQLcode/"
-    - "!spring2024/"
+    - "!SQL_code/"
     - "!quarto_presentations/"
     - "!AERapp/"
     - "!Ames_example/"
     - "!more_shiny/"
-    - "!SQL_code/"
   resources:
     - "Data/*.csv"
     - "Data/"
@@ -42,34 +40,20 @@ website:
       title: "Activities"
       contents:
         - 01_review164.qmd
-        - 02_maps.qmd
-        - 03_functions.qmd
-        - 04_code_quality.qmd
-        - 05_iteration.qmd
-        - 06_data_types.qmd
-        - 07_apis.qmd
-        - 08_table_scraping.qmd
-        - 09_web_scraping.qmd
-        - 10_strings_part1.qmd
-        - 11_strings_part2.qmd
-        - 12_strings_part3.qmd
-        - 13_text_analysis.qmd
-        - 14_first_shiny_instructions.qmd
-        - 16_SQL_exercises.qmd
-        
+        - 02_strings_part1.qmd
+        - 03_strings_part2.qmd
+        - 04_strings_part3.qmd
+        - 05_text_analysis.qmd
+
     - id: projects
       title: "Projects"
       contents:
-        - miniproject1.qmd
-        - miniproject2.qmd
-        - miniproject3.qmd
-        - miniproject4.qmd
-        - finalproject.qmd
+        - miniproject01.qmd
 
 
   page-footer:
     left: |
-      &copy; Joe Roith, 2025<br>
+      &copy; Paul Roback, 2025<br>
       All content licensed under ![](https://static.thenounproject.com/png/70967-200.png){height=20px} ([CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/))
     right: |
       Site built with [Quarto](https://quarto.org/)

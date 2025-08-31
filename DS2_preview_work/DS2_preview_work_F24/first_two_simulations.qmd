@@ -1,0 +1,171 @@
+---
+title: "Simulation"
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2024/blob/main/07_simulation.qmd).  Just hit the Download Raw File button.
+
+This leans on parts of MDSR Chapter 13: Simulation.
+
+```{r}
+#| message: false
+#| warning: false
+
+# Initial packages required
+library(tidyverse)
+```
+
+
+# Simulation
+
+Simulation (or as MDSR calls it "making up data") is reasoning in reverse.  Rather than start with data and then visualize and analyze to gain understanding, we will start with speculation and create data that fits that speculation.  The simulated data then provides insights into our speculated system, and it can also be held up to real data to help us better understand that data.
+
+We will look at several scenarios in which simulation can be valuable and tools that will help us generate useful simulated data.
+
+
+## Simulating behavior under a null hypothesis
+
+While MDSR Section 13.2 has a cool example involving cancer genomics, we will consider a simpler example here.  
+
+[This applet](https://www.rossmanchance.com/applets/2021/chisqshuffle/ChiSqShuffle.htm?dolphins=1) contains data from a 2005 study on the use of dolphin-facilitated therapy on the treatment of depression.  In that study, 10 of the 15 subjects (67%) assigned to dolphin therapy showed improvement, compared to only 3 of the 15 subjects (20%) assigned to the control group.  But with such small sample sizes, is this significant evidence that the dolphin group had greater improvement of their depressive symptoms?  To answer that question, we can use simulation to conduct a randomization test.
+
+We will simulate behavior in the "null world" where there is no real effect of treatment.  In that case, the 13 total improvers would have improved no matter the treatment assigned, and the 17 total non-improvers would have not improved no matter the treatment assigned.  So in the "null world", treatment is a meaningless label that can be just as easily shuffled among subjects without any effect.  In that world, the fact we observed a 47 percentage point difference in success rates (67 - 20) was just random luck.  But we should ask: how often would we expect a difference as large as 47% by chance, assuming we're living in the null world where there is no effect of treatment?
+
+You could think about simulating this situation with the following steps:
+
+1. write code to calculate the difference in success rates in the observed data
+
+2. write a loop to calculate the differences in success rates from 1000 simulated data sets from the null world.  Store those 1000 simulated differences
+
+3. calculate how often we found a difference in the null world as large as that found in the observed data.  In statistics, when this probability is below .05, we typically reject the null world, and conclude that there is likely a real difference between the two groups (i.e. a "statistically significant" difference)
+
+### On Your Own
+
+1) Follow the steps above to conduct a **randomization test for the difference in two proportions**.  In addition to finding your probability in (3), plot the 1000 simulated differences and indicate where the observed difference of .47 falls in that "null distribution".
+
+The code below generates a tibble with our observed data.  Notice how the `sample()` function can be used to shuffle the treatments among the 30 subjects.
+
+```{r}
+dolphin_data <- tibble(treatment = rep(c("Dolphin", "Control"), each = 15),
+                       improve = c(rep("Yes", 10), rep("No", 5), 
+                                   rep("Yes", 3), rep("No", 12)))
+print(dolphin_data, n = Inf)
+
+sample(dolphin_data$treatment)
+```
+
+```{r}
+# Step 1
+dolphin_summary <- dolphin_data |>
+  group_by(treatment) |>
+  summarize(prop_yes = mean(improve == "Yes"))
+observed_diff <- dolphin_summary[[2]][2] - dolphin_summary[[2]][1]
+
+# Step 2
+simulated_diffs <- vector("double", 1000)
+for(i in 1:1000) {
+  dolphin_summary <- dolphin_data |>
+    mutate(treatment = sample(treatment)) |>
+    group_by(treatment) |>
+    summarize(prop_yes = mean(improve == "Yes"))
+  simulated_diffs[[i]] <- dolphin_summary[[2]][2] - dolphin_summary[[2]][1]
+}  
+
+# Step 3
+null_world <- tibble(simulated_diffs = simulated_diffs)
+ggplot(null_world, aes(x = simulated_diffs)) +
+  geom_histogram() +
+  geom_vline(xintercept = observed_diff, color = "red")
+
+p_value <- sum(abs(simulated_diffs) >= abs(observed_diff)) / 1000
+p_value
+```
+
+
+## Find the power of a statistical test
+
+The **power** of a statistical test is the probability that it rejects the null hypothesis when the null hypothesis is false.  In other words, it's the probability that a statistical test can detect when a true difference exists.  The power depends on a number of factors, including:
+
+- sample size
+- type I error level
+- variability in the data
+- size of the true difference
+
+The following steps can be followed to simulate a power calculation
+
+1. simulate data where is a true difference or effect
+
+2. run your desired test on the simulated data and record if the null hypothesis was rejected or not (i.e. if the p-value was below .05)
+
+3. repeat a large number of times and record the total proportion of times that the null hypothesis was rejected - that is the power of the test under those conditions
+
+4. often we will then repeat (1)-(3) under different conditions - different sizes of the true effect, different amount of variability, different sample sizes, etc.
+
+
+Here is the code from my post-class video: creating a power curve for a two-sample t-test:
+
+```{r}
+# set parameters for two-sample t-test
+mean1 <- 100
+truediff <- 5
+mean2 <- mean1 + truediff
+sd1 <- 10
+sd2 <- 10
+n1 <- 20
+n2 <- 20
+numsims <- 1000
+
+# find if null is rejected for a single sample
+samp1 <- rnorm(n1, mean1, sd1)
+samp2 <- rnorm(n2, mean2, sd2)
+
+sim_data <- tibble(response = c(samp1, samp2), 
+       group = c(rep("Group 1", n1), rep("Group 2", n2)))
+mosaic::favstats(response ~ group, data = sim_data)
+ggplot(sim_data, aes(x = response, y = group)) +
+  geom_boxplot()
+
+p_value <- t.test(x = samp1, y = samp2)$p.value
+p_value
+p_value < .05
+
+# find the power = proportion of time null is rejected when
+#   true difference is not 0
+significant <- vector("logical", numsims)
+for (i in 1:numsims) {
+  samp1 <- rnorm(n1, mean1, sd1)
+  samp2 <- rnorm(n2, mean2, sd2)
+  p_value <- t.test(x = samp1, y = samp2)$p.value
+  significant[i] <- (p_value < .05)
+}
+power <- mean(significant)
+power
+
+# plot a power curve (vs. sample size)
+#   For now, we assume sample sizes equal, SDs equal, and truediff is 5
+power1 <- vector("double", 30)
+sampsize1 <- vector("double", 30)
+for (j in 1:30)  {
+  n1 <- 5 * j
+  n2 <- n1
+
+  significant <- vector("logical", numsims)
+  for (i in 1:numsims) {
+    samp1 <- rnorm(n1, mean1, sd1)
+    samp2 <- rnorm(n2, mean2, sd2)
+    p_value <- t.test(x = samp1, y = samp2)$p.value
+    significant[i] <- (p_value < .05)
+  }
+power1[j] <- mean(significant)
+sampsize1[j] <- n1
+}
+
+plotdata <- tibble(n_per_group = sampsize1, power = power1)
+ggplot(plotdata, aes(x = n_per_group, y = power)) +
+  geom_line() +
+  geom_hline(yintercept = .80, color = "red")
+```
+

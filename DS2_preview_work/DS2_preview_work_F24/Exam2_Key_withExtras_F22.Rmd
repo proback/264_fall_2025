@@ -1,0 +1,629 @@
+---
+title: 'MSCS 264: Exam 2 (Take-home)'
+subtitle: 'Due Tues Nov 23 at class time'
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 4.5
+  html_document: default
+  word_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+**Take-Home Exam Guidelines.**  
+
+By signing the Pledge below, you certify that you conformed to the following guidelines for this take-home exam:
+
+- You may use all materials from this class (textbook, class notes, Moodle posts, videos, materials on the RStudio server, etc.).  In addition, a limited number of google searches are okay, as long as you **list the website URLs for any outside sources** that you use:
+
+[LIST ANY OUTSIDE SOURCES HERE]
+
+- Obviously, no consulting with anyone else, either in our class or not, and either in-person or electronically (e.g. no posting questions online).  Avoid even comments like “#1 is hard”.  **When grading exams, it is pretty apparent when two or more people have likely been in contact.  Approaches to questions differ in subtle but telling ways to someone who sees a lot of answers.  So please do not fall to temptation.  You all sign the Honor Code pledge, and I need to be able to trust you to handle take-home exams honorably.**
+
+- Questions to Prof Roback are allowed – I may not be able to answer everything, but I’ll answer what I can.  If you have any questions about what is appropriate, please ask!
+
+
+Exams are due by **class time on Tuesday, November 22**.  (NO exceptions unless cleared with me before exams passed out.)  You should submit a knitted pdf file on Moodle, but be sure to show all of your R code, in addition to your output, plots, and written responses.  Your Rmd file should also be clearly labeled in your student submit folder.  And, for one extra credit point, add the date after your pledge signature below.
+
+Please also note that while there often is more than one way to write code that works, **you should use tidyverse** (e.g. filter, mutate, piping, etc) when appropriate to receive full credit, in addition to solving things in an efficient manner with readable code.  Basically, I want you to use methods that we've learned in class, not other stuff you may find on the internet or have learned elsewhere.
+
+There are 20 total questions on this exam; each is worth 5 points.  You may select 2 questions for me not to grade, where you will automatically receive 5 points each.  **Please clearly denote the 2 questions that I should not grade!**
+
+
+**PLEDGE:**  By typing my full name below, I pledge on my honor that I have neither received nor given assistance during this exam nor have I witnessed others receiving assistance, and I have followed the guidelines as described above.  
+
+**SIGNATURE:** (type full name)
+
+
+```{r setup, include=FALSE}
+library(rvest)
+library(tidytext)
+library(tidyverse)
+
+cookies_url <- "https://raw.githubusercontent.com/the-pudding/data/master/cookies/choc_chip_cookie_ingredients.csv"
+cookies <- read_csv(cookies_url)
+
+cookies2_url <- "https://raw.githubusercontent.com/the-pudding/data/master/cookies/All_directions.txt"
+cookies2 <- read_tsv(cookies2_url, col_names = FALSE)
+```
+
+\vspace{20mm}
+
+**Introduction:** Be sure to run the setup chunk above!  We will be using data from The Pudding's 2018 article entitled ["Baking the Most Average Chocolate Chip Cookie"](https://pudding.cool/2018/05/cookies/).  A description of variables contained in `cookies` can be found [here](https://github.com/the-pudding/data/tree/master/cookies):
+
+- `cookies` contains 1 row for each ingredient used in each of 211 recipes analyzed (1990 rows in all, with 7 variables)
+
+- `cookies2` contains only a single variable (`X1`) which contains lines of instructions from each of the 211 recipes (1110 rows in all, but only 1 column) 
+
+
+### Use `cookies` for Questions 1-3.
+
+1. Find the top 10 ingredients that appear in the most recipes.  Then use a `join` function to form a reduced version of `cookies` that contains only the ingredients that are NOT in the top 10 overall. [For one bonus point, look at the entire list of possible ingredients and describe the one that most intrigues/disgusts/excites you.]
+
+```{r}
+remove_top10 <- cookies %>%
+  count(Ingredient, sort = TRUE) %>%
+  slice_max(n, n = 10)
+
+cookies %>%
+  anti_join(remove_top10)
+
+# List all ingredients
+# cookies %>% count(Ingredient, sort = TRUE) %>% print(n = Inf)
+```
+
+
+2. 
+
+a) Write a function that creates a tibble as in (1), but one that lets the user choose the number of top ingredients that are removed.  The only input for your function should be the number of top ingredients.  Show that your function works for top 5 and top 10.
+
+```{r}
+remove_top_n_simple <- function(num) {
+  only_topn <- cookies %>% 
+    group_by(Ingredient) %>%
+    summarise(n = n()) %>%
+    slice_max(n, n = num)
+  cookies %>% anti_join(only_topn)
+}
+remove_top_n_simple(num = 5) %>% print(n = 3)
+remove_top_n_simple(num = 10) %>% print(n = 3)
+
+# Another option
+remove_top_n_simple <- function(num) {
+  only_topn <- cookies %>% 
+    count(Ingredient, sort = TRUE) %>%
+    slice_max(n, n = num)
+  cookies %>% anti_join(only_topn)
+}
+remove_top_n_simple(num = 5) %>% print(n = 3)
+remove_top_n_simple(num = 10) %>% print(n = 3)
+```
+
+b) Expand your function in (a) so that the function stops and prints an error if the user tries to enter a number that's too big (i.e., higher than the total number of possible ingredients).  Show your new function works for top 10 (produces a tibble) and top 1000 (produces an error).  Make sure the total number of possible ingredients is calculated internally rather than hard-coded in.
+
+```{r}
+remove_top_n_wstop <- function(num) {
+  if (num > n_distinct(cookies$Ingredient)) {
+    stop("number of ingredients too large", call. = FALSE)
+  } else {
+  only_topn <- cookies %>% 
+    count(Ingredient, sort = TRUE) %>%
+    slice_max(n, n = num)
+  cookies %>% anti_join(only_topn)
+  }
+}
+remove_top_n_wstop(num = 10) %>% print(n = 3)
+remove_top_n_wstop(num = 1000) 
+
+# Another option
+remove_top_n_wstop <- function(num) {
+  ingr_num <- cookies %>% summarize(n = n_distinct(Ingredient))
+  if (num > ingr_num[[1]]) {
+    stop("number of ingredients too large", call. = FALSE)
+  } else {
+  only_topn <- cookies %>% 
+    count(Ingredient, sort = TRUE) %>%
+    slice_max(n, n = num)
+  cookies %>% anti_join(only_topn)
+  }
+}
+remove_top_n_wstop(num = 10) %>% print(n = 3)
+remove_top_n_wstop(num = 1000) 
+```
+
+c) Expand your function from (a) -- the one *without* an option to stop for an error -- so that the user can also enter the name of the data set and the variable name for the ingredients column.  Again show that it works for top 5 and top 10.  [For 2 bonus points, similarly expand your function from (b).]
+
+```{r}
+# With data set name and variable name
+remove_top_n <- function(data, var_name, num) {
+  only_topn <- data %>% 
+    count({{ var_name }}, sort = TRUE) %>%
+    slice_max(n, n = num)
+  cookies %>% anti_join(only_topn)
+}
+remove_top_n(data = cookies, var_name = Ingredient, num = 5) %>% 
+  print(n = 3)
+remove_top_n(data = cookies, var_name = Ingredient, num = 10) %>% 
+  print(n = 3)
+
+# Option with stop
+remove_top_n <- function(data, var_name, num) {
+  ingr_num <- data %>% summarize(n = n_distinct({{ var_name }}))
+  if (num > ingr_num[[1]]) {
+    stop("number of ingredients too large", call. = FALSE)
+  } else {
+  only_topn <- data %>% 
+    count({{ var_name }}, sort = TRUE) %>%
+    slice_max(n, n = num)
+  cookies %>% anti_join(only_topn)
+  }
+}
+remove_top_n(data = cookies, var_name = Ingredient, num = 10) %>% 
+  print(n = 3)
+remove_top_n(data = cookies, var_name = Ingredient, num = 1000)
+```
+
+
+3. 
+
+a) Use `join` to produce a smaller version of `cookies` that contains ONLY the top 9 ingredients in chocolate chips cookie recipes.
+
+```{r}
+top9_ingredients <- cookies %>%
+  count(Ingredient, sort = TRUE) %>%
+  slice_max(n, n = 9)
+top9_ingredients
+
+cookies %>%
+  semi_join(top9_ingredients)
+```
+
+b) First select only the variables `Ingredient`, `Text`, `Quantity`, and `Unit` from your data set in (a).  Then show how to generate the quantity and unit yourself from the `Text` column; call your new columns `My_Quantity` and `My_Unit`.  You can assume that the first "word" in `Text` is the quantity, and that the second "word" is the units.  (Note: don't worry if your new columns are not perfect duplication of the original `Quantity` and `Unit` at this point.)
+
+```{r}
+temp <- cookies %>%
+  semi_join(top9_ingredients) %>%
+  mutate(My_Quantity = parse_number(str_extract(Text, "[\\d\\.]+")),
+         My_Unit = str_extract(Text, "[a-zA-Z]+")) %>%
+  select(Ingredient, Quantity, Unit, My_Quantity, My_Unit, Text)
+temp
+```
+
+c) Let's try to fix `My_Unit` and `My_Quantity` from (b) to match the original `Unit` and `Quantity`.  To see how this might be done, let's consider only rows corresponding to "vanilla".  Show (through counts) that `Unit` contains only "teaspoon" while `My_Unit` contains many different units.  Write code to automatically convert `My_Quantity` to the correct quantity assuming that all units are in "teaspoons".  Provide evidence that all conversions match the original `Quantity`. (Hint: there are 3 teaspoons in a tablespoon, 2 tablespoons in an ounce, and 8 fluid ounces in a cup.)
+
+```{r}
+temp %>% count(Unit)
+temp %>% filter(Ingredient == "vanilla") %>% count(Unit)
+temp %>% filter(Ingredient == "vanilla") %>% count(My_Unit)
+
+fix_vanilla <- temp %>%
+  filter(Ingredient == "vanilla") %>%
+  mutate(My_Quantity2 = ifelse(My_Unit == "tablespoons" | 
+            My_Unit == "tablespoon" | My_Unit == "tbsp",
+            3 * My_Quantity, My_Quantity),
+         My_Quantity2 = ifelse(My_Unit == "ounce", 6 * My_Quantity,
+            My_Quantity2),
+         My_Quantity2 = ifelse(My_Unit == "cup", 48 * My_Quantity,
+            My_Quantity2),
+         My_Unit2 = "teaspoon"
+         )
+fix_vanilla
+
+fix_vanilla %>%
+  filter(!near(My_Quantity2, Quantity))
+```
+
+
+### Use `cookies5.csv` for Questions 4-6.
+
+4. Read in the data set `cookies5.csv` from the `Class/Data` folder; this contains all the mentions of the top 5 overall ingredients in the 211 recipes.  So it's a smaller version of `cookies` both in terms of rows (only 919 rows containing 5 different ingredients) and columns (only 4 selected columns).
+
+```{r}
+cookies5 <- read_csv("~/Mscs 264 F22/Class/Data/cookies5.csv")
+```
+
+a) Modify `cookies5.csv` so that it has one row per recipe, with separate columns for each of the top 5 ingredients containing a numeric measure of quantity.  If a particular recipe does not have a certain ingredient, there should be a 0 for the quantity.
+
+```{r}
+one_row_per_recipe <- cookies5 %>%
+#  select(Ingredient, Recipe_Index, Rating, Quantity) %>%
+  pivot_wider(names_from = Ingredient, 
+              values_from = Quantity, 
+              values_fill = 0)
+one_row_per_recipe
+
+# note only 199 rows instead of 209 recipes in cookies
+```
+
+b) Find the mean quantity across all recipes for each of the top 5 ingredients.  This is the amount you should use to create the "The Mathematical Average Cookie".  How do your amounts of these 5 ingredients compare to when you click on "Get the Recipe" at The Pudding?
+
+```{r}
+one_row_per_recipe %>%
+  summarise(mean_flour_cups = mean(`all purpose flour`),
+            mean_soda_tsp = mean(`baking soda`),
+            mean_egg = mean(egg),
+            mean_sugar_cups = mean(sugar),
+            mean_vanilla_tsp = mean(vanilla))
+```
+
+
+5. We'd like to compare quantities of the top 5 ingredients by the 3 sources (AllRecipes (AR), Epicurious (E), and Hand Collected (Misc)).  Use the tibble you created in (4a).
+
+a) Find mean quantities by source for each of the 5 ingredients.  Summarize what you find.
+
+```{r}
+one_row_per_recipe %>%
+  separate(Recipe_Index, into = c("Source", "ID_num")) %>%
+  group_by(Source) %>%
+  summarise(samp_size = n(),
+            mean_flour_cups = mean(`all purpose flour`),
+            mean_soda_tsp = mean(`baking soda`),
+            mean_egg = mean(egg),
+            mean_sugar_cups = mean(sugar),
+            mean_vanilla_tsp = mean(vanilla))
+```
+
+There is general agreement around 3.75 cups of flour (AR recipes are lower), just over a tsp of baking soda (Misc recipes are higher), nearly 3 eggs (AR is a bit lower), 1 cup of sugar (Misc is a bit higher), and then vanilla means are more different (although E is only based on 18 recipes).
+
+b) You should have noticed in (a) that the three sources seem to differ in amount of vanilla used.  Create an appropriate plot comparing the 3 sources with respect to quantity of vanilla, and comment on what you find. (You might filter out unusually large vanilla amounts.)
+
+```{r}
+one_row_per_recipe %>%
+  separate(Recipe_Index, into = c("Source", "ID_num")) %>%
+  filter(vanilla < 10) %>%
+  ggplot(aes(x = vanilla, y = Source)) +
+    geom_boxplot()
+```
+
+After removing outliers, E recipes now have the smallest median (and mean) amounts of vanilla, while Misc recipes typically have the most vanilla and the most variability.
+
+c) Is the amount of vanilla used related to the rating received?  Fit a linear trend by source after removing recipes with missing ratings.  What can you conclude?
+
+```{r}
+one_row_per_recipe %>%
+  separate(Recipe_Index, into = c("Source", "ID_num")) %>%
+  filter(vanilla < 6, !is.na(Rating)) %>%
+  ggplot(aes(x = vanilla, y = Rating, color = Source)) +
+    geom_jitter() +
+    geom_smooth(method = "lm")
+```
+
+There is a slight trend in E recipes for better rating to be associated with more vanilla, but again n=18.  There is essentially no relationship between vanilla and rating in AR recipes, and Misc recipes had no ratings so they are not shown.
+
+
+6. If we wanted to determine the nutritional information for each recipe, we would need to merge in nutritional information for each individual ingredient and then sum across ingredients.  For example, [this website](https://www.calories.info/food/baking-ingredients) offers calorie information for common baking ingredients.  
+
+a) Use `rvest` to scrape data from the primary *table* at calories.info into a tibble called `calorie_info`.  Your tibble should look like this (where two other columns also called `Serving` have been removed):
+
+```{r}
+#> calorie_info
+## A tibble: 95 × 4
+#   Food              Serving Calories Kilojoule
+#   <chr>             <chr>   <chr>    <chr>    
+# 1 Agar-Agar         100g    26 cal   109 kJ   
+# 2 Agave Syrup       100ml   310 cal  1302 kJ  
+# 3 All Purpose Flour 100ml   364 cal  1529 kJ  
+# 4 Almond Extract    100ml   258 cal  1084 kJ  
+# 5 Almonds           100g    529 cal  2222 kJ  
+# 6 Apple Pie Filling 100g    100 cal  420 kJ   
+# 7 Baking Powder     100g    53 cal   223 kJ   
+# 8 Baking Soda       100g    0 cal    0 kJ     
+# 9 Bread Flour       100g    361 cal  1516 kJ  
+#10 Brittle           100g    592 cal  2486 kJ  
+## … with 85 more rows
+```
+
+```{r}
+robotstxt::paths_allowed("https://www.calories.info/food/baking-ingredients")
+
+calorie_data <- read_html("https://www.calories.info/food/baking-ingredients")
+tables <- html_nodes(calorie_data, css = "table") 
+tables  
+html_table(tables, header = TRUE, fill = TRUE)    # find the right table
+calorie_info <- html_table(tables, header = TRUE, fill = TRUE)[[1]] %>%
+  select(c(1,2,5,6))
+calorie_info
+# write_csv(calories, "~/Mscs 264 F22/Prof/calories.csv")
+
+# This also works
+# html_table(html_nodes(calorie_data, css = "table"), header = TRUE)
+```
+
+b) Write code to merge calorie information from `calorie_info` into `cookies5`.  Be sure that your keys match up (i.e. compare how ingredients are expressed in the two data sets)!  If you were unable to solve part (a), you can access the calorie data in `calories.csv` in the Class/Data folder.
+
+```{r}
+calorie_info <- calorie_info %>%
+  mutate(Food = str_to_lower(Food),
+         Food = fct_recode(Food, "vanilla" = "vanilla extract"))
+
+cookies5 %>%
+  left_join(calorie_info, by = c("Ingredient" = "Food"))
+
+# Note that we decided on the following key mappings:
+#  all purpose flour -> all purpose flour only 
+#    (not bread flour, whole wheat flour, flour, corn flour, etc.)
+#  baking soda -> baking soda
+#  egg -> egg only (not egg white, egg yolk, etc.)
+#  sugar -> sugar only (not powdered sugar, brown sugar, rock sugar)
+#  vanilla -> vanilla extract (not vanilla sugar)
+```
+
+
+### Use `cookies2` for Questions 7-8a.
+
+7. Chocolate chip cookies are known to convey warmth and happiness (e.g. [see this article](https://www.cnn.com/2018/08/30/health/chocolate-chip-cookies-addictive-food-drayer/index.html) ); do their recipes convey that same happiness?
+
+a) Using the bing lexicon, find the number of positive and the number of negative words in all the instructions (column `X1`) from 211 recipes contained in `cookies2`.
+
+```{r}
+tidy_recipes <- cookies2 %>%
+  unnest_tokens(word, X1, token = "words") 
+tidy_recipes
+
+tidy_recipes %>%
+  inner_join(get_sentiments(lexicon = "bing")) %>%
+  count(sentiment) 
+```
+
+b) Generate faceted bar plots showing the top 10 non-stop words that convey a negative sentiment and the top 10 conveying a positive sentiment.  Offer a couple of insights.
+
+```{r}
+smart_stopwords <- get_stopwords(source = "smart")
+tidy_recipes %>%
+  anti_join(smart_stopwords) %>%
+  inner_join(get_sentiments(lexicon = "bing")) %>%
+  count(sentiment, word, sort = TRUE) %>%
+  group_by(sentiment) %>%
+  slice_max(n, n = 10) %>%
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = sentiment)) +
+    geom_col() +  
+    coord_flip() +
+    facet_wrap(~ sentiment, scales = "free")
+```
+
+c) Carefully explain line-by-line what the code below would do (if you could actually run it), including the dimensions and content of each new tibble after running each line.  Then explain what the ggplot will ultimately look like and what we might be able to conclude.
+
+For this question, *imagine* that `cookies2_plus` is a 1110 x 3 tibble, with one column called `text` containing the recipe instructions currently in `cookies2`, one column called `source` with AR, E, or Misc, and one column called `stars` with a rating of 1, 2, 3, 4, or 5 stars.  Also *imagine* there is a lexicon called "Gordon Ramsay" which lists cooking terms that are associated with "gourmet" chefs or "beginner" cooks.
+
+```{r, eval = FALSE}
+cookies2_plus %>%
+  unnest_tokens(word, text, token = "words") %>%
+  inner_join(get_sentiments("Gordon Ramsay")) %>%
+  count(source, stars, sentiment) %>%
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %>% 
+  mutate(diff = gourmet - beginner) %>%
+  ggplot(aes(stars, diff, fill = source)) +
+    geom_col(show.legend = FALSE) +
+    facet_grid(~source, scales = "free_x")
+```
+
+
+8. Miscellaneous: using `stringr` and regular expressions to explore instructions and ingredients.
+
+a) Starting with the 1110 instructions in column `X1` of `cookies2`, produce a tibble containing the different oven temperature recommended (in degrees F) and how often each occurs.  Write down any assumptions you make about the form of oven temperature recommendations.  Your regular expressions probably won't be able to cover every possible form that oven temperatures appear in.  Just do as well as you can, and acknowledge the cases your approach doesn't match.
+
+```{r}
+# part a
+cookies2 %>% 
+  rename(Instruction = X1) %>%
+  mutate(temp_phrase = str_extract(Instruction, 
+    "\\d{3}(( )+F|( )+degrees|\\.|F|\\?F)")) %>%
+  filter(!is.na(temp_phrase)) %>%
+  mutate(tempF = parse_number(temp_phrase)) %>%
+  filter(tempF > 250 & tempF < 550) %>%
+  count(tempF)
+# could also use str_subset then str_extract
+```
+
+Assumptions:  the baking temperature in F will take on one of these forms - "350 degrees F", "350 F", "350 degrees", "350.", "350?F" - with the possibility of an extra space after the temp.  Also assuming F is listed before C, and the temp in F must be between 250 and 550.  Any violation of an assumption means we won't pick up that temp.
+
+b) Among the original ingredient text strings (column `Text` in the `cookies` tibble), what proportion of strings that mention "brown sugar" also mention that the brown sugar should be "packed"?
+
+```{r}
+cookies %>%
+  filter(str_detect(Text, "brown sugar")) %>%
+  mutate(packed = str_detect(Text, "packed")) %>%
+  summarise(prop_packed = mean(packed))
+```
+
+c) In the `cookies` tibble, find the proportion of the recipes with multiple kinds of chocolate chips for each of the 3 sources.  Any `Recipe_Index` with "chocolate chip" in multiple `Ingredient` names counts (even if they both are, for instance, "semisweet chocolate chip", they still are usually different kinds of chocolate that both happen to fall under the "semisweet" family).
+
+```{r}
+# proportion of multiple chocolate chips by source
+more_than_one <- cookies %>%
+  filter(str_detect(Ingredient, "chocolate chip")) %>%
+#  separate(Recipe_Index, into = c("Source", "ID_num")) %>%
+#  count(Source, ID_num) %>%
+  count(Recipe_Index) %>%
+  filter(n > 1)
+more_than_one
+
+cookies %>%
+  semi_join(more_than_one) %>%
+  filter(str_detect(Ingredient, "chocolate chip")) %>%
+  select(Ingredient, Recipe_Index, Text) %>%
+  arrange(Recipe_Index, Ingredient) %>%
+  print(n = Inf)
+
+cookies %>%
+  group_by(Recipe_Index) %>%
+  filter(row_number() == 1) %>%
+  ungroup %>%
+  left_join(more_than_one) %>%
+  mutate(multiple_chips = !is.na(n)) %>%
+  separate(Recipe_Index, into = c("Source", "ID_num")) %>%
+  group_by(Source) %>%
+  summarise(prop_multi = mean(multiple_chips))
+```
+
+
+
+### Discarded code and questions
+
+```{r}
+# produces output like hypothetical code in 7c
+source_vec <- c(rep("AR", 444), rep("E", 200), rep("Misc", 466))
+stars_vec <- sample(1:5, size = 1110, replace = TRUE)
+cookies2_plus <- cookies2 %>%
+  mutate(source = source_vec,
+         stars = stars_vec,
+         text = X1) %>%
+  select(-X1)
+
+cookies2_plus %>%
+  unnest_tokens(word, text, token = "words") %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(source, stars, sentiment) %>%
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %>% 
+  mutate(diff = positive - negative) %>%
+  ggplot(aes(stars, diff, fill = source)) +
+    geom_col(show.legend = FALSE) +
+    facet_grid(~source, scales = "free_x")
+```
+
+```{r}
+# What tf-idf might look like if cookies2 had column for source
+recipe_words <- cookies2_plus %>%
+  unnest_tokens(word, text, token = "words") 
+  
+recipe_word_count <- recipe_words %>%
+  count(word, source, sort = TRUE)
+
+recipe_tfidf <- recipe_word_count %>%
+  bind_tf_idf(word, source, n)
+
+recipe_tfidf %>%
+  group_by(source) %>%
+  arrange(desc(tf_idf)) %>%
+  slice_max(tf_idf, n = 10) %>%
+  ungroup %>%
+  ggplot(aes(x = fct_reorder(word, tf_idf), y = tf_idf, fill = source)) +
+    geom_col(show.legend = FALSE) +
+    coord_flip() +
+    facet_wrap(~source, scales = "free")
+```
+
+```{r}
+# nrc lexicon didn't seem to be working for folks
+get_sentiments("nrc") %>% 
+  filter(sentiment == "joy") %>%
+  inner_join(tidy_recipes) %>%
+  count(word, sort = TRUE)
+
+get_sentiments("nrc") %>% 
+  filter(sentiment == "sadness") %>%
+  inner_join(tidy_recipes) %>%
+  count(word, sort = TRUE)
+```
+
+Yes, there are many more positive words than negative words in cookie recipes, but traditional sentiment analysis is an awkward fit.  Many words that denote negativity or sadness are just part of the baking process (cookie racks, removing from the oven, beating eggs, etc.).  Even the positive words also describe the process (cool cookies coming from the oven, mix well, cream the batter).  But of course, words like chocolate, golden, soft, and sweet speak to the potential for cookies to uplift.
+
+b) What proportion of the 1110 instructions in column `X1` of `cookies2` have a word that's 5 or more letters that's repeated at least once?
+
+```{r}
+str_subset(cookies2$X1, "([^ ]{5,}) .*\\1 ")[1:10]
+cookies2 %>%
+  summarise(prop5 = mean(str_detect(X1, "([^ ]{5,}) .*\\1 ")))
+```
+
+```{r}
+# Scraping 68 ingredient recipe for Mathematically Average Cookie
+
+robotstxt::paths_allowed("https://pudding.cool/2018/05/cookies/")
+
+read_html("https://pudding.cool/2018/05/cookies/") %>%
+  html_nodes(".card-box__left li") %>%
+  html_text()
+# only keep top 68
+
+# When take means of all 68 ingredients, missing should be 0
+```
+
+```{r}
+# How to scrape data from Food Network recipes
+
+robotstxt::paths_allowed("https://www.foodnetwork.com/recipes/food-network-kitchen/simple-chocolate-chip-cookies-3362917")
+
+choc_chip <- read_html("https://www.foodnetwork.com/recipes/food-network-kitchen/simple-chocolate-chip-cookies-3362917")
+
+ingreds <- choc_chip %>%
+  html_nodes(".o-Ingredients__a-Ingredient--CheckboxLabel") %>%
+  html_text()
+
+yield <- choc_chip %>%
+  html_nodes(".o-RecipeInfo__m-Yield .o-RecipeInfo__a-Description") %>%
+  html_text()
+
+rating <- choc_chip %>%
+  html_nodes(".rating-star-full") %>%
+  html_text()
+
+ingredients_foodnetwork <- ingreds[-1]
+yield_foodnetwork <- parse_number(yield)[1]
+# rating really hard to grab, since behind the stars
+
+instruct <- choc_chip %>%
+  html_nodes(".o-Method__m-Step") %>%
+  html_text()
+
+instructions_foodnetwork <- str_trim(instruct)
+
+# Create a loop where you replace the recipe name-number each time
+#   and then bind rows to get longer and longer (with ingredients, 
+#   should also create columns with FN_recipenumber, rating, and yield.)
+```
+
+b) By filling in ???'s in the R code below, produce a histogram and an overall mean for the different cook times recommended.  If a recipe offers a range (e.g. "Bake for 10 to 12 minutes"), just use the midpoint.  Feel free to remove any obvious outliers.  As in (a), write down any assumptions you make about the form of cooking times.  
+
+```{r, eval = FALSE}
+instructions <- cookies2$X1
+bake_times <- instructions %>%
+  str_subset("???") %>%
+  str_extract("???")
+lower_upper <- str_extract_all(bake_times, "???", simplify = TRUE)
+lower <- parse_number(lower_upper[,1])
+upper <- parse_number(lower_upper[,2])
+bake_time <- ifelse(???)
+
+as_tibble(bake_time) %>%
+  filter(???) %>%
+  ggplot(aes(x = value)) +
+    geom_histogram(bins = ???)
+
+as_tibble(bake_time) %>%
+  filter(???) %>%
+  summarise(???)
+```
+
+Assumptions: the baking time will take on this form - the word bake/Bake, followed eventually by min or minutes, with time in various forms involving one or two numbers (10, 10-12, 10 to 12, etc.).  In this way, after bake you can have instructions, "approximately", "about", etc.  We find 222 matches with all but 28 involving ranges, where we find the midpoint.  This won't pick up instances where "bake" isn't used (rare) or where time is broken up (e.g. bake 5 minutes, check, then bake another 5 minutes), and it will inadvertently pick up errors like 1012 without the dash or times of other steps between "bake" and the time (rare).  One nice feature is that it will not pick up instructions for time on other steps (beating, cooling, etc.)
+
+```{r}
+# part b
+instructions <- cookies2$X1
+
+# See if regular expression seems to be working
+# cookies2a <- cookies2 %>%
+#   mutate(yes = str_detect(X1, "[Bb]ake(.*)[\\d to -]+ minutes"))
+# as.data.frame(cookies2a)
+
+bake_times <- instructions %>%
+  str_subset("[Bb]ake(.*)[\\d to -]+ min") %>%
+  str_extract("[Bb]ake(.*)[\\d to -]+ min")
+
+lower_upper <- str_extract_all(bake_times, "\\d+", simplify = TRUE)
+lower <- parse_number(lower_upper[,1])
+upper <- parse_number(lower_upper[,2])
+bake_time <- ifelse(is.na(upper), lower, (lower + upper) / 2)
+
+as_tibble(bake_time) %>%
+  filter(value < 60) %>%
+  ggplot(aes(x = value)) +
+    geom_histogram(bins = 10)
+
+as_tibble(bake_time) %>%
+  filter(value < 60) %>%
+  summarise(mean = mean(value))
+
+# This doesn't work great - lots of times the temp comes before time!!!
+```

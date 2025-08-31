@@ -1,0 +1,137 @@
+---
+title: 'Equation numbering'
+sidebar: false
+editor_options: 
+  chunk_output_type: console
+format:
+  html: default
+
+#project:
+#  type: book
+  
+#format:
+#  html:
+#    theme:
+#      - cosmo
+#      - r4ds.scss
+#    code-link: true
+---
+
+
+### Test equation numbering
+
+```{r}
+#| include: false
+
+library(tidyverse)
+```
+
+### 1
+
+Try referencing @eq-model1 before it's stated.
+
+$$ 
+Y_{i}=\beta_{0}+\beta_{1}\textrm{Year}_{i}+\epsilon_{i} \quad \textrm{where} \quad \epsilon_{i}\sim \textrm{N}(0,\sigma^2).
+$$  {#eq-model1}
+
+Now please refer back to @eq-model1.
+
+
+### 2
+
+Next, we try referring to \eqref{eq-lik30}:
+
+\begin{equation} \label{eq-lik30}
+\begin{split}
+ \mathrm{Lik}(p_B) &= p_B^{6}(1-p_B)^{7}p_B^{10} \cdots \\
+ &= p_B^{30}(1-p_B)^{20}
+\end{split}
+\end{equation}
+
+### 2 (alternative)
+
+Next, we try referring to @eq-lik30:
+
+$$
+\begin{align}
+ \mathrm{Lik}(p_B) &= p_B^{6}(1-p_B)^{7}p_B^{10} \cdots \\
+ &= p_B^{30}(1-p_B)^{20}
+\end{align}
+$$ {#eq-lik30}
+
+
+Try other equations from the first edition Rmds.  These make reference to \eqref{eq-dlogLik50}, \eqref{eq-level1a}, \eqref{eq-level2s0}, \eqref{eq-level2s1}, and \eqref{eq-level2s0hat}.
+
+### 3
+
+\begin{align*}
+ \mathrm{lik} (p_B) &= P(GBB)P(GGG) \\
+                    &= [(1-p_B)p_B^2][(1-p_B)^3] \\
+                    &= (1-p_B)^4p_B^2
+\end{align*}
+
+
+### 4
+
+\begin{equation} \label{eq-dlogLik50}
+\begin{split}
+ \mathrm{lik}(p_B)                      &= p_B^{30}(1-p_B)^{20} \\
+ \log(\mathrm{lik}(p_B))                &= 30\log(p_B)+20\log(1-p_B) \\
+ \frac{d}{dp_B} \log(\mathrm{lik}(p_B)) &= \frac{30}{p_B} - \frac{20}{1-p_B} = 0
+\end{split}
+\end{equation}
+
+
+### 4 (alternative)
+
+Does this cross-reference work: @eq-dlogLik50?
+
+$$ 
+\begin{align}
+ \mathrm{lik}(p_B)                      &= p_B^{30}(1-p_B)^{20} \\
+ \log(\mathrm{lik}(p_B))                &= 30\log(p_B)+20\log(1-p_B) \\
+ \frac{d}{dp_B} \log(\mathrm{lik}(p_B)) &= \frac{30}{p_B} - \frac{20}{1-p_B} = 0
+\end{align}
+$$ {#eq-dlogLik50}
+
+
+### 5
+
+\begin{equation} \label{eq-level1a}
+Y_{22j}=a_{22}+b_{22}\textrm{LargeEns}_{22j}+\epsilon_{22j} \textrm{ where } \epsilon_{22j}\sim N(0,\sigma^2) \textrm{ and }
+\end{equation} 
+
+$$ \textrm{LargeEns}_{j} = \begin{cases}  1  & \textrm{if perf-type = Large Ensemble} \\
+    0  & \textrm{if perf-type = Solo or Small Ensemble}\end{cases}$$
+
+
+### 6
+
+\begin{align}
+a_{i} & =  \alpha_{0}+\alpha_{1}\textrm{Orch}_{i}+u_{i} \label{eq-level2s0}  \\
+b_{i} & =  \beta_{0}+\beta_{1}\textrm{Orch}_{i}+v_{i} \label{eq-level2s1}
+\end{align}
+
+
+### 7
+
+\begin{align}
+\hat{a}_{i} & = 16.3+1.4\textrm{Orch}_{i}+u_{i} \label{eq-level2s0hat}  \\
+\hat{b}_{i} & = -0.8-1.4\textrm{Orch}_{i}+v_{i} \nonumber
+\end{align}
+
+
+### 8
+
+\begin{equation*} 
+\left[ \begin{array}{c}
+            u_{i} \\ v_{i}
+          \end{array}  \right] \sim N \left( \left[
+          \begin{array}{c}
+            0 \\ 0
+          \end{array} \right], \left[
+          \begin{array}{cc}
+            \sigma_{u}^{2} & \rho_{uv}\sigma_{u}\sigma_v \\
+            \rho_{uv}\sigma_{u}\sigma_v & \sigma_{v}^{2}
+          \end{array} \right] \right) 
+\end{equation*}

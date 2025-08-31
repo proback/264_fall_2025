@@ -1,0 +1,386 @@
+---
+title: "HW5_key"
+format:
+  pdf: default
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+#| include: FALSE
+
+library(tidyverse)
+library(tidytext)
+library(textdata)
+library(wordcloud)
+library(wordcloud2)
+library(viridis)
+library(ggthemes)
+```
+
+
+# Harry Potter
+
+The `potter_untidy` dataset includes the text of 7 books of the Harry Potter series by J.K. Rowling. For a brief overview of the books (or movies), see this quote from Wikipedia: 
+
+> Harry Potter is a series of seven fantasy novels written by British author J. K. Rowling. The novels chronicle the lives of a young wizard, Harry Potter, and his friends Hermione Granger and Ron Weasley, all of whom are students at Hogwarts School of Witchcraft and Wizardry. The main story arc concerns Harry's conflict with Lord Voldemort, a dark wizard who intends to become immortal, overthrow the wizard governing body known as the Ministry of Magic, and subjugate all wizards and Muggles (non-magical people).
+
+```{r}
+#| include: FALSE
+
+potter_untidy <- read_csv("https://proback.github.io/264_fall_2024/Data/potter_untidy.csv") |>
+#potter_untidy <- read_csv("Data/potter_untidy.csv") |>
+  mutate(title = fct_reorder(title, book_num))
+
+potter_untidy
+
+potter_tidy <- potter_untidy |>
+  unnest_tokens(output = word, input = text)
+
+potter_tidy
+
+potter_locations <- read_csv("https://proback.github.io/264_fall_2024/Data/potterlocations.csv") |>
+#potter_locations <- read_csv("Data/potterlocations.csv") |>
+  mutate(value = str_to_lower(value))
+
+potter_locations
+
+potter_names <- read_csv("https://proback.github.io/264_fall_2024/Data/potternames.csv") |>
+#potter_names <- read_csv("Data/potternames.csv") |>
+  mutate(fullname = str_to_lower(fullname),
+         firstname = str_to_lower(firstname),
+         lastname = str_to_lower(lastname))
+
+potter_names
+
+potter_spells <- read_csv("https://proback.github.io/264_fall_2024/Data/potter_spells.csv") |>
+#potter_spells <- read_csv("Data/potter_spells.csv") |>
+  filter(spell_name != "Point Me")
+
+potter_spells
+```
+
+
+1. What words contribute the most to negative and positive sentiment scores?  Show a faceted bar plot of the top 10 negative and the top 10 positive words (according to the "bing" lexicon) across the entire series.
+
+```{r}
+#| warning: FALSE
+
+potter_tidy |>
+  inner_join(get_sentiments("bing")) |>
+  count(sentiment, word, sort = TRUE) |>
+  group_by(sentiment) |>
+  top_n(10) |>
+  ungroup() |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = sentiment)) +
+    geom_col() +   # makes bar plot where heights = values in the data set
+    coord_flip() +
+    facet_wrap(~ sentiment, scales = "free")
+# note in warning that enviously appears as both positive and negative
+```
+
+2. Find a list of the top 10 words associated with "fear" and with "trust" (according to the "nrc" lexicon) across the entire series.
+
+```{r}
+# Check out which words are associated with which sentiment
+get_sentiments("nrc") |>
+  count(sentiment)
+
+get_sentiments("nrc") |> 
+  filter(sentiment == "fear") |>
+  inner_join(potter_tidy) |>
+  count(word, sort = TRUE)
+
+get_sentiments("nrc") |> 
+  filter(sentiment == "trust") |>
+  inner_join(potter_tidy) |>
+  count(word, sort = TRUE)
+```
+
+3. Make a wordcloud for the entire series after removing stop words using the "smart" source.
+
+```{r}
+#| warning: FALSE
+
+# wordcloud wants a column with words and another column with counts
+words <- potter_tidy |>
+  anti_join(stop_words) |>
+  anti_join(potter_names, join_by(word == firstname)) |>
+  anti_join(potter_names, join_by(word == lastname)) |>
+  count(word) |>
+  arrange(desc(n))
+
+# Note: this will look better in html than in the Plots window in RStudio
+wordcloud(
+  words = words$word, 
+  freq = words$n, 
+  max.words = 100, 
+  random.order = FALSE, 
+  rot.per = 0,            
+  colors = brewer.pal(6, "Dark2")
+)
+# See Z's R Tip of the Day for suggestions on options
+
+# Or for even cooler looks, use wordcloud2 in html
+#words_df <- words |>
+#  slice_head(n = 80) |>
+#  data.frame()
+
+#wordcloud2(words_df, size = .35, shape = 'star')
+```
+
+4. Create a wordcloud with the top 20 negative words and the top 20 positive words in the Harry Potter series according to the bing lexicon.  The words should be sized by their respective counts and colored based on whether their sentiment is positive or negative.  (Feel free to be resourceful and creative to color words by a third variable!)
+
+```{r}
+pos_neg <- potter_tidy |>
+  inner_join(get_sentiments("bing")) |>
+  count(sentiment, word, sort = TRUE) |>
+  group_by(sentiment) |>
+  top_n(20) |>
+  ungroup()
+
+wordcloud(
+  words = pos_neg$word, 
+  freq = pos_neg$n, 
+  random.order = FALSE, 
+  rot.per = 0,     
+  ordered.colors = TRUE,
+  colors = brewer.pal(6, "Dark2")[factor(pos_neg$sentiment)]
+)
+
+# Not sure why this doesn't work...
+# pos_neg_df <- data.frame(pos_neg)
+# wordcloud2(
+#   pos_neg_df[,2:3], 
+#   color = ifelse(pos_neg_df[,1] == "positive", "blue", "red")
+# )
+
+# Can also look in wordcloud documentation under "comparisons and
+#   commonality clouds"
+```
+
+5. Make a faceted bar chart to compare the positive/negative sentiment trajectory over the 7 Harry Potter books.  You should have one bar per chapter (thus chapter becomes the index), and the bar should extend up from 0 if there are more positive than negative words in a chapter (according to the "bing" lexicon), and it will extend down from 0 if there are more negative than positive words.
+
+6. Repeat (5) using a faceted scatterplot to show the average sentiment score according to the "afinn" lexicon for each chapter.  (Hint: use `mutate(chapter_factor = factor(chapter))` to treat chapter as a factor variable.)
+
+```{r}
+#| warning: FALSE
+
+potter_tidy |>
+  inner_join(get_sentiments("bing")) |>
+  count(title, chapter, sentiment) |>
+  spread(key = sentiment, value = n, fill = 0) |>
+  mutate(sentiment = positive - negative) |> 
+  ggplot(aes(x = chapter, y = sentiment, fill = title)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~title, ncol = 2, scales = "free_x")
+
+potter_tidy |>
+  mutate(chapter_factor = factor(chapter)) |>
+  inner_join(get_sentiments("afinn")) |>
+  group_by(title, chapter_factor) |>
+  summarise(mean_sentiment = mean(value)) |>
+  ggplot(aes(x = chapter_factor, y = mean_sentiment, 
+             fill = title, color = title)) +
+    geom_point() +
+    geom_hline(yintercept = 0) +
+    facet_wrap(~title, ncol = 2)
+```
+
+7. Make a faceted bar plot showing the top 10 words that distinguish each book according to the tf-idf statistic.
+
+```{r}
+book_word_count <- potter_tidy |>
+  count(word, title, sort = TRUE)
+
+book_tfidf <- book_word_count |>
+  bind_tf_idf(word, title, n)
+
+book_tfidf |>
+  arrange(-tf_idf) 
+
+book_tfidf |>
+  group_by(title) |>
+  arrange(desc(tf_idf)) |> 
+  top_n(10, wt = tf_idf) |> 
+  ungroup() |>
+  ggplot(aes(x = fct_reorder(word, tf_idf), y = tf_idf, fill = title)) +
+    geom_col(show.legend = FALSE) +
+    coord_flip() +
+    facet_wrap(~title, scales = "free")
+```
+
+8. Repeat (7) to show the top 10 2-word combinations that distinguish each book. 
+
+```{r}
+tidy_ngram <- potter_untidy |>
+  unnest_tokens(bigram, text, token = "ngrams", n = 2)
+
+bigram_tf_idf <- tidy_ngram |>
+  count(title, bigram) |>
+  bind_tf_idf(bigram, title, n) |>
+  arrange(desc(tf_idf)) |>
+  filter(!is.na(bigram))
+
+bigram_tf_idf |>
+  group_by(title) |>
+  arrange(desc(tf_idf)) |>
+  top_n(10, wt = tf_idf) |>  
+  ungroup() |>
+  ggplot(aes(x = fct_reorder(bigram, tf_idf), y = tf_idf, fill = title)) +
+    geom_col(show.legend = FALSE) +
+    coord_flip() +
+    facet_wrap(~title, scales = "free")
+
+```
+
+9. Find which words contributed most in the "wrong" direction using the afinn sentiment combined with how often a word appears among all 7 books.  Come up with a list of 4 negation words, and for each negation word, illustrate the words associated with the largest "wrong" contributions in a faceted bar plot.
+
+```{r}
+afinn <- get_sentiments("afinn")
+
+bigrams_separated <- tidy_ngram |>
+  separate(bigram, c("word1", "word2"), sep = " ") |>
+  count(word1, word2, sort = TRUE) |>
+  filter(!is.na(word1) & !is.na(word2))
+
+negation_words <- c("not", "no", "never", "without")
+
+negated_words <- bigrams_separated |>
+  filter(word1 %in% negation_words) |>
+  inner_join(afinn, by = c(word2 = "word")) |>
+  arrange(desc(n))
+
+negated_words
+
+negated_words |>
+  mutate(contribution = n * value) |>
+  arrange(desc(abs(contribution))) |>
+  group_by(word1) |>
+  slice_max(abs(contribution), n = 10) |>
+  ungroup() |>
+  mutate(word2 = reorder(word2, contribution)) |>
+  ggplot(aes(n * value, word2, fill = n * value > 0)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~ word1, scales = "free") +
+    labs(x = "Sentiment value * number of occurrences",
+         y = "Words preceded by negation term")
+```
+
+10. Select a set of 4 "interesting" terms and then use the Phi coefficient to find and plot the 6 words most correlated with each of your "interesting" words.  Start by dividing `potter_tidy` into 80-word sections and then remove names and spells and stop words.
+
+```{r}
+library(widyr)
+
+potter_section_words <- potter_tidy |>
+  mutate(section = 1 + row_number() %/% 80) |> 
+  anti_join(potter_names, join_by(word == firstname)) |>
+  anti_join(potter_names, join_by(word == lastname)) |>
+  anti_join(potter_spells, join_by(word == first_word)) |>  
+  anti_join(potter_spells, join_by(word == second_word)) |>
+  filter(!word %in% stop_words$word,
+         !is.na(word))
+
+word_cors <- potter_section_words |>
+  group_by(word) |>
+  filter(n() >= 10) |>
+  pairwise_cor(word, section, sort = TRUE)
+
+# Plot words most associated with a set of interesting words:
+word_cors |>
+  filter(item1 %in% c("eyes", "professor", "wand", "time")) |>
+  group_by(item1) |>
+  slice_max(correlation, n = 6) |>
+  ungroup() |>
+  mutate(item2 = reorder(item2, correlation)) |>
+  ggplot(aes(item2, correlation)) +
+    geom_bar(stat = "identity") +
+    facet_wrap(~ item1, scales = "free") +
+    coord_flip()
+```
+
+11. Create a network graph to visualize the correlations and clusters of words that were found by the `widyr` package in (10).
+
+```{r}
+library(igraph)
+library(ggraph)
+set.seed(1989)
+
+word_cors |>
+  filter(correlation > .5) |>
+  graph_from_data_frame() |>
+  ggraph(layout = "fr") +
+    geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE) +
+    geom_node_point(color = "lightblue", size = 5) +
+    geom_node_text(aes(label = name), repel = TRUE) +
+    theme_void()
+```
+
+12. Use LDA to fit a 2-topic model to all 7 Harry Potter books.  Be sure to remove names, spells, and stop words before running your topic models.  (a) Make a plot to illustrate words with greatest difference between two topics, using log ratio.  (b) Print a table with the gamma variable for each document and topic.  Based on (a) and (b), can you interpret what the two topics represent?
+
+```{r}
+# cast the collection of 3 works as a document-term matrix
+library(tm)
+
+book_word_count <- potter_tidy |>
+  group_by(title, word) |>
+  count() |>
+  arrange(desc(n))
+
+seven_books_dtm <- book_word_count |>
+  anti_join(potter_names, join_by(word == firstname)) |>
+  anti_join(potter_names, join_by(word == lastname)) |>
+  anti_join(potter_spells, join_by(word == first_word)) |>  
+  anti_join(potter_spells, join_by(word == second_word)) |>
+  filter(!word %in% stop_words$word,
+         !is.na(word)) |>
+  cast_dtm(title, word, n)
+
+# set a seed so that the output of the model is predictable
+library(topicmodels)
+seven_books_lda <- LDA(seven_books_dtm, k = 2, control = list(seed = 1234))
+seven_books_lda
+
+seven_books_topics <- tidy(seven_books_lda, matrix = "beta")
+seven_books_topics
+
+# Find the most common words within each topic
+seven_books_top_terms <- seven_books_topics |>
+  group_by(topic) |>
+  slice_max(beta, n = 10) |> 
+  ungroup() |>
+  arrange(topic, -beta)
+
+seven_books_top_terms |>
+  mutate(term = reorder_within(term, beta, topic)) |>
+  ggplot(aes(beta, term, fill = factor(topic))) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~ topic, scales = "free") +
+    scale_y_reordered()
+
+# Find words with greatest difference between two topics, using log ratio
+beta_wide <- seven_books_topics |>
+  mutate(topic = paste0("topic", topic)) |>
+  pivot_wider(names_from = topic, values_from = beta) |> 
+  filter(topic1 > .001 | topic2 > .001) |>
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_wide
+
+beta_wide |>
+  arrange(desc(abs(log_ratio))) |>
+  slice_max(abs(log_ratio), n = 20) |>
+  mutate(term = reorder(term, log_ratio)) |>
+  ggplot(aes(log_ratio, term, fill = log_ratio > 0)) +
+    geom_col(show.legend = FALSE) +
+    labs(x = "Log ratio of Beta values",
+         y = "Words in seven works")
+
+
+# find the gamma variable for each document and topic
+seven_books_documents <- tidy(seven_books_lda, matrix = "gamma")
+seven_books_documents
+```
+
+Note: this code could be even better by converting repeated sections into functions!

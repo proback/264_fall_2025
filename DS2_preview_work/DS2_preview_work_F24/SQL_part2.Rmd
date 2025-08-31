@@ -1,0 +1,185 @@
+---
+title: "Ch 15 from Modern Data Science with R"
+subtitle: "Database querying using SQL"
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 4.5
+  html_document: default
+  word_document: default
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include = FALSE}
+# Initial packages required (we'll be adding more)
+library(tidyverse)
+library(mdsr)      # package associated with our MDSR book
+library(DBI)
+
+db <- dbConnect_scidb("airlines")
+```
+
+
+### Section 15.4: The SQL data manipulation language
+
+We will use `sql` chunks to write and execute SQL queries.  Unfortunately, these chunks will only run (in both Rmd and qmd files) when you render (knit) the entire document.  In newer versions of RStudio you can run current `sql` chunks in a quarto document using the right arrow.
+
+```{sql, connection = db}
+DESCRIBE airports;
+```
+
+Here's the query we were exploring using `dplyr` in Part 1.  It's kind of clunky, but to run it in this older version of RStudio, we have to output and then print out an R data frame that we call `mydataframe`.
+
+Alternative: select "Chunk Output Inline" under Settings button, remove "output.var = "mydataframe"", and then you'll get a chunk run buttton
+
+```{sql, connection = db, output.var = "mydataframe"}
+SELECT 
+  c.name,
+  SUM(1) AS N, 
+  SUM(arr_delay <= 15) / SUM(1) AS pct_ontime
+FROM flights AS f
+JOIN carriers AS c ON f.carrier = c.carrier
+WHERE year = 2016 AND month = 9
+  AND dest = 'JFK'
+GROUP BY name 
+HAVING N >= 100
+ORDER BY pct_ontime DESC
+LIMIT 0,4;
+```
+
+```{r}
+mydataframe
+```
+
+
+#### Section 15.4.1: SELECT...FROM
+
+Note that every SQL query must have a SELECT and FROM.  Here we also create a new column that's a function of other columns, combining latitude and longitude into a single column of geographic coordinates named `coordinates`.  Note that we also rename the airport name column using the AS keyword.
+
+```{sql, connection = db, output.var = "mydataframe"}
+SELECT 
+  name AS airport_name, 
+  CONCAT('(', lat, ', ', lon, ')') AS coordinates
+FROM airports
+LIMIT 0, 6;
+```
+
+```{r}
+mydataframe
+```
+
+
+#### Section 15.4.2: WHERE
+
+The WHERE clause is analogous to the `filter()` command in `dplyr` -- it allows you to restrict the set of rows that are retrieved to only those rows that match a certain condition.  Here we pick off the few flights that left Bradley International Airport on June 26th, 2013.
+
+```{sql, connection = db, output.var = "mydataframe"}
+SELECT 
+  year, month, day, origin, dest,
+  flight, carrier
+FROM flights
+WHERE year = 2013 AND month = 6 AND day = 26
+AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+```{r}
+mydataframe
+```
+
+Here we use STR_TO_DATE to convert 3 columns to a date field.  Notice how `year`, `month`, and `day` are not part of the final data frame, but we can still use these columns in the WHERE clause (in fact, WHERE only operates on columns from the original table).
+
+```{sql, connection = db, output.var = "mydataframe"}
+SELECT 
+  STR_TO_DATE(CONCAT(year, '-', month, '-', day), '%Y-%m-%d') AS theDate,
+  origin,
+  flight, carrier
+FROM flights
+WHERE year = 2013 AND month = 6 AND day = 26
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+```{r}
+mydataframe
+```
+
+Therefore, this query produces an error, while the following query works since WHERE can operate on functions of original columns.  However, the second query is very slow because it doesn't make use of indices of the original variables (see Section 16.1.4).
+
+```{sql, connection = db, eval = FALSE}
+SELECT 
+  STR_TO_DATE(CONCAT(year, '-', month, '-', day), '%Y-%m-%d') AS theDate,
+  origin, flight, carrier
+FROM flights
+WHERE theDate = '2013-06-26'
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+```{sql, connection = db, output.var = "mydataframe"}
+SELECT 
+  STR_TO_DATE(CONCAT(year, '-', month, '-', day), '%Y-%m-%d') AS theDate,
+  origin, flight, carrier
+FROM flights
+WHERE STR_TO_DATE(CONCAT(year, '-', month, '-', day), '%Y-%m-%d') = 
+  '2013-06-26'
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+```{r}
+mydataframe
+```
+
+There are several keywords that can help with filtering using WHERE.  These include BETWEEN and IN.  Explain in the queries below why:
+
+- the first block produces 5 rows while the second block produces 2 rows
+- both blocks produce only a single column
+
+```{sql, connection = db, eval = FALSE}
+SELECT
+  DISTINCT STR_TO_DATE(CONCAT(year, '-', month, '-', day), '%Y-%m-%d') 
+    AS theDate
+FROM flights
+WHERE year = 2013 AND month = 6 AND day BETWEEN 26 and 30
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+```{sql, connection = db, eval = FALSE}
+SELECT 
+  DISTINCT STR_TO_DATE(CONCAT(year, '-', month, '-', day), '%Y-%m-%d') 
+    AS theDate
+FROM flights
+WHERE year = 2013 AND month = 6 AND day IN (26, 30)
+  AND origin = 'BDL'
+LIMIT 0, 6;
+```
+
+In the following two blocks, explain why the first one contains 557,874 rows while the second only contains 2,542.
+
+```{sql, connection = db, eval = FALSE}
+SELECT 
+  COUNT(*) AS N
+FROM flights
+WHERE year = 2013 AND month = 6 OR day = 26
+  AND origin = 'BDL';
+```
+
+```{sql, connection = db, eval = FALSE}
+SELECT 
+  COUNT(*) AS N
+FROM flights
+WHERE year = 2013 AND (month = 6 OR day = 26)
+  AND origin = 'BDL';
+```
+
+
+#### Section 15.4.2: GROUP BY
+
+The GROUP BY clause allows one to aggregate multiple rows according to some criteria. The challenge when using GROUP BY is specifying how multiple rows of data should be reduced into a single value. Aggregate functions (e.g., COUNT(), SUM(), MAX(), and AVG()) are necessary.
+
+For example, we know that there were 65 flights that left Bradley Airport on June 26th, 2013, but how many belonged to each airline carrier? To get this information we need to aggregate the individual flights, based on who the carrier was.
+
+

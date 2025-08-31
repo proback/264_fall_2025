@@ -1,0 +1,197 @@
+---
+title: "Knowledge Quiz 1"
+subtitle: "YOUR NAME HERE"
+format:
+  pdf: default
+editor_options: 
+  chunk_output_type: console
+---
+
+Please answer the following questions, render a pdf, and submit via moodle by 11 PM on Mon Oct 7.
+
+Guidelines: 
+
+- No consulting with anyone else (other than clarification questions from Professor Roback)
+- You may use only materials from this class (our class webpage, links on moodle, our 3 online textbooks, files posted to the RStudio server)
+- No online searches or use of large language models like ChatGPT
+
+Pledge: 
+
+I pledge my honor that on this quiz I have neither given nor received assistance not explicitly approved by the professor and that I an aware of no dishonest work.
+
+- type your name here to acknowledge the pledge: _________________________
+- OR
+- place an X here if you intentionally are not signing the pledge: _______
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+```
+
+
+1. Here's is a crazy list that tells you some stuff about data science.  Give code that will produce **exactly** the following outputs.
+
+```{r}
+data_sci <- list(
+  first = c("first it must work", "then it can be" , "pretty"),
+  DRY = c("Do not", "Repeat", "Yourself"),
+  dont_forget = c("garbage", "in", "out"),
+  our_first_tibble = mpg,
+  integers = 1:25,
+  doubles = sqrt(1:25),
+  tidyverse = c(pack1 = "ggplot2", 
+                pack2 = "dplyr", 
+                pack3 = "lubridate", 
+                etc = "and more!"),
+  opinion = list("SDS 264 is",  
+                 c("awesome!", "amazing!", "rainbows!"))
+)
+
+str(data_sci)
+```
+
+[1] "first it must work" "then it can be"     "pretty" 
+```{r}
+data_sci$first
+data_sci[["first"]]
+data_sci[[1]]
+typeof(data_sci[[1]])
+```
+
+$DRY
+[1] "Do not"   "Repeat"   "Yourself"
+```{r}
+data_sci[2]
+data_sci["DRY"]
+typeof(data_sci["DRY"])
+```
+
+[1]  2  4  6  8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50
+```{r}
+data_sci[["integers"]] * 2
+data_sci[[5]] * 2
+data_sci$integers * 2
+typeof(data_sci$integers)
+```
+
+[1] "rainbows!"
+```{r}
+data_sci[[8]][[2]][3]
+data_sci$opinion[[2]][3]
+typeof(data_sci$opinion[[2]])
+```
+
+[1] "garbage" "in"      "garbage" "out"   
+```{r}
+data_sci[[3]][c(1,2,1,3)]
+data_sci$dont_forget[c(1,2,1,3)]
+typeof(data_sci$dont_forget[c(1,2,1,3)])
+```
+
+# A tibble: 234 x 2
+     hwy   cty
+   <int> <int>
+ 1    29    18
+ 2    29    21
+ 3    31    20
+ 4    30    21
+ 5    26    16
+ 6    26    18
+ 7    27    18
+ 8    26    18
+ 9    25    16
+10    28    20
+# … with 224 more rows
+```{r}
+typeof(data_sci[[4]])
+is_tibble(data_sci[[4]])
+data_sci$our_first_tibble[c("hwy", "cty")]
+data_sci[[4]][c("hwy", "cty")]
+data_sci[[4]] %>%
+  select(hwy, cty)
+```
+
+
+2. Write a function called `summary_stats()` that allows a user to input a tibble, numeric variables in that tibble, and summary statistics that they would like to see for each variable.  Using `across()`, the function's output should look like the example below.
+
+```{r}
+#| eval: FALSE
+
+summary_stats(mtcars, 
+              vars = c(mpg, hp, wt), 
+              stat_fcts = list(mean = mean, 
+                               median = median, 
+                               sd = sd, 
+                               IQR = IQR))
+
+#  mpg_mean mpg_median   mpg_sd mpg_IQR  hp_mean hp_median    hp_sd hp_IQR wt_mean
+# 1 20.09062       19.2 6.026948   7.375 146.6875       123 68.56287   83.5 3.21725
+#  wt_median     wt_sd  wt_IQR  n
+# 1     3.325 0.9784574 1.02875 32
+```
+
+```{r}
+summary_stats <- function(df, 
+                          vars = where(is.numeric), 
+                          stat_fcts = list(mean = mean, sd = sd)) {
+  df |> 
+    summarize(
+      across(.cols = {{ vars }}, 
+             .fns = stat_fcts),
+      n = n(),
+      .groups = "drop"
+    )
+}
+
+summary_stats(mtcars)
+summary_stats(mtcars, vars = c(mpg, hp, wt))
+summary_stats(mtcars, 
+              vars = c(mpg, hp, wt), 
+              stat_fcts = list(mean = mean, 
+                               median = median, 
+                               sd = sd, 
+                               IQR = IQR))
+```
+
+
+3. The Central Limit Theorem is one of the most amazing results in all of mathematics.  It says that if you take random samples from any population, if the sample size is large enough, the sample means will follow a normal distribution.  This is true no matter how not-normal the original population is - crazy but true!!  Let's explore the CLT in two steps.
+
+a) Write a for loop that takes 10,000 samples of size 30 from a skewed distribution and then plots the 10,000 means in a histogram to let us see if the histogram follows a normal distribution.  Here are a couple of hints:
+
+- `rexp(30, rate = 0.2)` will produce a random sample of size 30 from a skewed distribution
+- `tibble(x = x)` will take a vector `x` and turn it into a column of a tibble that can be used in `ggplot`
+
+b) Turn your for loop from (a) into a function whose attributes are `samp_size` with default of 30, and `n_means` with default of 10000.  In addition, your histogram should now have a title that says "Means from samples of size 30 from a skewed population", where 30 is replaced with the user's input.
+
+```{r}
+means <- vector("double", 10000)
+for (i in 1:10000) {
+  x <- rexp(30, rate = 0.2)
+  means[[i]] <- mean(x)
+}  
+temp <- tibble(means = means)
+ggplot(temp, aes(x = means)) +
+  geom_histogram()
+
+
+clt <- function(samp_size= 30, n_means = 10000) {
+  means <- vector("double", n_means)
+  for (i in 1:n_means) {
+    x <- rexp(samp_size, rate = 0.2)
+    means[[i]] <- mean(x)
+  } 
+  
+  label <- rlang::englue("Means from samples of size {samp_size} from a skewed population")
+
+  temp <- tibble(means = means)
+  ggplot(temp, aes(x = means)) +
+    geom_histogram() +
+    labs(title = label)
+}
+
+clt()
+clt(10)
+```
+

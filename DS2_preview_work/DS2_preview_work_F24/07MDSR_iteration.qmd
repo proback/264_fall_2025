@@ -1,0 +1,330 @@
+---
+title: "MDSR2e Ch 7: Iteration"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# no longer needed:
+# knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Goals
+
+-   To
+
+# Required reading
+
+-   [Chapter 5](https://openintro-ims.netlify.app/explore-numerical.html) of your textbook
+
+# New Code
+
+-   `mosaic::favstats(dataset$var)`, provides summary statistics for variable `var` from `dataset`
+
+# Before class
+
+Let's start by loading a subset of data used for the story by doing the following command in R
+
+```{r}
+# Section 7.1: Vectorized operations
+
+library(tidyverse)
+library(mdsr)
+
+# package containing a database with many tables related to US professional baseball
+library(Lahman)   
+names(Teams)   # one row for each team in each MLB season
+
+# columns 15-40 contain numerical data about each team's performance
+str(Teams)
+glimpse(Teams)
+
+# a for loop to find the mean for each of the 26 numeric variables
+averages <- NULL
+for (i in 15:40) {
+  averages[i - 14] <- mean(Teams[, i], na.rm = TRUE)
+}
+names(averages) <- names(Teams)[15:40]
+averages
+# the use of "magic numbers" like 14, 15, 40 is problematic
+
+# the fundamental architecture of R is based on vectors (unlike C++ or Python).  Thus R provides several tools for performing loop-like operations without actually writing a loop
+
+# this string is stored as a character vector of length 1
+a <- "a string"
+class(a)
+is.vector(a)
+length(a)
+
+# the function exp() is vectorized - performs operation on every element of the vector.  Input = vector; output = vector of same length
+exp(1:3)
+
+# the function mean() is a summary function.  Input = vector; output = single value
+mean(1:3)
+
+# the if() function is not vectorized - wants single input
+if (c(TRUE, FALSE)) {
+  cat("This is a great book!")
+}
+
+# it will be important to develop intuition about which functions are vectorized and which are not.  But be patient with yourself!
+
+# here appealing to vectorized feature of exp() is MUCH faster
+library(bench)  # might have to install first
+x <- 1:1e5
+bench::mark(
+  exp(x),
+  map_dbl(x, exp)
+)
+
+
+# Section 7.2: Using across() with dplyr functions
+
+# use within summarize to find mean of all numeric columns
+Teams %>%
+  summarize(across(where(is.numeric), mean, na.rm = TRUE))
+
+# can also specify columns directly instead of using predicate function
+Teams %>%
+  summarize(across(15:40, mean, na.rm = TRUE))
+
+
+# Section 7.3: The map() family of functions
+
+# map() applies a function to each item in a list or vector, or columns of a data frame.  Note how this is much more readable than above.
+Teams %>% 
+  select(15:40) %>%
+  map_dbl(mean, na.rm = TRUE)
+
+# be careful about non-numeric vectors
+Teams %>% 
+  select(teamID) %>% 
+  map_dbl(mean, na.rm = TRUE)
+
+
+# Section 7.4: Iterating over a one-dimensional vector
+
+# Section 7.4.1: Iterating a known function
+
+# find 4 team names in one franchise's history and associated years
+angels <- Teams %>% 
+  filter(franchID == "ANA") %>% 
+  group_by(teamID, name) %>%
+  summarize(began = first(yearID), ended = last(yearID)) %>% 
+  arrange(began)
+angels
+
+# check names manually 1 at a time
+# first pull off names as a vector instead of a tibble
+angels_names <- angels %>%
+  pull(name)
+nchar(angels_names[1])
+nchar(angels_names[2])
+nchar(angels_names[3])
+nchar(angels_names[4])
+
+# more efficient solution
+map_int(angels_names, nchar)
+
+# actually nchar() is already vectorized, so can use directly
+#   - need a different example!!
+nchar(angels_names)
+
+# Section 7.4.2: Iterating an arbitrary function
+
+# want to display top 5 seasons in terms of wins for Angels teams
+top5 <- function(data, team_name) {
+  data %>%
+    filter(name == team_name) %>%
+    select(teamID, yearID, W, L, name) %>%
+    arrange(desc(W)) %>%
+    head(n = 5)
+}
+
+# team_name argument accepts the value over which we iterate
+angels_names %>%
+  map(top5, data = Teams)
+
+# use map_dfr() to collect results in a single data frame, and then find average wins over top 5 years for each Angels team name
+angels_names %>% 
+  map_dfr(top5, data = Teams) %>%
+  group_by(teamID, name) %>%
+  summarize(N = n(), mean_wins = mean(W)) %>%
+  arrange(desc(mean_wins))
+
+
+# Section 7.5: Iteration over subgroups
+
+# Section 7.5.1: Example - Expected winning percentage
+
+# Bill James' model for estimating a team's winning percentage (Pythagorean Winning Percentage)
+exp_wpct <- function(x) { 
+  return(1/(1 + (1/x)^2))
+}
+
+TeamRuns <- Teams %>% 
+  filter(yearID >= 1954) %>%
+  rename(RS = R) %>% 
+  mutate(WPct = W / (W + L), run_ratio = RS/RA) %>%
+  select(yearID, teamID, lgID, WPct, run_ratio)
+
+ggplot(data = TeamRuns, aes(x = run_ratio, y = WPct)) +
+  geom_vline(xintercept = 1, color = "darkgray", linetype = 2) +
+  geom_hline(yintercept = 0.5, color = "darkgray", linetype = 2) +
+  geom_point(alpha = 0.2) + 
+  stat_function(fun = exp_wpct, linewidth = 2, color = "blue") + 
+  xlab("Ratio of Runs Scored to Runs Allowed") + 
+  ylab("Winning Percentage")
+
+# find the optimal value of the exponent
+TeamRuns %>%
+  nls(
+    formula = WPct ~ 1/(1 + (1/run_ratio)^k), 
+    start = list(k = 2)
+  ) %>%
+  coef()
+
+# find the optimal value of the exponent over different decades.  Note that group_modify() allows you to apply function to groups of a data set
+fit_k <- function(x) {
+  mod <- nls(
+    formula = WPct ~ 1/(1 + (1/run_ratio)^k), 
+    data = x,
+    start = list(k = 2)
+  )
+  return(tibble(k = coef(mod), n = nrow(x)))
+}
+
+fit_k(TeamRuns)   # overall estimate of k
+
+TeamRuns %>% 
+  mutate(decade = yearID %/% 10 * 10) %>%
+  group_by(decade) %>% 
+  group_modify(~fit_k(.x))
+
+# Section 7.5.2: Annual leaders
+
+# function to find team that led a certain league in home runs in a certain year
+hr_leader <- function(x) {
+  x %>% 
+    select(teamID, HR) %>% 
+    arrange(desc(HR)) %>% 
+    head(1)
+}
+
+Teams %>% 
+  filter(yearID == 1961 & lgID == "AL") %>% 
+  hr_leader()
+
+hr_leaders <- Teams %>% 
+  group_by(yearID, lgID) %>% 
+  group_modify(~hr_leader(.x), .keep = TRUE)  # keep grouping variables
+
+# most recent HR leaders in the National and American Leagues
+tail(hr_leaders, 4)  
+
+# for each league, find the average HRs among teams who hit the most 
+hr_leaders %>%
+  group_by(lgID) %>%
+  summarize(mean_hr = mean(HR))
+
+# repeat to exclude old leagues (before 1916)
+hr_leaders %>%
+  filter(yearID >= 1916) %>%
+  group_by(lgID) %>%
+  summarize(mean_hr = mean(HR))
+
+# plot changes over time (and denote major rule change in AL)
+hr_leaders %>% 
+  filter(yearID >= 1916) %>%
+  ggplot(aes(x = yearID, y = HR, color = lgID)) + 
+  geom_line() + 
+  geom_point() + 
+  geom_smooth(se = FALSE) + 
+  geom_vline(xintercept = 1973) + 
+  annotate(
+    "text", x = 1974, y = 25, 
+    label = "AL adopts DH", hjust = "left"
+  ) +
+  labs(x = "Year", y = "Home runs", color = "League")
+
+
+# Section 7.6: Simulation
+
+# What is the distribution of optimal exponents for a single season's worth of data?  Previews ideas of simulation in Ch 13 where there's an element of randomness in the values collected.
+k_actual <- TeamRuns %>% 
+  group_by(yearID) %>% 
+  group_modify(~fit_k(.x))
+k_actual %>%
+  ungroup() %>%
+  skim(k)
+
+ggplot(data = k_actual, aes(x = k)) + 
+  geom_density() + 
+  xlab("Best fit exponent for a single season")
+
+# bootstrap the CI for the mean exponent by sampling without replacement (book doesn't really acknowledge these are means)
+n <- 10000
+
+bstrap <- 1:n %>%
+  map_dbl(
+    ~k_actual %>%
+      pull(k) %>%
+      sample(replace = TRUE) %>% 
+      mean()
+  )
+
+civals <- bstrap %>%
+  quantile(probs = c(0.025, .975))
+civals
+
+ggplot(data = enframe(bstrap, value = "k"), aes(x = k)) + 
+  geom_density() + 
+  xlab("Distribution of resampled means") + 
+  geom_vline(
+    data = enframe(civals), aes(xintercept = value), 
+    color = "red", linetype = 3
+  )
+
+
+# Section 7.7: Extended example - Factors associated with BMI
+
+# Use NHANES data to find factors associated with high BMI
+library(NHANES)
+
+# show relationship between BMI and one of 75 possible predictors
+ggplot(NHANES, aes(x = Age, y = BMI)) +
+  geom_point() + 
+  geom_smooth()
+
+# write a function to do this for any predictor.  Note the use of aes_string
+bmi_plot <- function(.data, x_var) {
+  ggplot(.data, aes(y = BMI)) +
+    aes_string(x = x_var) + 
+    geom_jitter(alpha = 0.3) + 
+    geom_smooth() + 
+    labs(
+      title = paste("BMI by", x_var),
+      subtitle = "NHANES",
+      caption = "US National Center for Health Statistics (NCHS)"
+    )
+}
+
+bmi_plot(NHANES, "Age")
+
+c("Age", "HHIncomeMid", "PhysActiveDays", 
+  "TVHrsDay", "AlcoholDay", "Pulse") %>%
+  map(bmi_plot, .data = NHANES) %>%
+  patchwork::wrap_plots(ncol = 2)
+
+```

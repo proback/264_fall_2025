@@ -1,0 +1,122 @@
+---
+title: "Working with geospatial data: EPA Transit"
+format:
+  html: default
+  pdf: default
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+# Initial packages required (we'll be adding more)
+library(tidyverse)
+library(mdsr)      # package associated with our MDSR book
+library(sf)        
+# sf = support for simple features, a standardized way to encode spatial vector data
+```
+
+
+Sources:
+
+https://www.epa.gov/smartgrowth/smart-location-mapping#SLD
+
+
+```{r}
+#| eval: false
+#| include: false
+
+# If use downloaded shapefiles stored in RStudio
+dsn <- fs::path("~/Mscs 264 S24/Prof/EPATransit_SHP")  # path to shapefiles
+list.files(dsn)  # note 9 files
+st_layers(dsn)   # 1 layer
+
+SLD <- st_read(dsn, layer = "SLD_Trans45")
+class(SLD)
+SLD
+table(SLD$CBSA_Name)
+MSP <- SLD |> filter(CBSA_Name == "Minneapolis-St. Paul-Bloomington, MN-WI")
+
+# make basic map of deaths with correct lat/long information
+ggplot(MSP) +
+  geom_sf()    
+# assumes (x,y) info stored in a column called "geometry", so we don't
+#   explicitly have to specify the x and y aesthetics
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+
+# Download shapefiles from EPA webpage
+src <- "https://edg.epa.gov/data/Public/OP/SLD/SLD_Trans45_shp.zip"
+lcl_zip <- fs::path(tempdir(), "SLD_Trans45_shp.zip")
+download.file(src, destfile = lcl_zip)
+lcl_SLD <- fs::path(tempdir(), "SLD_Trans45_shp")
+unzip(lcl_zip, exdir = lcl_SLD)
+#dsn_districts <- fs::path(lcl_districts, "districtShapes")
+
+list.files(lcl_SLD)  # note 9 files
+st_layers(lcl_SLD)   # 1 layer
+
+SLD <- st_read(lcl_SLD, layer = "SLD_Trans45")
+class(SLD)
+SLD
+table(SLD$CBSA_Name)
+MSP <- SLD |> filter(CBSA_Name == "Minneapolis-St. Paul-Bloomington, MN-WI")
+rm(SLD)   # to free up space
+glimpse(MSP)
+summary(MSP)
+
+MSP |>
+  st_geometry() |>
+  plot(col = gray.colors(nrow(MSP)))
+
+library(ggspatial)
+plot1 <- ggplot(data = MSP, aes(fill = Pct_LoMeWg)) +
+  annotation_map_tile(zoom = -2, type = "osm", progress = "none") + 
+  geom_sf(alpha = 0.5) +
+  theme_void()
+
+# Color based on Pct_LoMeWg
+# Produces the warning message and won't produce plot:
+#   In grid.Call.graphics(C_raster, x$raster, x$x, x$y, x$width, x$height,  : cannot allocate memory block of size 16777216 Tb
+
+plot1 +
+  scale_fill_distiller(
+    "Pct_LoMeWg", 
+    palette = "RdBu", 
+    limits = c(0, 0.362)
+  )
+
+# A leaflet map can allow us to zoom in and see where major cities fit, etc.
+library(leaflet)
+pal <- colorNumeric(palette = "RdBu", domain = c(0, 0.362))
+st_bbox(MSP)   # bounding box
+
+leaflet_msp <- leaflet(MSP) |>
+  addTiles() |>
+  addPolygons(
+    weight = 1, fillOpacity = 0.7, 
+    color = ~pal(Pct_LoMeWg),   
+    popup = ~paste(round(Pct_LoMeWg, 3))
+  ) |>                          
+  setView(lng = -93, lat = 45, zoom = 9)
+leaflet_msp
+
+
+# Try a second variable
+pal <- colorNumeric(palette = "Blues", domain = c(0,1200000))
+
+leaflet_msp <- leaflet(MSP) |>
+  addTiles() |>
+  addPolygons(
+    weight = 1, fillOpacity = 0.7, 
+    color = ~pal(Pop_byTr),   
+    popup = ~paste(round(Pop_byTr, 3))
+  ) |>                          
+  setView(lng = -93, lat = 45, zoom = 9)
+leaflet_msp
+
+```

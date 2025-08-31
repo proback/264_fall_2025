@@ -1,0 +1,74 @@
+---
+title: "Shiny through R Markdown"
+author: "Paul Roback"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, 
+       breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", 
+       main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+```{r eruptions2, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks2", label = "Number of bins:",
+              choices = c(5, 10, 15, 20, 25, 30), selected = 15),
+  
+  sliderInput("bw_adjust2", label = "Bandwidth adjustment:",
+              min = 0.1, max = 3, value = 1.2, step = 0.1)
+)
+
+renderPlot({
+  ggplot(faithful, aes(x = eruptions)) +
+    geom_histogram(aes(y = after_stat(density)), 
+                   bins = as.numeric(input$n_breaks2),
+                   fill = "white", colour = "black") +
+    geom_density(adjust = input$bw_adjust2, colour = "blue") +
+    labs(x = "Duration (minutes)", 
+         title = "Geyser eruption duration")
+})
+```
+
+```{r, eval = FALSE, include = FALSE}
+# First write code that works, then incorporate into renderPlot
+nbins = 30
+nadjust = 1.2
+
+ggplot(faithful, aes(x = eruptions)) +
+  geom_histogram(aes(y = after_stat(density)), 
+                 bins = nbins,
+                 fill = "white", colour = "black") +
+  geom_density(adjust = nadjust, colour = "blue") +
+  labs(x = "Duration (minutes)", 
+       title = "Geyser eruption duration")
+```
+

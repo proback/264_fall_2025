@@ -1,0 +1,48 @@
+---
+title: "first_shiny"
+format: html
+server: shiny
+---
+
+Here we see what "first Shiny" would look like in quarto.  For more details on writing shiny apps in quarto, try [this link](https://quarto.org/docs/interactive/shiny/)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r echo=FALSE}
+# could try adding: #| panel: sidebar
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+```
+
+```{r echo = FALSE}
+# could try adding: #| panel: fill
+plotOutput("distPlot")
+```
+
+```{r}
+#| context: server
+output$distPlot <- renderPlot({
+  x <- faithful$eruptions  # Old Faithful Geyser data
+  hist(x, breaks = as.numeric(input$n_breaks), probability = TRUE,
+       col = 'darkgray', border = 'white',
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  dens <- density(x, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+

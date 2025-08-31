@@ -1,0 +1,423 @@
+---
+title: "Webscraping to create informative maps"
+sidebar: false
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+
+Based on Section 3.2.3 from Modern Data Science with R
+
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2024/blob/main/02_maps.qmd).  Just hit the Download Raw File button.
+
+
+```{r}
+#| message: false
+#| warning: false
+
+# Initial packages required 
+library(tidyverse)
+library(rvest)
+library(htmltools)
+library(glue)
+library(leaflet)
+library(sf)
+```
+
+So when we recreated the interactive choropleth map of US state population densities from [this webpage](https://rstudio.github.io/leaflet/articles/choropleths.html) in 02_maps.qmd, we were using incorrect densities!  Realizing this egregious error, we want to go out and find the real statewise population densities, create a tidy data frame, merge that with our state geometry shapefiles, and then regenerate our plot.  
+
+A quick wikipedia search yields [this webpage](https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density) with more reasonable population densities in a nice table format.  Let's see if we can grab this data!
+
+There are typically four steps to scraping data with functions in the `rvest` library:
+
+0. `robots_text::paths_allowed()` Check if the website allows scraping!
+1. `read_html()`.  Input the URL containing the data and turn the html code into an XML file (another markup format that's easier to work with).
+2. `html_nodes()`.  Extract specific nodes from the XML file by using the CSS path that leads to the content of interest. (use css="table" for tables.)
+3. `html_text()`.  Extract content of interest from nodes.  Might also use `html_table()`.
+
+Here are those steps applied to scraping the correct population densities from wikipedia: 
+
+```{r}
+# checkout the website first
+robotstxt::paths_allowed("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density")
+
+# 1: read_html()
+pop_dens <- read_html("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density")
+
+# 2: html_nodes()
+tables <- html_nodes(pop_dens, css = "table") 
+tables  # have to guesstimate which table contains our desired table
+
+# 3: html_table()
+html_table(tables, header = TRUE, fill = TRUE)    # find the right table
+
+density_table <- html_table(tables, header = TRUE, fill = TRUE)[[1]]  
+density_table
+```
+
+Even after grabbing our table from wikipedia and setting it in a nice tibble format, there is still some cleaning to do before we can merge this with our state geometries:
+
+```{r}
+density_data <- density_table |>
+  select(1, 2, 4, 5) |>
+  filter(!row_number() == 1) |>
+  rename(Land_area = `Land area`) |>
+  mutate(state_name = str_to_lower(as.character(Location)),
+         Density = parse_number(Density),
+         Population = parse_number(Population),
+         Land_area = parse_number(Land_area)) |>
+  select(-Location)
+
+
+# Check to make sure merging on state name will go smoothly
+
+us_states |>
+  anti_join(density_data, by = c("region" = "state_name")) |>
+  count(region)
+
+density_data |>
+  anti_join(us_states, by = c("state_name" = "region")) |>
+  count(state_name)
+```
+
+First, we will merge the densities with the lat-long points from the `maps` package in order to create a static choropleth.  Remember that we want to classify densities into our own pre-determined bins before plotting!
+
+```{r}
+state_plotting <- density_data |>
+  right_join(us_states, by = c("state_name" = "region")) |>
+  mutate(Density_intervals = cut(Density, n = 8,
+          breaks = c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)))
+state_plotting |> count(state_name)
+print(state_plotting, n = 5, width = Inf)
+
+# Create static plot with ggplot and geom_polygon
+state_plotting |>
+  ggplot(mapping = aes(x = long, y = lat, group = group)) + 
+    geom_polygon(aes(fill = Density_intervals), color = "white",
+                 linetype = 2) + 
+    labs(fill = "Population Density (per sq mile)") +
+    coord_map() + 
+    theme_void() +  
+    scale_fill_brewer(palette = "YlOrRd") 
+```
+
+We could even create a static plot using `geom_sf()` after merging the correct densities into the `states` data frame.
+
+```{r}
+states <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
+  mutate(name = str_to_lower(name))
+
+state_plotting_sf <- states |>
+  left_join(density_data, by = c("name" = "state_name")) |>
+  mutate(Density_intervals = cut(Density, n = 8,
+          breaks = c(0, 10, 20, 50, 100, 200, 500, 1000, Inf))) |>
+  filter(!(name %in% c("alaska", "hawaii", "puerto rico")))
+
+# Create a static plot with ggplot and geom_sf
+ggplot(data = state_plotting_sf) + 
+  geom_sf(aes(fill = Density_intervals), colour = "white", linetype = 2) + 
+#  geom_sf_label(aes(label = Density)) +   # labels too busy here
+  theme_void() +  
+  scale_fill_brewer(palette = "YlOrRd") 
+```
+
+But why not make an interactive plot instead??
+
+```{r}
+#| warning: false
+
+# Create our own category bins for population densities
+#   and assign the yellow-orange-red color palette
+bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", domain = states$density, bins = bins)
+
+# Create labels that pop up when we hover over a state.  The labels must
+#   be part of a list where each entry is tagged as HTML code.
+state_plotting_sf <- state_plotting_sf |>
+  mutate(labels = str_c(name, ": ", Density, " people / sq mile"))
+labels <- lapply(state_plotting_sf$labels, HTML)
+
+# If want more HTML formatting, use these lines instead of those above:
+# states <- states |>
+#   mutate(labels = glue("<strong>{name}</strong><br/>{density} people / 
+#   mi<sup>2</sup>"))
+# labels <- lapply(states$labels, HTML)
+
+leaflet(state_plotting_sf) %>%
+  setView(-96, 37.8, 4) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~pal(Density),
+    weight = 2,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlightOptions = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")) %>%
+  addLegend(pal = pal, values = ~Density, opacity = 0.7, title = NULL,
+    position = "bottomright")
+```
+
+
+Other tidbits for later
+ - get shapefiles of all different levels/sizes from the Census Bureau
+ - use the tigris package to make maps of census data easier
+
+```{r}
+# Shapefiles from US Census Bureau:
+#https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html
+
+# using the tigris package
+# https://learn.r-journalism.com/en/mapping/census_maps/census-maps/
+
+# https://github.com/walkerke/tigris?tab=readme-ov-file
+
+# code below from Ch 5 in https://walker-data.com/census-r/index.html or
+#   specifically https://walker-data.com/census-r/census-geographic-data-and-applications-in-r.html
+
+
+# Store shapefiles on local computer rather than always downloading
+options(tigris_use_cache = TRUE)
+rappdirs::user_cache_dir("tigris")
+
+# Downloading the shapefiles for states at the lowest resolution
+library(tigris)
+states_tigris <- states(cb=T)   
+class(states_tigris)
+
+plot(states_tigris$geometry)
+
+states_tigris %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(popup=~NAME)
+
+mn_counties <- counties("MN")
+plot(mn_counties$geometry)
+
+rice_tracts <- tracts("MN", "Rice")
+plot(rice_tracts$geometry)
+
+# to be able to zoom plots
+library(mapview)
+mapview(rice_tracts)
+
+# cb=T gives cartographic boundary (e.g. Michigan looks better)
+mi_counties <- counties("MI")
+mi_counties_cb <- counties("MI", cb = TRUE)
+
+library(patchwork)   # for formatting ggplots
+a <- ggplot(mi_counties) + 
+  geom_sf() + 
+  theme_void() + 
+  labs(title = "TIGER/Line")
+
+b <- ggplot(mi_counties_cb) + 
+  geom_sf() + 
+  theme_void() + 
+  labs(title = "Cartographic boundary")
+
+a + b
+
+# see how geographies like census tracts change over time
+library(glue)
+library(purrr)
+yearly_plots <- map(seq(1990, 2020, 10), ~{
+  year_tracts <- tracts("TX", "Tarrant", year = .x,
+                        cb = TRUE)
+
+  ggplot(year_tracts) + 
+    geom_sf() + 
+    theme_void() + 
+    labs(title = glue("{.x}: {nrow(year_tracts)} tracts"))
+})
+
+(yearly_plots[[1]] + yearly_plots[[2]]) / 
+  (yearly_plots[[3]] + yearly_plots[[4]])
+
+
+# Plotting the US
+us_states <- states(cb = TRUE, resolution = "20m")  # low res
+
+# issues with territories and non-48 states
+ggplot(us_states) + 
+  geom_sf() + 
+  theme_void()
+
+# opinionated inclusion of non-48
+us_states_shifted <- shift_geometry(us_states)
+ggplot(us_states_shifted) + 
+  geom_sf() + 
+  theme_void()
+
+# another option
+us_states_outside <- shift_geometry(us_states, 
+                                    preserve_area = TRUE,
+                                    position = "outside")
+ggplot(us_states_outside) + 
+  geom_sf() + 
+  theme_void()
+```
+
+
+We will now use tidycensus to plot characteristics of geographies.  Here is a warning produced by tidycensus:
+
+Warning message:
+
+- You have not set a Census API key. Users without a key are limited to 500
+queries per day and may experience performance limitations.
+- For best results, get a Census API key at
+http://api.census.gov/data/key_signup.html and then supply the key to the
+`census_api_key()` function to use it throughout your tidycensus session.
+
+Ch 2 provides an excellent intro to the `tidycensus` package:
+https://walker-data.com/census-r/an-introduction-to-tidycensus.html
+
+Or use this site:
+https://walker-data.com/tidycensus/
+
+Can also use censusapi package for even more data: https://www.hrecht.com/censusapi/
+
+```{r}
+# I ran this below with the key I received via email to store and use
+#   my key immediately
+#census_api_key("my_api_key", install = TRUE)
+#readRenviron("~/.Renviron") 
+
+# After running the above code once, I can use the code below to
+#   access my key
+Sys.getenv("CENSUS_API_KEY")
+
+# Ch 6 with choropleth mapping of census data
+library(tidycensus)
+
+us_median_age <- get_acs(
+  geography = "state",
+  variables = "B01002_001",
+  year = 2019,
+  survey = "acs1",
+  geometry = TRUE,
+  resolution = "20m"
+) %>%
+  shift_geometry()
+
+ggplot(data = us_median_age, aes(fill = estimate)) + 
+  geom_sf()
+
+
+ggplot(data = us_median_age, aes(fill = estimate)) + 
+  geom_sf() + 
+  scale_fill_distiller(palette = "RdPu", 
+                       direction = 1) + 
+  labs(title = "  Median Age by State, 2019",
+       caption = "Data source: 2019 1-year ACS, US Census Bureau",
+       fill = "ACS estimate") + 
+  theme_void()
+
+# maps by zip code tabulation areas (ZCTAs)
+irs_data <- read_csv("https://www.irs.gov/pub/irs-soi/18zpallnoagi.csv")
+
+self_employment <- irs_data %>%
+  select(ZIPCODE, self_emp = N09400, total = N1)
+
+boston_zctas <- zctas(
+  cb = TRUE, 
+  starts_with = c("021", "022", "024"),
+  year = 2018
+)
+mapview(boston_zctas)
+
+boston_se_data <- boston_zctas %>%
+  left_join(self_employment, by = c("GEOID10" = "ZIPCODE")) %>%
+  mutate(pct_self_emp = 100 * (self_emp / total)) %>%
+  select(GEOID10, self_emp, pct_self_emp)
+# Ch 6 then uses tmap, but we could also use geom_sf()
+
+# leaflet plots with census data
+dallas_bachelors <- get_acs(
+  geography = "tract",
+  variables = "DP02_0068P",
+  year = 2020,
+  state = "TX",
+  county = "Dallas",
+  geometry = TRUE
+)
+
+mapview(dallas_bachelors, zcol = "estimate")
+
+library(leaflet)
+
+pal <- colorNumeric(
+  palette = "magma",
+  domain = dallas_bachelors$estimate
+)
+
+pal(c(10, 20, 30, 40, 50))
+
+# code below doesn't work - "sf layer has inconsistent datum"
+leaflet() %>%
+  addProviderTiles(providers$Stamen.TonerLite) %>%
+  addPolygons(data = dallas_bachelors,
+              color = ~pal(estimate),
+              weight = 0.5,
+              smoothFactor = 0.2,
+              fillOpacity = 0.5,
+              label = ~estimate) %>%
+  addLegend(
+    position = "bottomright",
+    pal = pal,
+    values = dallas_bachelors$estimate,
+    title = "% with bachelor's<br/>degree"
+  )
+```
+
+
+Notes from elsewhere:
+
+
+Other tidbits for later
+ - get shapefiles of all different levels/sizes from the Census Bureau
+ - use the tigris package to make maps of census data easier
+
+```{r}
+# Shapefiles from US Census Bureau:
+#https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html
+
+# using the tigris package
+# https://learn.r-journalism.com/en/mapping/census_maps/census-maps/
+
+# https://github.com/walkerke/tigris?tab=readme-ov-file
+
+# https://walker-data.com/census-r/census-geographic-data-and-applications-in-r.html
+
+# Downloading the shapefiles for states at the lowest resolution
+library(tigris)
+states_tigris <- states(cb=T)
+class(states_tigris)
+
+states_tigris %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(popup=~NAME)
+
+mn_counties <- counties("MN")
+plot(mn_counties$geometry)
+
+
+# Good explanation of maps package vs sf package
+# https://ggplot2-book.org/maps
+
+```
+
+

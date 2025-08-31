@@ -1,0 +1,218 @@
+---
+title: "Sample MP4 using SQL"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(mdsr)
+library(dbplyr)
+library(DBI)
+```
+
+
+### Potential Exercises
+
+Project webpage: https://www.science.smith.edu/wai-database/
+
+Info about data: https://www.science.smith.edu/wai-database/home/download-data/
+
+Plot to duplicate: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093226/
+
+
+
+```{r}
+library(RMariaDB)
+con <- dbConnect(
+  MariaDB(), host = "scidb.smith.edu",
+  user = "waiuser", password = "smith_waiDB", 
+  dbname = "wai"
+)
+Measurements <- tbl(con, "Measurements")
+PI_Info <- tbl(con, "PI_Info")
+Subjects <- tbl(con, "Subjects")
+
+# collect(Measurements)
+```
+
+
+```{sql, connection = con}
+SELECT * FROM PI_Info LIMIT 0,10;
+```
+
+```{sql, connection = con, output.var = "temp0"}
+SELECT * 
+FROM Measurements 
+WHERE Identifier = "Werner_2010";
+```
+
+```{r}
+collect(temp0)
+length(table(temp0$SubjectNumber, temp0$Ear))
+```
+
+At least for Abur_2014, there are 248 frequencies per session per ear, and the frequencies are always the same.  Thus, it appears any averaging must be across sessions.
+
+```{sql, connection = con, output.var = "temp"}
+SELECT Identifier, SubjectNumber, Ear, Frequency,
+  AVG(Absorbance) AS mean_absorbance
+FROM Measurements
+WHERE Identifier IN ('Abur_2014', 'Feeney_2017', 'Groon_2015',
+              'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006',
+              'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010',
+              'Werner_2010') AND Frequency < 8000 AND Frequency > 200
+GROUP BY Identifier, SubjectNumber, Ear, Frequency;
+```
+
+```{r}
+# 155103 x 5 data set
+head(temp)
+```
+
+```{r}
+#| warning: FALSE
+#| message: FALSE  
+
+table(temp$Identifier)
+table(temp$Identifier, temp$SubjectNumber)
+
+temp |>
+  mutate(logFrequency = log10(Frequency)) |>
+  ggplot(aes(x = logFrequency, y = mean_absorbance, color = Identifier)) +
+    geom_smooth() 
+```
+
+```{sql, connection = con, output.var = "temp2"}
+SELECT p.Identifier, Year, AuthorsShortList, Instrument, 
+       COUNT(DISTINCT SubjectNumber, Ear) AS Unique_Ears
+FROM PI_Info AS p
+LEFT JOIN Measurements AS m ON m.Identifier = p.Identifier
+WHERE p.Identifier IN ('Abur_2014', 'Feeney_2017', 'Groon_2015',
+              'Lewis_2015', 'Liu_2008', 'Rosowski_2012', 'Shahnaz_2006',
+              'Shaver_2013', 'Sun_2016', 'Voss_1994', 'Voss_2010',
+              'Werner_2010') AND Frequency < 8000 AND Frequency > 200
+GROUP BY p.Identifier, Instrument
+```
+
+```{r}
+#| warning: FALSE
+#| message: FALSE  
+
+# use for smoother labels
+temp2 <- temp2 |>
+  mutate(our_label = str_glue("{AuthorsShortList} ({Year}) N={Unique_Ears}; {Instrument}"))
+temp2
+
+temp |>
+  mutate(logFrequency = log10(Frequency)) |>
+  ggplot(aes(x = logFrequency, y = mean_absorbance, color = Identifier)) +
+    geom_smooth() +
+    labs(y = "Mean Absorbance",
+         x = "Frequency (Hz)",
+         title = "Mean absorbance from each publication in WAI database") +
+    scale_color_discrete(labels = temp2$our_label)
+```
+
+
+
+Find a study where subjects of different sex, race, or ethnicity were enrolled:
+
+```{sql, connection = con, output.var = "temp0"}
+SELECT * 
+FROM Subjects 
+WHERE Identifier = "Werner_2010";
+```
+
+```{r}
+table(temp0$Sex)
+table(temp0$AgeCategoryFirstMeasurement)
+table(temp0$Race)
+table(temp0$Ethnicity)
+```
+
+Then produce frequency vs mean absorbance plots by demographic category:
+
+```{sql, connection = con, output.var = "temp3"}
+SELECT s.Identifier, Sex, AgeCategoryFirstMeasurement, 
+       s.SubjectNumber, Ear, Frequency, mean_absorbance
+FROM Subjects AS s
+RIGHT JOIN (SELECT m.Identifier, m.SubjectNumber, Ear, Frequency,
+              AVG(Absorbance) AS mean_absorbance
+            FROM Measurements AS m
+            WHERE Identifier = 'Werner_2010' 
+              AND Frequency < 8000 AND Frequency > 200
+            GROUP BY m.Identifier, m.SubjectNumber, Ear, Frequency) AS j
+  ON j.SubjectNumber = s.SubjectNumber AND
+     j.Identifier = s.Identifier
+```
+
+```{r}
+#| warning: FALSE
+#| message: FALSE  
+
+head(temp3)
+
+temp3 |>
+  mutate(logFrequency = log10(Frequency)) |>
+  ggplot(aes(x = logFrequency, y = mean_absorbance, color = Sex)) +
+    geom_smooth() +
+    labs(y = "Mean Absorbance",
+         x = "Frequency (Hz)",
+         title = "Plots from Werner (2010) by Sex")
+
+temp3 |>
+  mutate(logFrequency = log10(Frequency)) |>
+  ggplot(aes(x = logFrequency, y = mean_absorbance, 
+             color = AgeCategoryFirstMeasurement)) +
+    geom_smooth() +
+    labs(y = "Mean Absorbance",
+         x = "Frequency (Hz)",
+         title = "Plots from Werner (2010) by Age",
+         color = "Age Category")
+```
+
+
+
+
+### Didn't use imdb database
+
+```{r}
+# Supplementary exercise 1 - imdb database.  21 tables can be seen using
+# SHOW TABLES.  
+
+# Hard to tell if there's anything interesting here (rating, budget, etc.),
+# but this database is used in Ch 20: Networks extended example
+db2 <- dbConnect_scidb("imdb")
+movie_info <- tbl(db2, "movie_info")
+person_info <- tbl(db2, "person_info")
+movie_info_idx <- tbl(db2, "movie_info_idx")
+title <- tbl(db2, "title")
+cast_info <- tbl(db2, "cast_info")
+char_name <- tbl(db2, "char_name")
+keyword <- tbl(db2, "keyword")
+kind_type <- tbl(db2, "kind_type")
+role_type <- tbl(db2, "role_type")
+name <- tbl(db2, "name")
+
+```
+
+```{sql, connection = db2}
+SHOW TABLES;
+```
+
+```{sql, connection = db2}
+DESCRIBE keyword;
+```
+
+```{sql, connection = db2}
+SELECT * FROM name LIMIT 0,10;
+```

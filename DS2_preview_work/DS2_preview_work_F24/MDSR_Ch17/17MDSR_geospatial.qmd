@@ -1,0 +1,151 @@
+---
+title: "MDSR2e Ch 17: Working with geospatial data"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options:
+  chunk_output_type: console
+---
+
+This is an abbreviated version of the full version in R > DS2, just to play with GitHub.  Focus on NC Congressional districts.  No leaflet since that needs html.
+
+```{r}
+#| label: setup
+#| include: false
+
+#| no longer needed:
+#| knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Goals
+
+-   To
+
+# Required reading
+
+-   [Chapter 5](https://openintro-ims.netlify.app/explore-numerical.html) of your textbook
+
+# New Code
+
+-   `mosaic::favstats(dataset$var)`, provides summary statistics for variable `var` from `dataset`
+
+# Before class
+
+Let's start by loading a subset of data used for the story by doing the following command in R
+
+```{r}
+#| Section 17.1: Whats so great about geospatial data?
+
+library(tidyverse)
+library(mdsr)
+library(sf)
+library(ggspatial)
+
+#| Section 17.4: Extended example - Congressional districts
+
+#| Section 17.4.1: Election results
+
+library(fec12)
+results_house |> 
+  group_by(state, district_id) |> 
+  summarize(N = n()) |> 
+  nrow()
+
+results_house |> 
+  left_join(candidates, by = "cand_id") |>
+  select(state, district_id, cand_name, party, general_votes) |>
+  arrange(desc(general_votes)) |> filter(state == "NC") |> count(party) |> 
+  print(n = Inf)
+
+district_elections <- results_house |>
+  mutate(district = parse_number(district_id)) |>
+  group_by(state, district) |>
+  summarize(   # pretty crude - e.g. won't count 14 DFL candidates
+    N = n(),   #   but maybe okay for NC (24 D, 48 R, 3 LIB, 1 W)
+    total_votes = sum(general_votes, na.rm = TRUE),
+    d_votes = sum(ifelse(party == "D", general_votes, 0), na.rm = TRUE),
+    r_votes = sum(ifelse(party == "R", general_votes, 0), na.rm = TRUE)
+  ) |>
+  mutate(
+    other_votes = total_votes - d_votes - r_votes,
+    r_prop = r_votes / total_votes,  
+    winner = ifelse(r_votes > d_votes, "Republican", "Democrat")
+  )
+nc_results <- district_elections |> 
+  filter(state == "NC")
+nc_results |>
+  ungroup() |>   # book code doesn't work without ungroup()
+  select(-state)
+
+nc_results |>   # summary stats of total_votes column (no na's to worry about)
+  skim(total_votes) |>
+  select(-na)
+
+nc_results |>
+  summarize(
+    N = n(), 
+    state_votes = sum(total_votes), 
+    state_d = sum(d_votes), 
+    state_r = sum(r_votes)
+  ) |>
+  mutate(
+    d_prop = state_d / state_votes, 
+    r_prop = state_r / state_votes
+  )
+
+nc_results |> 
+  select(district, r_prop, winner) |> 
+  arrange(desc(r_prop))
+
+#| Section 17.4.2: Congressional districts
+
+#src <- "http://cdmaps.polisci.ucla.edu/shp/districts113.zip"
+#dsn_districts <- usethis::use_zip(src, destdir = fs::path("data_large"))
+
+#| didn't use code above but downloaded zip file and uploaded it into R
+dsn_districts <- fs::path("~/R/DS2/districtShapes")
+
+st_layers(dsn_districts)
+
+districts <- st_read(dsn_districts, layer = "districts113") |>
+  mutate(DISTRICT = parse_number(as.character(DISTRICT)))
+
+glimpse(districts)
+
+nc_shp <- districts |>
+  filter(STATENAME == "North Carolina")
+nc_shp |>   # works but tons of white space around plot
+  st_geometry() |>
+  plot(col = gray.colors(nrow(nc_shp)))
+
+#| Section 17.4.3: Putting it all together
+
+nc_merged <- nc_shp |>
+  st_transform(4326) |>
+  inner_join(nc_results, by = c("DISTRICT" = "district"))
+glimpse(nc_merged)
+
+#| Section 17.4.4: Using ggplot2
+
+nc <- ggplot(data = nc_merged, aes(fill = winner)) +
+  annotation_map_tile(zoom = 7, type = "osm") + 
+  geom_sf(alpha = 0.5) +
+  scale_fill_manual("Winner", values = c("blue", "red")) + 
+  geom_sf_label(aes(label = DISTRICT), fill = "white") + 
+  theme_void()
+nc   # background pretty fuzzy if use, say, zoom = 5
+
+nc + 
+  aes(fill = r_prop) + 
+  scale_fill_distiller(
+    "Proportion\nRepublican", 
+    palette = "RdBu", 
+    limits = c(0.2, 0.8)
+  )
+
+```

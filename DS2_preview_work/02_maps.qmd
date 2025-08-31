@@ -1,0 +1,491 @@
+---
+title: "Creating informative maps"
+sidebar: false
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/02_maps.qmd).  Just hit the Download Raw File button.
+
+
+```{r}
+#| message: false
+#| warning: false
+
+# Initial packages required (we'll be adding more)
+library(tidyverse)
+library(mdsr)      # package associated with our MDSR book
+```
+
+
+### Opening example
+
+Here is a simple choropleth map example from Section 3.2.3 of MDSR.  Note how we use an underlying map with strategic shading to convey a story about a variable that's been measured on each country. 
+
+```{r}
+#| message: false
+#| warning: false
+
+# CIACountries is a 236 x 8 data set with information on each country
+#   taken from the CIA factbook - gdp, education, internet use, etc.
+head(CIACountries)
+CIACountries |>
+  select(country, oil_prod) |>
+  mutate(oil_prod_disc = cut(oil_prod, 
+    breaks = c(0, 1e3, 1e5, 1e6, 1e7, 1e8), 
+    labels = c(">1000", ">10,000", ">100,000", ">1 million", 
+               ">10 million"))) |>
+  mosaic::mWorldMap(key = "country") +  #<1>
+  geom_polygon(aes(fill = oil_prod_disc)) + 
+  scale_fill_brewer("Oil Prod. (bbl/day)", na.value = "white") +
+  theme(legend.position = "top")
+```
+
+1. We won't use mWorldMap often, but it's a good quick illustration
+
+
+### Choropleth Maps
+
+When you have specific regions (e.g. countries, states, counties, census tracts,...) and a value associated with each region. 
+
+A choropleth map will color the entire region according to the value. 
+For example, let's consider state vaccination data from March 2021.
+
+```{r}
+#| message: false
+#| warning: false
+
+
+
+vaccines <- read_csv("https://joeroith.github.io/264_spring_2025/Data/vacc_Mar21.csv") 
+
+vacc_mar13 <- vaccines |>
+  filter(Date =="2021-03-13") |>
+  select(State, Date, people_vaccinated_per100, share_doses_used, Governor)
+
+vacc_mar13
+```
+
+The tricky part of choropleth maps is getting the shapes (polygons) that make up the regions. This is really a pretty complex set of lines for R to draw! 
+
+Luckily, some maps are already created in R in the `maps` package.
+
+```{r}
+#| message: false
+#| warning: false
+
+library(maps)
+us_states <- map_data("state")
+head(us_states)
+
+us_states |>
+  ggplot(mapping = aes(x = long, y = lat,
+                          group = group)) + 
+  geom_polygon(fill = "white", color = "black")
+```
+
+**[Pause to ponder:]** What might the `group` and `order` columns represent?
+
+
+Other maps provided by the `maps` package include US counties, France, Italy, New Zealand, and two different views of the world. If you want maps of other countries or regions, you can often find them online.
+
+Where the really cool stuff happens is when we join our data to the `us_states` dataframe.  Notice that the state name appears in the "region" column of `us_states`, and that the state name is in all small letters. In `vacc_mar13`, the state name appears in the State column and is in lower case.  Thus, we have to be very careful when we join the state vaccine info to the state geography data.
+
+Run this line by line to see what it does:
+
+```{r}
+vacc_mar13 <- vacc_mar13 |>
+  mutate(State = str_to_lower(State))
+
+vacc_mar13 |>
+  right_join(us_states, by = c("State" = "region")) |>
+  rename(region = State) |>
+  ggplot(mapping = aes(x = long, y = lat,
+                          group = group)) + 
+  geom_polygon(aes(fill = people_vaccinated_per100), color = "black")
+```
+
+oops, New York appears to be a problem.
+
+```{r}
+vacc_mar13 |>
+  anti_join(us_states, by = c("State" = "region"))
+
+us_states |>
+  anti_join(vacc_mar13, by = c("region" = "State")) |>
+  count(region)
+```
+
+**[Pause to ponder:]** What did we learn by running `anti_join()` above?
+
+
+Notice that the `us_states` map also includes only the contiguous 48 states. [This](https://r-spatial.org/r/2018/10/25/ggplot2-sf-3.html) gives an example of creating really beautiful map insets for Alaska and Hawaii.
+
+```{r}
+vacc_mar13 <- vacc_mar13 |>
+  mutate(State = str_replace(State, " state", ""))
+
+vacc_mar13 |>
+  anti_join(us_states, by = c("State" = "region"))
+
+us_states |>
+  anti_join(vacc_mar13, by = c("region" = "State")) %>%
+  count(region)
+```
+
+Better.
+
+
+```{r}
+#| message: false
+#| warning: false
+
+library(viridis) # for color schemes
+vacc_mar13 |>
+  right_join(us_states, by = c("State" = "region")) |>
+  rename(region = State) |>
+  ggplot(mapping = aes(x = long, y = lat,
+                          group = group)) + 
+  geom_polygon(aes(fill = people_vaccinated_per100), color = "black") + 
+  labs(fill = "People Vaccinated\nper 100 pop.") +
+  coord_map() +  #<1>
+  theme_void() +  #<2>
+  scale_fill_viridis()  #<3>
+```
+
+1. This scales the longitude and latitude so that the shapes look correct.  coord_quickmap() can also work here - it's less exact but faster.
+2. This theme can give you a really clean look
+3. You can change the fill scale for different color schemes.
+
+
+You can also use a categorical variable to color regions:
+
+```{r}
+vacc_mar13 |>
+  right_join(us_states, by = c("State" = "region")) |>
+  rename(region = State) |>
+  ggplot(mapping = aes(x = long, y = lat,
+                          group = group)) + 
+  geom_polygon(aes(fill = Governor), color = "darkgrey", linewidth = 0.2) + 
+  labs(fill = "Governor") +
+  coord_map() + 
+  theme_void() +  
+  scale_fill_manual(values = c("blue", "red")) #<1>
+```
+
+1. You can change the fill scale for different color schemes.
+
+
+**Note:** Map projections are actually pretty complicated, especially if you're looking at large areas (e.g. world maps) or drilling down to very small regions where a few feet can make a difference (e.g. tracking a car on a map of roads).  It's impossible to preserve both shape and area when projecting an (imperfect) sphere onto a flat surface, so that's why you sometimes see [such different maps of the world](https://futuremaps.com/blogs/news/top-10-world-map-projections).  This is why packages like `maps` which connect latitude-longitude points are being phased out in favor of packages like `sf` with more GIS functionality.  We won't get too deep into GIS in this class, but to learn more, take Spatial Data Analysis!!
+
+
+### Multiple maps!  
+
+You can still use data viz tools from Data Science 1 (like faceting) to create things like time trends in maps:
+
+```{r}
+#| message: false
+#| warning: false
+
+library(lubridate)
+weekly_vacc <- vaccines |>
+  mutate(State = str_to_lower(State)) |>
+  mutate(State = str_replace(State, " state", ""),
+         week = week(Date)) |>
+  group_by(week, State) |>
+  summarize(date = first(Date),
+            mean_daily_vacc = mean(daily_vaccinated/est_population*1000)) |>
+  right_join(us_states, by =c("State" = "region")) |>
+  rename(region = State)
+
+weekly_vacc |>
+  filter(week > 2, week < 11) |>
+  ggplot(mapping = aes(x = long, y = lat,
+                          group = group)) + 
+  geom_polygon(aes(fill = mean_daily_vacc), color = "darkgrey", 
+               linewidth = 0.1) + 
+  labs(fill = "Weekly Average Daily Vaccinations per 1000") +
+  coord_map() + 
+  theme_void() + 
+  scale_fill_viridis() + 
+  facet_wrap(~date) + 
+  theme(legend.position = "bottom") 
+```
+
+**[Pause to ponder:]** are we bothered by the warning about many-to-many when you run the code above?
+
+
+### Other cool state maps
+
+#### statebin (square representation of states)
+
+```{r}
+#| message: false
+#| warning: false
+
+library(statebins) # may need to install
+
+vacc_mar13 |>
+  mutate(State = str_to_title(State)) |>
+  statebins(state_col = "State",
+            value_col = "people_vaccinated_per100") + 
+  theme_statebins() + #<1>
+  labs(fill = "People Vaccinated per 100")
+```
+
+1. One nice layout. You can customize with usual ggplot themes.
+
+
+**[Pause to ponder:]** Why might one use a map like above instead of our previous choropleth maps?
+
+
+I used [this example](https://livefreeordichotomize.com/2021/04/07/nytimes-map-how-to/) to create the code above.  The original graph is located [here](https://www.nytimes.com/interactive/2021/04/06/us/variants-cases-spread.html).
+
+
+### Interactive point maps with leaflet
+
+To add even more power and value to your plots, we can add interactivity.  For now, we will use the `leaflet` package, but later in the course we will learn even more powerful and flexible approaches for creating interactive plots and webpages.  
+
+For instance, here is a really simple plot with a pop-up window:
+
+```{r}
+library(leaflet)
+
+leaflet() |> 
+  addTiles() |>   #<1>
+  setView(-93.1832, 44.4597, zoom = 17) |>   #<2>
+  addPopups(-93.1832, 44.4597, 'Here is the <b>Regents Hall of Mathematical Sciences</b>, home of the Statistics and Data Science program at St. Olaf College')   #<3>
+```
+
+1. addTiles() uses OpenStreetMap, an awesome open-source mapping resource, as the default tile layer (background map)
+2. setView() centers the map at a specific latitude and longitude, then zoom controls how much of the surrounding area is shown
+3. add a popup message (with html formatting) that can be clicked on or off
+
+
+Leaflet is not part of the tidyverse, but the structure of its code is pretty similar and it also plays well with piping.
+
+Let's try pop-up messages with a data set containing Airbnb listings in the Boston area:
+
+```{r}
+#| message: false
+#| include: false
+
+#airbnb.df <- read_csv("https://raw.githubusercontent.com/joeroith/264_spring_2025/main/Data/airbnbData.csv") 
+airbnb.df <- read_csv("https://joeroith.github.io/264_spring_2025/Data/airbnbData.csv") 
+```
+
+```{r}
+leaflet() |>
+    addTiles() |>
+    setView(lng = mean(airbnb.df$Long), lat = mean(airbnb.df$Lat), 
+            zoom = 13) |> 
+    addCircleMarkers(data = airbnb.df,
+        lat = ~ Lat, 
+        lng = ~ Long, 
+        popup = ~ AboutListing, 
+        radius = ~ S_Accomodates,  
+        # These last options describe how the circles look
+        weight = 2,
+        color = "red", 
+        fillColor = "yellow")
+```
+
+**[Pause to ponder:]** List similarities and differences between leaflet plots and ggplots.
+
+
+
+### Interactive choropleth maps with leaflet
+
+OK.  Now let's see if we can put things together and duplicate the interactive choropleth map found [here](https://rstudio.github.io/leaflet/articles/choropleths.html) showing population density by state in the US.  
+
+
+#### A preview to shapefiles and the sf package
+
+```{r}
+#| message: false
+
+library(sf) #<1>
+states <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson")  #<2>
+class(states) #<3>
+states
+```
+
+1. `sf` stands for "simple features"
+2. From https://leafletjs.com/examples/choropleth/us-states.js
+3. Note that `states` has class `sf` in addition to the usual `tbl` and `df`
+
+
+For maps in `leaflet` that show boundaries and not just points, we need to input a shapefile rather than a series of latitude-longitude combinations like we did for the `maps` package.  In the example we're emulating, they use the `read_sf()` function from the `sf` package to read in data.  While our `us_states` data frame from the `maps` package contained 15537 rows, our simple features object `states` contains only 52 rows - one per state.  Importantly, `states` contains a column called `geometry`, which is a "multipolygon" with all the information necessary to draw a specific state.  Also, while `states` can be treated as a tibble or data frame, it is also an `sf` class object with a specific "geodetic coordinate reference system".  Again, take Spatial Data Analysis for more on shapefiles and simple features!
+
+Note also that the authors of this example have already merged state population densities with state geometries, but if we wanted to merge in other state characteristics using the `name` column as a key, we could definitely do this!
+
+First we'll start with a static plot using a simple features object and geom_sf():
+
+```{r}
+# Create density bins as on the webpage
+state_plotting_sf <- states |>
+  mutate(density_intervals = cut(density, n = 8,
+          breaks = c(0, 10, 20, 50, 100, 200, 500, 1000, Inf))) |>
+  filter(!(name %in% c("Alaska", "Hawaii", "Puerto Rico")))
+
+ggplot(data = state_plotting_sf) + 
+  geom_sf(aes(fill = density_intervals), colour = "white", linetype = 2) + 
+#  geom_sf_label(aes(label = density)) +   # labels too busy here
+  theme_void() +  
+  scale_fill_brewer(palette = "YlOrRd") 
+```
+
+Now let's use `leaflet` to create an interactive plot!
+
+```{r}
+#| warning: false
+
+# Create our own category bins for population densities
+#   and assign the yellow-orange-red color palette
+bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", domain = states$density, bins = bins)
+
+# Create labels that pop up when we hover over a state.  The labels must
+#   be part of a list where each entry is tagged as HTML code.
+library(htmltools)
+library(glue)
+
+states <- states |>
+  mutate(labels = str_c(name, ": ", density, " people / sq mile"))
+
+# If want more HTML formatting, use these lines instead of those above:
+#states <- states |>
+#  mutate(labels = glue("<strong>{name}</strong><br/>{density} people / #mi<sup>2</sup>"))
+
+labels <- lapply(states$labels, HTML)
+
+leaflet(states) |>
+  setView(-96, 37.8, 4) |>
+  addTiles() |>
+  addPolygons(
+    fillColor = ~pal(density),
+    weight = 2,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlightOptions = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+    label = labels,
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto")) |>
+  addLegend(pal = pal, values = ~density, opacity = 0.7, title = NULL,
+    position = "bottomright")
+```
+
+**[Pause to ponder:]** Pick several formatting options in the code above, determine what they do, and then change them to create a customized look.
+
+
+### On Your Own
+
+The `states` dataset in the `poliscidata` package contains 135 variables on each of the 50 US states.  See [here](https://rdrr.io/cran/poliscidata/man/states.html) for more detail.
+
+Your task is to create a *two* meaningful choropleth plots, one using a numeric variable and one using a categorical variable from `poliscidata::states`.  You should make *two* versions of each plot: a static plot using the `maps` package and `ggplot()`, and an interactive plot using the `sf` package and `leaflet()`.  Write a sentence or two describing what you can learn from each plot.
+
+Here's some R code and hints to get you going:
+
+```{r}
+#| message: false
+#| warning: false
+
+# Get info to draw US states for geom_polygon (connect the lat-long points)
+library(maps)
+states_polygon <- as_tibble(map_data("state")) |>
+  select(region, group, order, lat, long)
+
+# See what the state (region) levels look like in states_polygon
+unique(states_polygon$region)
+
+
+# Get info to draw US states for geom_sf and leaflet (simple features object 
+#   with multipolygon geometry column)
+library(sf)
+states_sf <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
+  select(name, geometry)
+
+# See what the state (name) levels look like in states_sf
+unique(states_sf$name)
+
+
+# Load in state-wise data for filling our choropleth maps
+#   (Note that I selected my two variables of interest to simplify)
+library(poliscidata)   # may have to install first
+polisci_data <- as_tibble(poliscidata::states) |>
+  select(state, carfatal07, cook_index3)
+
+# See what the state (state) levels look like in polisci_data
+unique(polisci_data$state)   # can't see trailing spaces but can see
+                             #   lack of internal spaces
+print(polisci_data)   # can see trailing spaces
+```
+
+R code hints:
+
+- stringr functions like `str_squish` and `str_to_lower` and `str_replace_all` (be sure to carefully look at your keys!)
+- *_join functions (make sure they preserve classes)
+- filter so that you only have 48 contiguous states (and maybe DC)
+- for help with colors: https://rstudio.github.io/leaflet/reference/colorNumeric.html
+- be sure labels pop up when scrolling with leaflet
+
+
+```{r}
+# Make sure all keys have the same format before joining:
+#   all lower case, no internal or external spaces
+
+```
+
+```{r}
+# Now we can merge data sets together for the static and the interactive plots
+
+
+# Merge with states_polygon (static)
+
+# Check that merge worked for 48 contiguous states
+
+
+# Merge with states_sf (static or interactive)
+
+# Check that merge worked for 48 contiguous states
+
+```
+
+
+Numeric variable (static plot):
+
+```{r}
+
+```
+
+
+Numeric variable (interactive plot):
+
+```{r}
+# it's okay to skip a legend here
+```
+
+
+Categorical variable (static plot):
+
+```{r}
+# be really careful with matching color order to factor level order
+```
+
+
+Categorical variable (interactive plot):
+
+```{r}
+# may use colorFactor() here
+```
