@@ -1,0 +1,11 @@
+name: ProfR_Shiny_flexdashboard
+title: ProfR_Shiny_flexdashboard
+username:
+account: proback
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7824336
+bundleId: 9496819
+url: https://proback.shinyapps.io/ProfR_Shiny_flexdashboard/
+asMultiple: FALSE
+asStatic: FALSE

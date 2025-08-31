@@ -1,0 +1,10 @@
+name: profr_app
+title:
+username:
+account: proback
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1546882
+bundleId: 2631330
+url: https://proback.shinyapps.io/profr_app/
+when: 1575255669.63285

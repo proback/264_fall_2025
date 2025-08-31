@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Strings: In-class Exercises (Part 2) – SDS 264: Data Science 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e137d14179fa74b23b5b2b66ff8bbb28.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<link href="site_libs/str_view-0.1.0/str_view.css" rel="stylesheet">
+
+<script src="site_libs/str_view-binding-1.5.1/str_view.js"></script>
+
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">SDS 264: Data Science 2</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tech-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tech Notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tech-notes">    
+        <li>
+    <a class="dropdown-item" href="./tech_setup.html">
+ <span class="dropdown-text">Tech Setup</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./why_quarto.html">
+ <span class="dropdown-text">Why Quarto?</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./github_intro.html">
+ <span class="dropdown-text">Intro to GitHub</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./github_links.html">
+ <span class="dropdown-text">GitHub Links</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-activities" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Activities</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-activities">    
+        <li>
+    <a class="dropdown-item" href="./01_review164.html">
+ <span class="dropdown-text">Review of Data Science 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./02_strings_part1.html">
+ <span class="dropdown-text">Strings: In-class Exercises (Part 1)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./03_strings_part2.html">
+ <span class="dropdown-text">Strings: In-class Exercises (Part 2)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./04_strings_part3.html">
+ <span class="dropdown-text">Strings: Extra Practice (Part 3)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./05_text_analysis.html">
+ <span class="dropdown-text">Text analysis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
+        <li>
+    <a class="dropdown-item" href="./miniproject01.html">
+ <span class="dropdown-text">Mini-Project 1: Text Analysis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./rtipoftheday.html"> 
+<span class="menu-text">R Tip of the Day</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_strings_part2.html">Strings: In-class Exercises (Part 2)</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_review164.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Review of Data Science 1</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_strings_part1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 1)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_strings_part2.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Strings: In-class Exercises (Part 2)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_strings_part3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: Extra Practice (Part 3)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_text_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text analysis</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#manipulating-strings" id="toc-manipulating-strings" class="nav-link active" data-scroll-target="#manipulating-strings">Manipulating strings</a></li>
+  <li><a href="#warm-up" id="toc-warm-up" class="nav-link" data-scroll-target="#warm-up">Warm-up</a></li>
+  <li><a href="#important-functions-for-identifying-strings-which-match" id="toc-important-functions-for-identifying-strings-which-match" class="nav-link" data-scroll-target="#important-functions-for-identifying-strings-which-match">Important functions for identifying strings which match</a></li>
+  <li><a href="#a-tibble-2-2" id="toc-a-tibble-2-2" class="nav-link" data-scroll-target="#a-tibble-2-2">A tibble: 2 × 2</a></li>
+  <li><a href="#a-tibble-2-2-1" id="toc-a-tibble-2-2-1" class="nav-link" data-scroll-target="#a-tibble-2-2-1">A tibble: 2 × 2</a>
+  <ul class="collapse">
+  <li><a href="#matching-patterns-with-regular-expressions" id="toc-matching-patterns-with-regular-expressions" class="nav-link" data-scroll-target="#matching-patterns-with-regular-expressions">Matching patterns with regular expressions</a></li>
+  <li><a href="#more-useful-regular-expressions" id="toc-more-useful-regular-expressions" class="nav-link" data-scroll-target="#more-useful-regular-expressions">More useful regular expressions:</a></li>
+  <li><a href="#repetition" id="toc-repetition" class="nav-link" data-scroll-target="#repetition">Repetition</a></li>
+  <li><a href="#useful-functions-for-handling-patterns" id="toc-useful-functions-for-handling-patterns" class="nav-link" data-scroll-target="#useful-functions-for-handling-patterns">Useful functions for handling patterns</a></li>
+  <li><a href="#grouping-and-backreferences" id="toc-grouping-and-backreferences" class="nav-link" data-scroll-target="#grouping-and-backreferences">Grouping and backreferences</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Strings: In-class Exercises (Part 2)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>You can download this .qmd file from <a href="https://github.com/joeroith/264_spring_2025/blob/main/11_strings_part2.qmd">here</a>. Just hit the Download Raw File button.</p>
+<p>This uses parts of R4DS Ch 14: Strings and Ch 15: Regular Expressions (both the first and second editions).</p>
+<section id="manipulating-strings" class="level2">
+<h2 class="anchored" data-anchor-id="manipulating-strings">Manipulating strings</h2>
+<p>str functions to know for manipulating strings:</p>
+<ul>
+<li>str_length()</li>
+<li>str_sub()</li>
+<li>str_c()</li>
+<li>str_to_lower()</li>
+<li>str_to_upper()</li>
+<li>str_to_title()</li>
+<li>str_replace() <em>not in 10_strings examples</em></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#spotify &lt;- read_csv("Data/spotify.csv") </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>spotify <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://joeroith.github.io/264_spring_2025/Data/spotify.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>spot_smaller <span class="ot">&lt;-</span> spotify <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    title, </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    artist, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    album_release_date, </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    album_name, </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    subgenre, </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    playlist_name</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>spot_smaller <span class="ot">&lt;-</span> spot_smaller[<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">32</span>, <span class="dv">49</span>, <span class="dv">52</span>, <span class="dv">83</span>, <span class="dv">175</span>, <span class="dv">219</span>, <span class="dv">231</span>, <span class="dv">246</span>, <span class="dv">265</span>), ]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>spot_smaller</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 6
+   title             artist album_release_date album_name subgenre playlist_name
+   &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;              &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;        
+ 1 Hear Me Now       Alok   2016-01-01         Hear Me N… indie p… "Chillout &amp; …
+ 2 Run the World (G… Beyon… 2011-06-24         4          post-te… "post-teen a…
+ 3 Formation         Beyon… 2016-04-23         Lemonade   hip pop  "Feeling Acc…
+ 4 7/11              Beyon… 2014-11-24         BEYONCÉ [… hip pop  "Feeling Acc…
+ 5 My Oh My (feat. … Camil… 2019-12-06         Romance    latin p… "2020 Hits &amp;…
+ 6 It's Automatic    Frees… 2013-11-28         It's Auto… latin h… "80's Freest…
+ 7 Poetic Justice    Kendr… 2012               good kid,… hip hop  "Hip Hop Con…
+ 8 A.D.H.D           Kendr… 2011-07-02         Section.80 souther… "Hip-Hop 'n …
+ 9 Ya Estuvo         Kid F… 1990-01-01         Hispanic … latin h… "HIP-HOP: La…
+10 Runnin (with A$A… Mike … 2018-11-16         Creed II:… gangste… "RAP Gangsta"</code></pre>
+</div>
+</div>
+</section>
+<section id="warm-up" class="level2">
+<h2 class="anchored" data-anchor-id="warm-up">Warm-up</h2>
+<ol start="0" type="1">
+<li>Describe what EACH of the str_ functions below does. Then, create a new variable “month” which is the two digit month from album_release_date</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>spot_new <span class="ot">&lt;-</span> spot_smaller <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(title, album_release_date) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">title_length =</span> <span class="fu">str_length</span>(title),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">year =</span> <span class="fu">str_sub</span>(album_release_date, <span class="dv">1</span>, <span class="dv">4</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">title_lower =</span> <span class="fu">str_to_lower</span>(title),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">album_release_date2 =</span> <span class="fu">str_replace_all</span>(album_release_date, <span class="st">"-"</span>, <span class="st">"/"</span>))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>spot_new</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 6
+   title   album_release_date title_length year  title_lower album_release_date2
+   &lt;chr&gt;   &lt;chr&gt;                     &lt;int&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;              
+ 1 Hear M… 2016-01-01                   11 2016  hear me now 2016/01/01         
+ 2 Run th… 2011-06-24                   21 2011  run the wo… 2011/06/24         
+ 3 Format… 2016-04-23                    9 2016  formation   2016/04/23         
+ 4 7/11    2014-11-24                    4 2014  7/11        2014/11/24         
+ 5 My Oh … 2019-12-06                   23 2019  my oh my (… 2019/12/06         
+ 6 It's A… 2013-11-28                   14 2013  it's autom… 2013/11/28         
+ 7 Poetic… 2012                         14 2012  poetic jus… 2012               
+ 8 A.D.H.D 2011-07-02                    7 2011  a.d.h.d     2011/07/02         
+ 9 Ya Est… 1990-01-01                    9 1990  ya estuvo   1990/01/01         
+10 Runnin… 2018-11-16                   49 2018  runnin (wi… 2018/11/16         </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>max_length <span class="ot">&lt;-</span> <span class="fu">max</span>(spot_new<span class="sc">$</span>title_length)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str_c</span>(<span class="st">"The longest title is"</span>, max_length, <span class="st">"characters long."</span>, <span class="at">sep =</span> <span class="st">" "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "The longest title is 49 characters long."</code></pre>
+</div>
+</div>
+</section>
+<section id="important-functions-for-identifying-strings-which-match" class="level2">
+<h2 class="anchored" data-anchor-id="important-functions-for-identifying-strings-which-match">Important functions for identifying strings which match</h2>
+<p>str_view() : most useful for testing str_subset() : useful for printing matches to the console str_detect() : useful when working within a tibble</p>
+<ol type="1">
+<li>Identify the input type and output type for each of these examples:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] │ indie &lt;pop&gt;timism
+[2] │ post-teen &lt;pop&gt;
+[3] │ hip &lt;pop&gt;
+[4] │ hip &lt;pop&gt;
+[5] │ latin &lt;pop&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(<span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(<span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "stringr_view"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>, <span class="at">match =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] │ indie &lt;pop&gt;timism
+ [2] │ post-teen &lt;pop&gt;
+ [3] │ hip &lt;pop&gt;
+ [4] │ hip &lt;pop&gt;
+ [5] │ latin &lt;pop&gt;
+ [6] │ latin hip hop
+ [7] │ hip hop
+ [8] │ southern hip hop
+ [9] │ latin hip hop
+[10] │ gangster rap</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>, <span class="at">html =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="str_view html-widget html-fill-item" id="htmlwidget-1c26a874933f50351f8e" style="width:960px;height:100%;"></div>
+<script type="application/json" data-for="htmlwidget-1c26a874933f50351f8e">{"x":{"html":"<ul>\n  <li><pre>indie <span class='match'>pop<\/span>timism<\/pre><\/li>\n  <li><pre>post-teen <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>hip <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>hip <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>latin <span class='match'>pop<\/span><\/pre><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_subset</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "indie poptimism" "post-teen pop"   "hip pop"         "hip pop"        
+[5] "latin pop"      </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li><p>Use str_detect to print the rows of the spot_smaller tibble containing songs that have “pop” in the subgenre. (i.e.&nbsp;make a new tibble with fewer rows)</p></li>
+<li><p>Find the mean song title length for songs with “pop” in the subgenre and songs without “pop” in the subgenre.</p></li>
+</ol>
+<p>Producing a table like this would be great:</p>
+</section>
+<section id="a-tibble-2-2" class="level1">
+<h1>A tibble: 2 × 2</h1>
+<p>sub_pop mean_title_length <lgl> <dbl> 1 FALSE 18.6 2 TRUE 13.6</dbl></lgl></p>
+<p>Producing a table like this would be SUPER great (hint: ifelse()):</p>
+</section>
+<section id="a-tibble-2-2-1" class="level1">
+<h1>A tibble: 2 × 2</h1>
+<p>sub_pop mean_title_length <chr> <dbl> 1 Genre with pop 13.6 2 Genre without pop 18.6</dbl></chr></p>
+<ol start="4" type="1">
+<li>In the bigspotify dataset, find the proportion of songs which contain “love” in the title (track_name) by playlist_genre.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>bigspotify <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-21/spotify_songs.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 32833 Columns: 23
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (10): track_id, track_name, track_artist, track_album_id, track_album_na...
+dbl (13): track_popularity, danceability, energy, key, loudness, mode, speec...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>bigspotify</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32,833 × 23
+   track_id              track_name track_artist track_popularity track_album_id
+   &lt;chr&gt;                 &lt;chr&gt;      &lt;chr&gt;                   &lt;dbl&gt; &lt;chr&gt;         
+ 1 6f807x0ima9a1j3VPbc7… I Don't C… Ed Sheeran                 66 2oCs0DGTsRO98…
+ 2 0r7CVbZTWZgbTCYdfa2P… Memories … Maroon 5                   67 63rPSO264uRjW…
+ 3 1z1Hg7Vb0AhHDiEmnDE7… All the T… Zara Larsson               70 1HoSmj2eLcsrR…
+ 4 75FpbthrwQmzHlBJLuGd… Call You … The Chainsm…               60 1nqYsOef1yKKu…
+ 5 1e8PAfcKUYoKkxPhrHqw… Someone Y… Lewis Capal…               69 7m7vv9wlQ4i0L…
+ 6 7fvUMiyapMsRRxr07cU8… Beautiful… Ed Sheeran                 67 2yiy9cd2QktrN…
+ 7 2OAylPUDDfwRGfe0lYql… Never Rea… Katy Perry                 62 7INHYSeusaFly…
+ 8 6b1RNvAcJjQH73eZO4BL… Post Malo… Sam Feldt                  69 6703SRPsLkS4b…
+ 9 7bF6tCO3gFb8INrEDcjN… Tough Lov… Avicii                     68 7CvAfGvq4RlIw…
+10 1IXGILkPm0tOCNeq00kC… If I Can'… Shawn Mendes               67 4QxzbfSsVryEQ…
+# ℹ 32,823 more rows
+# ℹ 18 more variables: track_album_name &lt;chr&gt;, track_album_release_date &lt;chr&gt;,
+#   playlist_name &lt;chr&gt;, playlist_id &lt;chr&gt;, playlist_genre &lt;chr&gt;,
+#   playlist_subgenre &lt;chr&gt;, danceability &lt;dbl&gt;, energy &lt;dbl&gt;, key &lt;dbl&gt;,
+#   loudness &lt;dbl&gt;, mode &lt;dbl&gt;, speechiness &lt;dbl&gt;, acousticness &lt;dbl&gt;,
+#   instrumentalness &lt;dbl&gt;, liveness &lt;dbl&gt;, valence &lt;dbl&gt;, tempo &lt;dbl&gt;,
+#   duration_ms &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<section id="matching-patterns-with-regular-expressions" class="level2">
+<h2 class="anchored" data-anchor-id="matching-patterns-with-regular-expressions">Matching patterns with regular expressions</h2>
+<p>^abc string starts with abc abc$ string ends with abc . any character [abc] a or b or c [^abc] anything EXCEPT a or b or c</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Guess the output!</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>artist, <span class="st">"^K"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[7] │ &lt;K&gt;endrick Lamar
+[8] │ &lt;K&gt;endrick Lamar
+[9] │ &lt;K&gt;id Frost</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>album_release_date, <span class="st">"01$"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] │ 2016-01-&lt;01&gt;
+[9] │ 1990-01-&lt;01&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>title, <span class="st">"^.. "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[5] │ &lt;My &gt;Oh My (feat. DaBaby)
+[9] │ &lt;Ya &gt;Estuvo</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>artist, <span class="st">"[^A-Za-z ]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [2] │ Beyonc&lt;é&gt;
+ [3] │ Beyonc&lt;é&gt;
+ [4] │ Beyonc&lt;é&gt;
+[10] │ Mike WiLL Made&lt;-&gt;It</code></pre>
+</div>
+</div>
+<ol start="5" type="1">
+<li>Given the corpus of common words in stringr::words, create regular expressions that find all words that:</li>
+</ol>
+<ul>
+<li>Start with “y”.</li>
+<li>End with “x”</li>
+<li>Are exactly three letters long.</li>
+<li>Have seven letters or more.</li>
+<li>Start with a vowel.</li>
+<li>End with ed, but not with eed.</li>
+<li>Words where q is not followed by u. (are there any in <code>words</code>?)</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Try using str_view() or str_subset()</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># For example, to find words with "tion" at any point, I could use:</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(words, <span class="st">"tion"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[181] │ condi&lt;tion&gt;
+[347] │ func&lt;tion&gt;
+[516] │ men&lt;tion&gt;
+[536] │ mo&lt;tion&gt;
+[543] │ na&lt;tion&gt;
+[631] │ posi&lt;tion&gt;
+[667] │ ques&lt;tion&gt;
+[695] │ rela&lt;tion&gt;
+[732] │ sec&lt;tion&gt;
+[804] │ sta&lt;tion&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_subset</span>(words, <span class="st">"tion"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "condition" "function"  "mention"   "motion"    "nation"    "position" 
+ [7] "question"  "relation"  "section"   "station"  </code></pre>
+</div>
+</div>
+</section>
+<section id="more-useful-regular-expressions" class="level2">
+<h2 class="anchored" data-anchor-id="more-useful-regular-expressions">More useful regular expressions:</h2>
+<p>\d - any number \s - any space, tab, etc \b - any boundary: space, ., etc.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>album_name, <span class="st">"</span><span class="sc">\\</span><span class="st">d"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[2] │ &lt;4&gt;
+[8] │ Section.&lt;8&gt;&lt;0&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>album_name, <span class="st">"</span><span class="sc">\\</span><span class="st">s"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] │ Hear&lt; &gt;Me&lt; &gt;Now
+ [4] │ BEYONCÉ&lt; &gt;[Platinum&lt; &gt;Edition]
+ [6] │ It's&lt; &gt;Automatic
+ [7] │ good&lt; &gt;kid,&lt; &gt;m.A.A.d&lt; &gt;city&lt; &gt;(Deluxe)
+ [9] │ Hispanic&lt; &gt;Causing&lt; &gt;Panic
+[10] │ Creed&lt; &gt;II:&lt; &gt;The&lt; &gt;Album</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>album_name, <span class="st">"</span><span class="sc">\\</span><span class="st">b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] │ &lt;&gt;Hear&lt;&gt; &lt;&gt;Me&lt;&gt; &lt;&gt;Now&lt;&gt;
+ [2] │ &lt;&gt;4&lt;&gt;
+ [3] │ &lt;&gt;Lemonade&lt;&gt;
+ [4] │ &lt;&gt;BEYONCÉ&lt;&gt; [&lt;&gt;Platinum&lt;&gt; &lt;&gt;Edition&lt;&gt;]
+ [5] │ &lt;&gt;Romance&lt;&gt;
+ [6] │ &lt;&gt;It&lt;&gt;'&lt;&gt;s&lt;&gt; &lt;&gt;Automatic&lt;&gt;
+ [7] │ &lt;&gt;good&lt;&gt; &lt;&gt;kid&lt;&gt;, &lt;&gt;m&lt;&gt;.&lt;&gt;A&lt;&gt;.&lt;&gt;A&lt;&gt;.&lt;&gt;d&lt;&gt; &lt;&gt;city&lt;&gt; (&lt;&gt;Deluxe&lt;&gt;)
+ [8] │ &lt;&gt;Section&lt;&gt;.&lt;&gt;80&lt;&gt;
+ [9] │ &lt;&gt;Hispanic&lt;&gt; &lt;&gt;Causing&lt;&gt; &lt;&gt;Panic&lt;&gt;
+[10] │ &lt;&gt;Creed&lt;&gt; &lt;&gt;II&lt;&gt;: &lt;&gt;The&lt;&gt; &lt;&gt;Album&lt;&gt;</code></pre>
+</div>
+</div>
+<p>Here are the regular expression special characters that require an escape character (a preceding &nbsp;): &nbsp;^ $ . ? * | + ( ) [ {</p>
+<p>For any characters with special properties, use &nbsp;to “escape” its special meaning … but &nbsp;is itself a special character … so we need two \! (e.g.&nbsp;\$, \., etc.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>title, <span class="st">"$"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] │ Hear Me Now&lt;&gt;
+ [2] │ Run the World (Girls)&lt;&gt;
+ [3] │ Formation&lt;&gt;
+ [4] │ 7/11&lt;&gt;
+ [5] │ My Oh My (feat. DaBaby)&lt;&gt;
+ [6] │ It's Automatic&lt;&gt;
+ [7] │ Poetic Justice&lt;&gt;
+ [8] │ A.D.H.D&lt;&gt;
+ [9] │ Ya Estuvo&lt;&gt;
+[10] │ Runnin (with A$AP Rocky, A$AP Ferg &amp; Nicki Minaj)&lt;&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>title, <span class="st">"</span><span class="sc">\\</span><span class="st">$"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[10] │ Runnin (with A&lt;$&gt;AP Rocky, A&lt;$&gt;AP Ferg &amp; Nicki Minaj)</code></pre>
+</div>
+</div>
+<ol start="6" type="1">
+<li><p>In bigspotify, how many track_names include a $? Be sure you print the track_names you find and make sure the dollar sign is not just in a featured artist!</p></li>
+<li><p>In bigspotify, how many track_names include a dollar amount (a $ followed by a number).</p></li>
+</ol>
+</section>
+<section id="repetition" class="level2">
+<h2 class="anchored" data-anchor-id="repetition">Repetition</h2>
+<p>? 0 or 1 times + 1 or more * 0 or more {n} exactly n times {n,} n or more times {,m} at most m times {n,m} between n and m times</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>album_name, <span class="st">"[A-Z]{2,}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [4] │ &lt;BEYONC&gt;É [Platinum Edition]
+[10] │ Creed &lt;II&gt;: The Album</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>album_release_date, <span class="st">"</span><span class="sc">\\</span><span class="st">d{4}-</span><span class="sc">\\</span><span class="st">d{2}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] │ &lt;2016-01&gt;-01
+ [2] │ &lt;2011-06&gt;-24
+ [3] │ &lt;2016-04&gt;-23
+ [4] │ &lt;2014-11&gt;-24
+ [5] │ &lt;2019-12&gt;-06
+ [6] │ &lt;2013-11&gt;-28
+ [8] │ &lt;2011-07&gt;-02
+ [9] │ &lt;1990-01&gt;-01
+[10] │ &lt;2018-11&gt;-16</code></pre>
+</div>
+</div>
+<p><strong>Use at least 1 repetition symbol when solving 8-10 below</strong></p>
+<ol start="8" type="1">
+<li><p>Modify the first regular expression above to also pick up “A.A” (in addition to “BEYONC” and “II”). That is, pick up strings where there might be a period between capital letters.</p></li>
+<li><p>Create some strings that satisfy these regular expressions and explain.</p></li>
+</ol>
+<ul>
+<li>“^.*$”</li>
+<li>“\{.+\}”</li>
+</ul>
+<ol start="10" type="1">
+<li>Create regular expressions to find all <code>stringr::words</code> that:</li>
+</ol>
+<ul>
+<li>Start with three consonants.</li>
+<li>Have two or more vowel-consonant pairs in a row.</li>
+</ul>
+</section>
+<section id="useful-functions-for-handling-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="useful-functions-for-handling-patterns">Useful functions for handling patterns</h2>
+<p>str_extract() : extract a string that matches a pattern str_count() : count how many times a pattern occurs within a string</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_extract</span>(spot_smaller<span class="sc">$</span>album_release_date, <span class="st">"</span><span class="sc">\\</span><span class="st">d{4}-</span><span class="sc">\\</span><span class="st">d{2}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "2016-01" "2011-06" "2016-04" "2014-11" "2019-12" "2013-11" NA       
+ [8] "2011-07" "1990-01" "2018-11"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>spot_smaller <span class="sc">|&gt;</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(album_release_date) <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year_month =</span> <span class="fu">str_extract</span>(album_release_date, <span class="st">"</span><span class="sc">\\</span><span class="st">d{4}-</span><span class="sc">\\</span><span class="st">d{2}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   album_release_date year_month
+   &lt;chr&gt;              &lt;chr&gt;     
+ 1 2016-01-01         2016-01   
+ 2 2011-06-24         2011-06   
+ 3 2016-04-23         2016-04   
+ 4 2014-11-24         2014-11   
+ 5 2019-12-06         2019-12   
+ 6 2013-11-28         2013-11   
+ 7 2012               &lt;NA&gt;      
+ 8 2011-07-02         2011-07   
+ 9 1990-01-01         1990-01   
+10 2018-11-16         2018-11   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>spot_smaller <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(artist) <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_vowels =</span> <span class="fu">str_count</span>(artist, <span class="st">"[aeiou]"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   artist            n_vowels
+   &lt;chr&gt;                &lt;int&gt;
+ 1 Alok                     1
+ 2 Beyoncé                  2
+ 3 Beyoncé                  2
+ 4 Beyoncé                  2
+ 5 Camila Cabello           6
+ 6 Freestyle                3
+ 7 Kendrick Lamar           4
+ 8 Kendrick Lamar           4
+ 9 Kid Frost                2
+10 Mike WiLL Made-It        5</code></pre>
+</div>
+</div>
+<ol start="11" type="1">
+<li><p>In the spot_smaller dataset, how many words are in each title? (hint \b)</p></li>
+<li><p>In the spot_smaller dataset, extract the first word from every title. Show how you would print out these words as a vector and how you would create a new column on the spot_smaller tibble. That is, produce this:</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] "Hear"      "Run"       "Formation" "7/11"      "My"        "It's"     </span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># [7] "Poetic"    "A.D.H.D"   "Ya"        "Runnin"   </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A tibble: 10 × 2</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   title                                             first_word</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   &lt;chr&gt;                                             &lt;chr&gt;     </span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 Hear Me Now                                       Hear      </span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 Run the World (Girls)                             Run       </span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 Formation                                         Formation </span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 4 7/11                                              7/11      </span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 5 My Oh My (feat. DaBaby)                           My        </span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 6 It's Automatic                                    It's      </span></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 7 Poetic Justice                                    Poetic    </span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 8 A.D.H.D                                           A.D.H.D   </span></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 9 Ya Estuvo                                         Ya        </span></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a><span class="co">#10 Runnin (with A$AP Rocky, A$AP Ferg &amp; Nicki Minaj) Runnin    </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="13" type="1">
+<li>Which decades are popular for playlist_names? Using the bigspotify dataset, try doing each of these steps one at a time!</li>
+</ol>
+<ul>
+<li>filter the bigspotify dataset to only include playlists that include something like “80’s” or “00’s” in their title.</li>
+<li>create a new column that extracts the decade</li>
+<li>use count to find how many playlists include each decade</li>
+<li>what if you include both “80’s” and “80s”?</li>
+<li>how can you count “80’s” and “80s” together in your final tibble?</li>
+</ul>
+</section>
+<section id="grouping-and-backreferences" class="level2">
+<h2 class="anchored" data-anchor-id="grouping-and-backreferences">Grouping and backreferences</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find all fruits with repeated pair of letters.  </span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>fruit <span class="ot">=</span> stringr<span class="sc">::</span>fruit</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>fruit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "apple"             "apricot"           "avocado"          
+ [4] "banana"            "bell pepper"       "bilberry"         
+ [7] "blackberry"        "blackcurrant"      "blood orange"     
+[10] "blueberry"         "boysenberry"       "breadfruit"       
+[13] "canary melon"      "cantaloupe"        "cherimoya"        
+[16] "cherry"            "chili pepper"      "clementine"       
+[19] "cloudberry"        "coconut"           "cranberry"        
+[22] "cucumber"          "currant"           "damson"           
+[25] "date"              "dragonfruit"       "durian"           
+[28] "eggplant"          "elderberry"        "feijoa"           
+[31] "fig"               "goji berry"        "gooseberry"       
+[34] "grape"             "grapefruit"        "guava"            
+[37] "honeydew"          "huckleberry"       "jackfruit"        
+[40] "jambul"            "jujube"            "kiwi fruit"       
+[43] "kumquat"           "lemon"             "lime"             
+[46] "loquat"            "lychee"            "mandarine"        
+[49] "mango"             "mulberry"          "nectarine"        
+[52] "nut"               "olive"             "orange"           
+[55] "pamelo"            "papaya"            "passionfruit"     
+[58] "peach"             "pear"              "persimmon"        
+[61] "physalis"          "pineapple"         "plum"             
+[64] "pomegranate"       "pomelo"            "purple mangosteen"
+[67] "quince"            "raisin"            "rambutan"         
+[70] "raspberry"         "redcurrant"        "rock melon"       
+[73] "salal berry"       "satsuma"           "star fruit"       
+[76] "strawberry"        "tamarillo"         "tangerine"        
+[79] "ugli fruit"        "watermelon"       </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(fruit, <span class="st">"(..)</span><span class="sc">\\</span><span class="st">1"</span>, <span class="at">match =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [4] │ b&lt;anan&gt;a
+[20] │ &lt;coco&gt;nut
+[22] │ &lt;cucu&gt;mber
+[41] │ &lt;juju&gt;be
+[56] │ &lt;papa&gt;ya
+[73] │ s&lt;alal&gt; berry</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># why does the code below add "pepper" and even "nectarine"?</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(fruit, <span class="st">"(..)(.*)</span><span class="sc">\\</span><span class="st">1"</span>, <span class="at">match =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [4] │ b&lt;anan&gt;a
+ [5] │ bell &lt;peppe&gt;r
+[17] │ chili &lt;peppe&gt;r
+[20] │ &lt;coco&gt;nut
+[22] │ &lt;cucu&gt;mber
+[29] │ eld&lt;erber&gt;ry
+[41] │ &lt;juju&gt;be
+[51] │ &lt;nectarine&gt;
+[56] │ &lt;papa&gt;ya
+[73] │ s&lt;alal&gt; berry</code></pre>
+</div>
+</div>
+<p>Tips with backreference: - You must use () around the the thing you want to reference. - To backreference multiple times, use \1 again. - The number refers to which spot you are referencing… e.g.&nbsp;\2 references the second set of ()</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"abxyba"</span>, <span class="st">"abccba"</span>, <span class="st">"xyaayx"</span>, <span class="st">"abxyab"</span>, <span class="st">"abcabc"</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(x1, <span class="st">"(.)(.)(..)</span><span class="sc">\\</span><span class="st">2</span><span class="sc">\\</span><span class="st">1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] │ &lt;abxyba&gt;
+[2] │ &lt;abccba&gt;
+[3] │ &lt;xyaayx&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(x1, <span class="st">"(.)(.)(..)</span><span class="sc">\\</span><span class="st">1</span><span class="sc">\\</span><span class="st">2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[4] │ &lt;abxyab&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(x1, <span class="st">"(.)(.)(.)</span><span class="sc">\\</span><span class="st">1</span><span class="sc">\\</span><span class="st">2</span><span class="sc">\\</span><span class="st">3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[5] │ &lt;abcabc&gt;</code></pre>
+</div>
+</div>
+<ol start="14" type="1">
+<li>Describe to your groupmates what these expressions will match, and provide a word or expression as an example:</li>
+</ol>
+<ul>
+<li>(.)\1\1</li>
+<li>“(.)(.)(.).*\3\2\1”</li>
+</ul>
+<p>Which words in <code>stringr::words</code> match each expression?</p>
+<ol start="15" type="1">
+<li><p>Construct a regular expression to match words in <code>stringr::words</code> that contain a repeated pair of letters (e.g.&nbsp;“church” contains “ch” repeated twice) but <em>not</em> match repeated pairs of numbers (e.g.&nbsp;507-786-3861).</p></li>
+<li><p>Reformat the album_release_date variable in spot_smaller so that it is MM-DD-YYYY instead of YYYY-MM-DD. (Hint: str_replace().)</p></li>
+<li><p>BEFORE RUNNING IT, explain to your partner(s) what the following R chunk will do:</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>sentences <span class="sc">|&gt;</span> </span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_replace</span>(<span class="st">"([^ ]+) ([^ ]+) ([^ ]+)"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 </span><span class="sc">\\</span><span class="st">3 </span><span class="sc">\\</span><span class="st">2"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "The canoe birch slid on the smooth planks." 
+[2] "Glue sheet the to the dark blue background."
+[3] "It's to easy tell the depth of a well."     
+[4] "These a days chicken leg is a rare dish."   
+[5] "Rice often is served in round bowls."       </code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Paul Roback, 2025<br> All content licensed under <img src="https://static.thenounproject.com/png/70967-200.png" height="20"> (<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Site built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

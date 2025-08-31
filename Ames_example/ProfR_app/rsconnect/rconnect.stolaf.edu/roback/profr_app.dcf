@@ -1,0 +1,13 @@
+name: profr_app
+title: ProfR_app
+username: roback
+account: roback
+server: rconnect.stolaf.edu
+hostUrl: https://rconnect.stolaf.edu/__api__
+appId: 78
+bundleId: 922
+url: https://rconnect.stolaf.edu/content/52309483-2c04-48e2-8a30-4b8bbfdfed71/
+when: 1670526204.53635
+lastSyncTime: 1670526204.53637
+asMultiple: FALSE
+asStatic: FALSE

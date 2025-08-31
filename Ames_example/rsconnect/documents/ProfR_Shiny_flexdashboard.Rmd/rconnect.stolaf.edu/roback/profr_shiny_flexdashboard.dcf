@@ -1,0 +1,13 @@
+name: profr_shiny_flexdashboard
+title: ProfR_Shiny_flexdashboard
+username: roback
+account: roback
+server: rconnect.stolaf.edu
+hostUrl: https://rconnect.stolaf.edu/__api__
+appId: 77
+bundleId: 920
+url: https://rconnect.stolaf.edu/content/bcb2f4bc-87d0-436a-aee1-ff702d8e75ff/
+when: 1670526049.70789
+lastSyncTime: 1670526049.7079
+asMultiple: FALSE
+asStatic: FALSE

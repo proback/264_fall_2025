@@ -1,0 +1,12 @@
+name: 15_first_Shiny_flexdash
+title: 15_first_Shiny_flexdash
+username: proback
+account: proback
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11972046
+bundleId: 8597562
+url: https://proback.shinyapps.io/15_first_Shiny_flexdash/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
