@@ -312,7 +312,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>You can download this .qmd file from <a href="https://github.com/joeroith/264_spring_2025/blob/main/13_text_analysis.qmd">here</a>. Just hit the Download Raw File button.</p>
+<p>You can download this .qmd file from <a href="https://github.com/proback/264_fall_2025/blob/main/05_text_analysis.qmd">here</a>. Just hit the Download Raw File button.</p>
 <p>We will build on techniques you learned in SDS 164 using parts of <a href="https://www.tidytextmining.com/">Text Mining with R</a> by Silge and Robinson.</p>
 <section id="text-analysis-of-books-from-project-gutenberg" class="level2">
 <h2 class="anchored" data-anchor-id="text-analysis-of-books-from-project-gutenberg">Text analysis of books from Project Gutenberg</h2>
@@ -346,7 +346,7 @@ Attaching package: 'RCurl'</code></pre>
     complete</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>three_works <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="fu">getURL</span>(<span class="st">"https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/three_works.csv"</span>, <span class="at">.encoding =</span> <span class="st">"UTF-8"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="fu">getURL</span>(<span class="st">"https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/three_works.csv"</span>, <span class="at">.encoding =</span> <span class="st">"UTF-8"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 25399 Columns: 3</code></pre>
 </div>
@@ -819,7 +819,7 @@ dbl (1): gutenberg_id
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Some alternative options (see Solveig's R tip of the day for more!)</span></span>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Some alternative options</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wordcloud</span>(</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">words =</span> words<span class="sc">$</span>word, </span>
 <span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">freq =</span> words<span class="sc">$</span>n, </span>
@@ -847,8 +847,8 @@ dbl (1): gutenberg_id
 <span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">minSize =</span> <span class="dv">10</span></span>
 <span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="wordcloud2 html-widget html-fill-item" id="htmlwidget-4c0a5cc659b3455bb391" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-4c0a5cc659b3455bb391">{"x":{"word":["life","father","eyes","time","night","elizabeth","found","mind","heart","day","death","feelings","dear","friend","passed","miserable","heard","clerval","love","human","appeared","country","friends","justine","misery","words","nature","cottage","feel","hope","despair","felix","happiness","return","chapter","days","happy","voice","horror","poor","sun","world","scene","ice","creature","joy","light","affection","fear","house","countenance","months","power","entered","hands","soul","moment","morning","mountains","pleasure","earth","geneva","journey","possessed","gentle","left","child","continued","discovered","hours","sea","spirit","fiend","idea","knowledge","rest","delight","letter","lost","peace"],"freq":[115,112,104,98,90,88,87,85,81,80,79,76,72,71,67,65,62,59,59,58,57,54,54,54,54,54,53,51,50,50,49,49,49,49,48,47,46,46,45,45,45,45,44,43,42,42,42,40,40,40,39,39,39,38,38,38,37,37,37,37,36,36,36,36,35,35,34,34,34,34,34,34,33,33,33,33,32,32,32,32],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":10,"weightFactor":0.391304347826087,"backgroundColor":"white","gridSize":0,"minRotation":-0.7853981633974483,"maxRotation":0.7853981633974483,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+<div class="wordcloud2 html-widget html-fill-item" id="htmlwidget-911862271f39fcd7f670" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-911862271f39fcd7f670">{"x":{"word":["life","father","eyes","time","night","elizabeth","found","mind","heart","day","death","feelings","dear","friend","passed","miserable","heard","clerval","love","human","appeared","country","friends","justine","misery","words","nature","cottage","feel","hope","despair","felix","happiness","return","chapter","days","happy","voice","horror","poor","sun","world","scene","ice","creature","joy","light","affection","fear","house","countenance","months","power","entered","hands","soul","moment","morning","mountains","pleasure","earth","geneva","journey","possessed","gentle","left","child","continued","discovered","hours","sea","spirit","fiend","idea","knowledge","rest","delight","letter","lost","peace"],"freq":[115,112,104,98,90,88,87,85,81,80,79,76,72,71,67,65,62,59,59,58,57,54,54,54,54,54,53,51,50,50,49,49,49,49,48,47,46,46,45,45,45,45,44,43,42,42,42,40,40,40,39,39,39,38,38,38,37,37,37,37,36,36,36,36,35,35,34,34,34,34,34,34,33,33,33,33,32,32,32,32],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":10,"weightFactor":0.391304347826087,"backgroundColor":"white","gridSize":0,"minRotation":-0.7853981633974483,"maxRotation":0.7853981633974483,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
 </div>
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A couple of helpful links for customizing wordclouds:</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   https://www.youtube.com/watch?v=0cToDzeDLRI</span></span>
@@ -1306,9 +1306,9 @@ dbl (1): gutenberg_id
 <span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a>bigram_graph</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>IGRAPH f7e450c DN-- 37 27 -- 
+<pre><code>IGRAPH d713a9f DN-- 37 27 -- 
 + attr: name (v/c), n (e/n)
-+ edges from f7e450c (vertex names):
++ edges from d713a9f (vertex names):
  [1] van     -&gt;helsing    madam   -&gt;mina       lord    -&gt;godalming 
  [4] dr      -&gt;van        dr      -&gt;seward     friend  -&gt;john      
  [7] seward's-&gt;diary      poor    -&gt;dear       harker's-&gt;journal   

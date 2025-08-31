@@ -299,7 +299,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>You can download this .qmd file from <a href="https://github.com/joeroith/264_spring_2025/blob/main/11_strings_part2.qmd">here</a>. Just hit the Download Raw File button.</p>
+<p>You can download this .qmd file from <a href="https://github.com/proback/264_fall_2025/blob/main/03_strings_part2.qmd">here</a>. Just hit the Download Raw File button.</p>
 <p>This uses parts of R4DS Ch 14: Strings and Ch 15: Regular Expressions (both the first and second editions).</p>
 <section id="manipulating-strings" class="level2">
 <h2 class="anchored" data-anchor-id="manipulating-strings">Manipulating strings</h2>
@@ -311,13 +311,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>str_to_lower()</li>
 <li>str_to_upper()</li>
 <li>str_to_title()</li>
-<li>str_replace() <em>not in 10_strings examples</em></li>
+<li>str_replace() <em>not in 02_strings examples</em></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#spotify &lt;- read_csv("Data/spotify.csv") </span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>spotify <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://joeroith.github.io/264_spring_2025/Data/spotify.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>spotify <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://proback.github.io/264_fall_2025/Data/spotify.csv"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>spot_smaller <span class="ot">&lt;-</span> spotify <span class="sc">|&gt;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
@@ -422,8 +422,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>, <span class="at">html =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="str_view html-widget html-fill-item" id="htmlwidget-1c26a874933f50351f8e" style="width:960px;height:100%;"></div>
-<script type="application/json" data-for="htmlwidget-1c26a874933f50351f8e">{"x":{"html":"<ul>\n  <li><pre>indie <span class='match'>pop<\/span>timism<\/pre><\/li>\n  <li><pre>post-teen <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>hip <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>hip <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>latin <span class='match'>pop<\/span><\/pre><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div class="str_view html-widget html-fill-item" id="htmlwidget-8f53cdf145151622356d" style="width:960px;height:100%;"></div>
+<script type="application/json" data-for="htmlwidget-8f53cdf145151622356d">{"x":{"html":"<ul>\n  <li><pre>indie <span class='match'>pop<\/span>timism<\/pre><\/li>\n  <li><pre>post-teen <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>hip <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>hip <span class='match'>pop<\/span><\/pre><\/li>\n  <li><pre>latin <span class='match'>pop<\/span><\/pre><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_subset</span>(spot_smaller<span class="sc">$</span>subgenre, <span class="st">"pop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
