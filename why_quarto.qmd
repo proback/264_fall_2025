@@ -18,7 +18,7 @@ Data scientists are [pretty excited](https://www.infoworld.com/article/3666743/w
 - while Rmd will be maintained and updated, cool new features will appear in Quarto
 - there are plans for future simultaneous editing like in google docs
 
-From Posit and the developers of Rstudio and Quarto <https://charlotte.quarto.pub/cascadia/>, Quarto (compared to RMarkdown):
+According to this [Intro to Quarto](https://charlotte.quarto.pub/cascadia/) workshop from Posit and the developers of Rstudio and Quarto, Quarto (compared to RMarkdown):
 
 - Offers “batteries included” shared syntax across formats, while R Markdown grew into a large ecosystem with varying syntax
 - Allows you to choose your own editor and your preferred data science language
@@ -31,6 +31,7 @@ In other words, Quarto unifies and extends R Markdown:
 - More accessible defaults as well as better support for accessibility
 - Support for other languages like Python, Julia, Observable, and more via Jupyter engine for executable code chunks.
 
+Be sure to check out the "Intro to Quarto" slides yourself, including the very [helpful section](https://charlotte.quarto.pub/cascadia/2-yaml-markdown-basics/) on rendering Quarto documents as pdfs.
 
 Here's a cool example from the Quarto documentation, showing features like cross-referencing of figures, chunk options using the hash-pipe format, collapsed code, and easy figure legends:
 

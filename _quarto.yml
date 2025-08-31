@@ -34,7 +34,6 @@ website:
         - tech_setup.qmd
         - why_quarto.qmd
         - github_intro.qmd
-        - github_links.qmd
 
     - id: activities
       title: "Activities"

@@ -39,13 +39,13 @@ In order to begin to get familiar with GitHub, we will use it to create a course
 
 ### Creating an R project (local) that's connected to GitHub (cloud)
 
-4. In your GitHub account, click the $+ \nabla$ (+down arrow) button near the top right and select New Repository (repo).  Put something like "SDS264_S25" for your repository (repo) name; use simple but descriptive names that avoid spaces.  Check Private for now; you can turn a repository Public if you want later.  Check Add a ReadMe File.  Finally hit Create Repository and copy the URL once your repo has been created;  the URL should be something like `github.com/username/SDS264_S25`.
+4. In your GitHub account, click the $+ \nabla$ (+down arrow) button near the top right and select New Repository (repo).  Put something like "SDS264_F25" for your repository (repo) name; use simple but descriptive names that avoid spaces.  Check Private for now; you can turn a repository Public if you want later.  Check Add a ReadMe File.  Finally hit Create Repository and copy the URL once your repo has been created;  the URL should be something like `github.com/username/SDS264_F25`.
 
-5. Go into your RStudio and select File > New Project > Version Control > Git.  For the repository URL paste in the URL for the repository you just created.  A project directory named "SDS264_S25" will be created in your specified folder (which you can navigate to).
+5. Go into your RStudio and select File > New Project > Version Control > Git.  For the repository URL paste in the URL for the repository you just created.  A project directory named "SDS264_F25" will be created in your specified folder (which you can navigate to).
 
 *Notice that you are now starting with a blank slate! Nothing in the environment or history. Also note where it says your project name in the top right corner.*
 
-**At this point your should have a GitHub repo called "SDS264_S25" connected to an R project named "SDS264_S25".  The basic framework is set!**
+**At this point your should have a GitHub repo called "SDS264_F25" connected to an R project named "SDS264_F25".  The basic framework is set!**
 
 Here is an illustration ([source](https://www.nobledesktop.com/learn/git/stage-commit-files-git)) of the process of using GitHub to manage version control and collaboration, followed by greater detail about each step:
 
@@ -53,7 +53,7 @@ Here is an illustration ([source](https://www.nobledesktop.com/learn/git/stage-c
 
 ### Creating new files in RStudio (local)
 
-6. You can download our first file with in-class exercises [here](https://github.com/joeroith/264_spring_2025/blob/main/01_review164.qmd).  Just hit the Download Raw File button and note where the file is saved on your computer.  Use File > Open File in RStudio to open up `01_review164.qmd`.  Then, use File > Save As to navigate to the SDS264_S25 folder on your computer and save a copy there.  You can even add your name or a few answers and re-save your file.
+6. You can download our first file with in-class exercises [here](https://github.com/proback/264_fall_2025/blob/main/01_review164.qmd).  Just hit the Download Raw File button and note where the file is saved on your computer.  Use File > Open File in RStudio to open up `01_review164.qmd`.  Then, use File > Save As to navigate to the SDS264_F25 folder on your computer and save a copy there.  You can even add your name or a few answers and re-save your file.
 
 
 ### Making sure the connection to GitHub is ready
@@ -89,4 +89,15 @@ Before you start a new session of working on a project in RStudio, you should al
 
 ### A bit more about R projects
 
-11. To see the power of projects, select File > Close Project and Don't Save the workspace image.  Then, select File > Recent Projects > SDS264_S25; you will get a clean Environment and Console once again, but History shows the commands you ran by hand, active Rmd and qmd files appear in the Source panel, and Files contains the Rmd, qmd, html, and csv files produced by your last session.  And you can stage, commit and push the changes and the new file to GitHub!
+11. To see the power of projects, select File > Close Project and Don't Save the workspace image.  Then, select File > Recent Projects > SDS264_F25; you will get a clean Environment and Console once again, but History shows the commands you ran by hand, active Rmd and qmd files appear in the Source panel, and Files contains the Rmd, qmd, html, and csv files produced by your last session.  And you can stage, commit and push the changes and the new file to GitHub!
+
+
+### A few additional GitHub links that I've found helpful:
+
+- [Using git and GitHub with RStudio (Lisa Lendway)](https://www.youtube.com/watch?v=QLFc9gw_Hfs)
+
+- [GitHub with R projects (Lisa Lendway)](https://www.youtube.com/watch?v=OduNU4vZ7IM)
+
+- [GitHub starter course – basic terminology](https://github.com/classroom-resources/github-starter-course)
+
+- [Happy Git and GitHub for the useR (Jenny Bryan)](https://happygitwithr.com/)

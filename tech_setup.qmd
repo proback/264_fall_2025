@@ -3,7 +3,7 @@ title: "Tech Setup"
 sidebar: false
 ---
 
-Ideally before class on Thurs Feb 6, and definitely before class on Tues Feb 11, you should follow these instructions to set up the software that we'll be using throughout the semester. **Even if you've already downloaded both R and RStudio, you'll want to re-download to make sure that you have the most current versions.**
+Ideally before class on Thurs Sep 4, and definitely before class on Tues Sep 9, you should follow these instructions to set up the software that we'll be using throughout the semester. **Even if you've already downloaded both R and RStudio, you'll want to re-download to make sure that you have the most current versions.**
 
 <br>
 
@@ -12,10 +12,10 @@ Ideally before class on Thurs Feb 6, and definitely before class on Tues Feb 11,
 - **FIRST:** Download R [here](https://cran.rstudio.com/).
     - In the top section, you will see three links "Download R for ..."
     - Choose the link that corresponds to your computer.
-    - As of the start of this semester, the latest version of R is 4.4.2 (“Pile of Leaves”).
+    - As of the start of this semester, the latest version of R is 4.5.1.
 - **SECOND:** Download RStudio [here](https://posit.co/download/rstudio-desktop/#download).
     - Click the button under step 2 to install the version of RStudio recommended for your computer.
-    - As of the start of this semester, the latest version of RStudio is 2024.12.0 (Build 467).
+    - As of the start of this semester, the latest version of RStudio is 2025.05.1 (Build 513).
 - **THIRD:** Check that when you go to File > New Project > New Directory, you see "Quarto Website" as an option.
 
 <br>
