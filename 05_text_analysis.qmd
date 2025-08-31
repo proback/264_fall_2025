@@ -6,7 +6,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/13_text_analysis.qmd).  Just hit the Download Raw File button.
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/05_text_analysis.qmd).  Just hit the Download Raw File button.
 
 We will build on techniques you learned in SDS 164 using parts of [Text Mining with R](https://www.tidytextmining.com/) by Silge and Robinson.
 
@@ -49,7 +49,7 @@ We will use the `gutenbergr` package to obtain several works from [Project Guten
 
 library(RCurl)
 three_works <- read_csv(
-  file = getURL("https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/three_works.csv", .encoding = "UTF-8"))
+  file = getURL("https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/three_works.csv", .encoding = "UTF-8"))
 
 three_works |> count(title)
 three_works
@@ -192,7 +192,7 @@ wordcloud(
   random.order = FALSE
 )
 
-# Some alternative options (see Solveig's R tip of the day for more!)
+# Some alternative options
 wordcloud(
   words = words$word, 
   freq = words$n, 
@@ -666,11 +666,11 @@ The `potter_untidy` dataset includes the text of 7 books of the Harry Potter ser
 ```{r}
 #| include: FALSE
 
-# potter_untidy <- read_csv("https://joeroith.github.io/264_spring_2025/Data/potter_untidy.csv") |>
+# potter_untidy <- read_csv("https://proback.github.io/264_fall_2025/Data/potter_untidy.csv") |>
 # potter_untidy <- read_csv("Data/potter_untidy.csv")
 
 potter_untidy <- read_csv(
-  file = getURL("https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/potter_untidy.csv", .encoding = "UTF-8")) |>
+  file = getURL("https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/potter_untidy.csv", .encoding = "UTF-8")) |>
   mutate(title = fct_reorder(title, book_num))
 
 potter_untidy
@@ -680,29 +680,29 @@ potter_tidy <- potter_untidy |>
 
 potter_tidy
 
-# potter_locations <- read_csv("https://joeroith.github.io/264_spring_2025/Data/potterlocations.csv") |>
+# potter_locations <- read_csv("https://proback.github.io/264_fall_2025/Data/potterlocations.csv") |>
 # potter_locations <- read_csv("Data/potterlocations.csv")
 
 potter_locations <- read_csv(
-  file = getURL("https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/potterlocations.csv", .encoding = "UTF-8")) |>
+  file = getURL("https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/potterlocations.csv", .encoding = "UTF-8")) |>
   mutate(value = str_to_lower(value))
 
 potter_locations
 
-# potter_names <- read_csv("https://joeroith.github.io/264_spring_2025/Data/potternames.csv") |>
+# potter_names <- read_csv("https://proback.github.io/264_fall_2025/Data/potternames.csv") |>
 # potter_names <- read_csv("Data/potternames.csv") |>
 potter_names <- read_csv(
-  file = getURL("https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/potternames.csv", .encoding = "UTF-8")) |>
+  file = getURL("https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/potternames.csv", .encoding = "UTF-8")) |>
   mutate(fullname = str_to_lower(fullname),
          firstname = str_to_lower(firstname),
          lastname = str_to_lower(lastname))
 
 potter_names
 
-# potter_spells <- read_csv("https://joeroith.github.io/264_spring_2025/Data/potter_spells.csv") |>
+# potter_spells <- read_csv("https://proback.github.io/264_fall_2025/Data/potter_spells.csv") |>
 # potter_spells <- read_csv("Data/potter_spells.csv") |>
 potter_spells <- read_csv(
-  file = getURL("https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/potter_spells.csv", .encoding = "UTF-8")) |>
+  file = getURL("https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/potter_spells.csv", .encoding = "UTF-8")) |>
   filter(spell_name != "Point Me")
 
 potter_spells

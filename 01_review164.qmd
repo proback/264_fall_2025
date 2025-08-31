@@ -6,7 +6,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/01_review164.qmd).  Just hit the Download Raw File button.
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/01_review164.qmd).  Just hit the Download Raw File button.
 
 
 ### Determinants of COVID vaccination rates
@@ -15,12 +15,12 @@ You can download this .qmd file from [here](https://github.com/joeroith/264_spri
 #| include: false
 
 library(tidyverse)
-vaccine_data <- read_csv("https://joeroith.github.io/264_spring_2025/Data/vaccinations_2021.csv")
+vaccine_data <- read_csv("https://proback.github.io/264_fall_2025/Data/vaccinations_2021.csv")
 ```
 
 First, a little detour to describe several alternatives for reading in data:
 
-If you navigate to [my Github account](https://github.com/joeroith), and find the `264_spring_2025` repo, there is a Data folder inside.  You can then click on `vacc_Mar21.csv` to see the data we want to download.   [This link](https://github.com/joeroith/264_spring_2025/blob/main/Data/vaccinations_2021.csv) should also get you there, but it's good to be able to navigate there yourself.
+If you navigate to [my Github account](https://github.com/proback), and find the `264_fall_2025` repo, there is a Data folder inside.  You can then click on `vacc_Mar21.csv` to see the data we want to download.   [This link](https://github.com/proback/264_fall_2025/blob/main/Data/vaccinations_2021.csv) should also get you there, but it's good to be able to navigate there yourself.
 
 
 ```{r}
@@ -30,13 +30,13 @@ If you navigate to [my Github account](https://github.com/joeroith), and find th
 vaccine_data <- read_csv("Data/vaccinations_2021.csv")  #<1>
 
 # Approach 2
-vaccine_data <- read_csv("~/264_spring_2025/Data/vaccinations_2021.csv")  #<2>
+vaccine_data <- read_csv("~/264_fall_2025/Data/vaccinations_2021.csv")  #<2>
 
 # Approach 3
-vaccine_data <- read_csv("https://joeroith.github.io/264_spring_2025/Data/vaccinations_2021.csv")  #<3>
+vaccine_data <- read_csv("https://proback.github.io/264_fall_2025/Data/vaccinations_2021.csv")  #<3>
 
 # Approach 4
-vaccine_data <- read_csv("https://raw.githubusercontent.com/joeroith/264_spring_2025/refs/heads/main/Data/vaccinations_2021.csv")  #<4>
+vaccine_data <- read_csv("https://raw.githubusercontent.com/proback/264_fall_2025/refs/heads/main/Data/vaccinations_2021.csv")  #<4>
 
 ```
 
