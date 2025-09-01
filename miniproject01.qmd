@@ -15,15 +15,15 @@ Your story must contain the following elements:
 - *at least* 3 different str_ functions
 - *at least* 3 different regular expressions
 - *at least* 2 different text analysis applications (count words, bing sentiment, afinn sentiment, nrc sentiment, wordclouds, trajectories over sections or time, tf-idf, bigrams, correlations, networks, LDA, etc.).  Note that many interesting insights can be gained by strategic and thoughtful use of regular expressions paired with simple counts and summary statistics.
-- *at least* 3 illustrative, well-labeled plots or tables
+- *at least* 3 illustrative, well-labeled plots or tables, one of which is described with alt-text using the Four Ingredients Model
 - a description of what insights can be gained from your plots and tables.  *Be sure you weave a compelling and interesting story!*
 
-Be sure to highlight the elements above so that they are easy for me to spot!
+Be sure to highlight the elements above so that they are easy for me to spot!  And be sure there is a working link to your code and your report in a GitHub repo!
 
 
 ## Evaluation Rubric
 
-Available [here](https://drive.google.com/file/d/1_yvxyKQrajvEOPZnZbriUDPdQ08DyCPG/view?usp=sharing)
+Available [here](https://drive.google.com/file/d/1QhoyZSA0wm_WnwY1DEDOfCtWXhTaTSty/view?usp=sharing).
 
 
 ## Timeline
@@ -48,9 +48,9 @@ library(tidyverse)
 #| message: false
 
 #barack <- read_csv("Data/tweets_potus.csv") 
-barack <- read_csv("https://joeroith.github.io/264_spring_2025/Data/tweets_potus.csv")
+barack <- read_csv("https://proback.github.io/264_fall_2025/Data/tweets_potus.csv")
 #michelle <- read_csv("Data/tweets_flotus.csv") 
-michelle <- read_csv("https://joeroith.github.io/264_spring_2025/Data/tweets_flotus.csv")
+michelle <- read_csv("https://proback.github.io/264_fall_2025/Data/tweets_flotus.csv")
 
 tweets <- bind_rows(barack |> 
                       mutate(person = "Barack"),

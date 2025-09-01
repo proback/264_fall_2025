@@ -138,10 +138,6 @@ window.Quarto = {
     <a class="dropdown-item" href="./github_intro.html">
  <span class="dropdown-text">Intro to GitHub</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="./github_links.html">
- <span class="dropdown-text">GitHub Links</span></a>
-  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -211,6 +207,7 @@ window.Quarto = {
   <li><a href="#modifying-files-that-have-already-been-pushed-to-github" id="toc-modifying-files-that-have-already-been-pushed-to-github" class="nav-link" data-scroll-target="#modifying-files-that-have-already-been-pushed-to-github">Modifying files that have already been pushed to GitHub</a></li>
   <li><a href="#pulling-work-from-github" id="toc-pulling-work-from-github" class="nav-link" data-scroll-target="#pulling-work-from-github">Pulling work from GitHub</a></li>
   <li><a href="#a-bit-more-about-r-projects" id="toc-a-bit-more-about-r-projects" class="nav-link" data-scroll-target="#a-bit-more-about-r-projects">A bit more about R projects</a></li>
+  <li><a href="#a-few-additional-github-links-that-ive-found-helpful" id="toc-a-few-additional-github-links-that-ive-found-helpful" class="nav-link" data-scroll-target="#a-few-additional-github-links-that-ive-found-helpful">A few additional GitHub links that I’ve found helpful:</a></li>
   </ul>
 </nav>
     </div>
@@ -267,18 +264,18 @@ window.Quarto = {
 <section id="creating-an-r-project-local-thats-connected-to-github-cloud" class="level3">
 <h3 class="anchored" data-anchor-id="creating-an-r-project-local-thats-connected-to-github-cloud">Creating an R project (local) that’s connected to GitHub (cloud)</h3>
 <ol start="4" type="1">
-<li><p>In your GitHub account, click the <span class="math inline">\(+ \nabla\)</span> (+down arrow) button near the top right and select New Repository (repo). Put something like “SDS264_S25” for your repository (repo) name; use simple but descriptive names that avoid spaces. Check Private for now; you can turn a repository Public if you want later. Check Add a ReadMe File. Finally hit Create Repository and copy the URL once your repo has been created; the URL should be something like <code>github.com/username/SDS264_S25</code>.</p></li>
-<li><p>Go into your RStudio and select File &gt; New Project &gt; Version Control &gt; Git. For the repository URL paste in the URL for the repository you just created. A project directory named “SDS264_S25” will be created in your specified folder (which you can navigate to).</p></li>
+<li><p>In your GitHub account, click the <span class="math inline">\(+ \nabla\)</span> (+down arrow) button near the top right and select New Repository (repo). Put something like “SDS264_F25” for your repository (repo) name; use simple but descriptive names that avoid spaces. Check Private for now; you can turn a repository Public if you want later. Check Add a ReadMe File. Finally hit Create Repository and copy the URL once your repo has been created; the URL should be something like <code>github.com/username/SDS264_F25</code>.</p></li>
+<li><p>Go into your RStudio and select File &gt; New Project &gt; Version Control &gt; Git. For the repository URL paste in the URL for the repository you just created. A project directory named “SDS264_F25” will be created in your specified folder (which you can navigate to).</p></li>
 </ol>
 <p><em>Notice that you are now starting with a blank slate! Nothing in the environment or history. Also note where it says your project name in the top right corner.</em></p>
-<p><strong>At this point your should have a GitHub repo called “SDS264_S25” connected to an R project named “SDS264_S25”. The basic framework is set!</strong></p>
+<p><strong>At this point your should have a GitHub repo called “SDS264_F25” connected to an R project named “SDS264_F25”. The basic framework is set!</strong></p>
 <p>Here is an illustration (<a href="https://www.nobledesktop.com/learn/git/stage-commit-files-git">source</a>) of the process of using GitHub to manage version control and collaboration, followed by greater detail about each step:</p>
 <p><img src="images/git-overall-workflow-diagram.png" class="img-fluid" width="600"></p>
 </section>
 <section id="creating-new-files-in-rstudio-local" class="level3">
 <h3 class="anchored" data-anchor-id="creating-new-files-in-rstudio-local">Creating new files in RStudio (local)</h3>
 <ol start="6" type="1">
-<li>You can download our first file with in-class exercises <a href="https://github.com/joeroith/264_spring_2025/blob/main/01_review164.qmd">here</a>. Just hit the Download Raw File button and note where the file is saved on your computer. Use File &gt; Open File in RStudio to open up <code>01_review164.qmd</code>. Then, use File &gt; Save As to navigate to the SDS264_S25 folder on your computer and save a copy there. You can even add your name or a few answers and re-save your file.</li>
+<li>You can download our first file with in-class exercises <a href="https://github.com/proback/264_fall_2025/blob/main/01_review164.qmd">here</a>. Just hit the Download Raw File button and note where the file is saved on your computer. Use File &gt; Open File in RStudio to open up <code>01_review164.qmd</code>. Then, use File &gt; Save As to navigate to the SDS264_F25 folder on your computer and save a copy there. You can even add your name or a few answers and re-save your file.</li>
 </ol>
 </section>
 <section id="making-sure-the-connection-to-github-is-ready" class="level3">
@@ -324,8 +321,17 @@ window.Quarto = {
 <section id="a-bit-more-about-r-projects" class="level3">
 <h3 class="anchored" data-anchor-id="a-bit-more-about-r-projects">A bit more about R projects</h3>
 <ol start="11" type="1">
-<li>To see the power of projects, select File &gt; Close Project and Don’t Save the workspace image. Then, select File &gt; Recent Projects &gt; SDS264_S25; you will get a clean Environment and Console once again, but History shows the commands you ran by hand, active Rmd and qmd files appear in the Source panel, and Files contains the Rmd, qmd, html, and csv files produced by your last session. And you can stage, commit and push the changes and the new file to GitHub!</li>
+<li>To see the power of projects, select File &gt; Close Project and Don’t Save the workspace image. Then, select File &gt; Recent Projects &gt; SDS264_F25; you will get a clean Environment and Console once again, but History shows the commands you ran by hand, active Rmd and qmd files appear in the Source panel, and Files contains the Rmd, qmd, html, and csv files produced by your last session. And you can stage, commit and push the changes and the new file to GitHub!</li>
 </ol>
+</section>
+<section id="a-few-additional-github-links-that-ive-found-helpful" class="level3">
+<h3 class="anchored" data-anchor-id="a-few-additional-github-links-that-ive-found-helpful">A few additional GitHub links that I’ve found helpful:</h3>
+<ul>
+<li><p><a href="https://www.youtube.com/watch?v=QLFc9gw_Hfs">Using git and GitHub with RStudio (Lisa Lendway)</a></p></li>
+<li><p><a href="https://www.youtube.com/watch?v=OduNU4vZ7IM">GitHub with R projects (Lisa Lendway)</a></p></li>
+<li><p><a href="https://github.com/classroom-resources/github-starter-course">GitHub starter course – basic terminology</a></p></li>
+<li><p><a href="https://happygitwithr.com/">Happy Git and GitHub for the useR (Jenny Bryan)</a></p></li>
+</ul>
 
 
 </section>

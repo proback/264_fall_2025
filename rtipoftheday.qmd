@@ -11,7 +11,7 @@ sidebar: false
 
 [My example of an RTD presentation with revealjs in quarto](https://rconnect.stolaf.edu/content/efd3944a-efcc-40cb-9e63-bf30780114a9)
 
-[Code for my example](https://github.com/joeroith/264_fall_2025/blob/main/quarto_presentations/rtd_example.qmd)
+[Code for my example](https://github.com/proback/264_fall_2025/blob/main/quarto_presentations/rtd_example.qmd)
 
 [RTD rubric](https://drive.google.com/file/d/1W-IpuJvUS0x94iNdJfEmomo4tziPtvxA/view?usp=sharing)
 
