@@ -43,6 +43,7 @@ website:
         - 03_strings_part2.qmd
         - 04_strings_part3.qmd
         - 05_text_analysis.qmd
+        - 06_code_quality.qmd
 
     - id: projects
       title: "Projects"

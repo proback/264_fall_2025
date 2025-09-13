@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Why Quarto? – SDS 264: Data Science 2</title>
+<title>Code quality – SDS 264: Data Science 2</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -202,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./why_quarto.html">Why Quarto?</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06_code_quality.html">Code quality</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -216,20 +216,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tech_setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tech Setup</span></a>
+  <a href="./01_review164.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Review of Data Science 1</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./why_quarto.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Why Quarto?</span></a>
+  <a href="./02_strings_part1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 1)</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Intro to GitHub</span></a>
+  <a href="./03_strings_part2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 2)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_strings_part3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: Extra Practice (Part 3)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_text_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_code_quality.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Code quality</span></a>
   </div>
 </li>
     </ul>
@@ -242,7 +260,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#air-quality" id="toc-air-quality" class="nav-link active" data-scroll-target="#air-quality">Air Quality</a></li>
+  <li><a href="#code-style" id="toc-code-style" class="nav-link active" data-scroll-target="#code-style">Code style</a></li>
+  <li><a href="#code-comments" id="toc-code-comments" class="nav-link" data-scroll-target="#code-comments">Code comments</a></li>
   </ul>
 </nav>
     </div>
@@ -251,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Why Quarto?</h1>
+<h1 class="title">Code quality</h1>
 </div>
 
 
@@ -268,58 +287,84 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>As described in the <a href="https://quarto.org/docs/computations/r.html">quarto documentation</a>: Quarto is a new, open-source, scientific, and technical publishing system. It is a multi-language, next generation version of R Markdown from RStudio, with many new features and capabilities. Like R Markdown, Quarto uses Knitr to execute R code, and is therefore able to render most existing Rmd files without modification.</p>
-<p>Data scientists are <a href="https://www.infoworld.com/article/3666743/what-is-quarto-rstudio-quietly-rolls-out-next-generation-r-markdown.html">pretty excited</a> about the introduction of Quarto, and since it represents the future of R Markdown, we will conduct SDS 264 using Quarto. Intriguing Quarto features that have been cited include:</p>
-<ul>
-<li>collaborate across coding languages</li>
-<li>open source</li>
-<li>dozens of export types, including websites, books, and blogs</li>
-<li>built-in YAML assistance (since it’s a notoriously finicky language)</li>
-<li>it’s installed like other software and automatically included in new versions of RStudio</li>
-<li>free publishing through quartopub.com</li>
-<li>while Rmd will be maintained and updated, cool new features will appear in Quarto</li>
-<li>there are plans for future simultaneous editing like in google docs</li>
-</ul>
-<p>According to this <a href="https://charlotte.quarto.pub/cascadia/">Intro to Quarto</a> workshop from Posit and the developers of Rstudio and Quarto, Quarto (compared to RMarkdown):</p>
-<ul>
-<li>Offers “batteries included” shared syntax across formats, while R Markdown grew into a large ecosystem with varying syntax</li>
-<li>Allows you to choose your own editor and your preferred data science language</li>
-<li>Comes with richer features out of the box</li>
-<li>Is actively developed</li>
-</ul>
-<p>In other words, Quarto unifies and extends R Markdown:</p>
-<ul>
-<li>Consistent implementation of attractive and handy features across outputs: tabsets, code-folding, syntax highlighting, etc.</li>
-<li>More accessible defaults as well as better support for accessibility</li>
-<li>Support for other languages like Python, Julia, Observable, and more via Jupyter engine for executable code chunks.</li>
-</ul>
-<p>Be sure to check out the “Intro to Quarto” slides yourself, including the very <a href="https://charlotte.quarto.pub/cascadia/2-yaml-markdown-basics/">helpful section</a> on rendering Quarto documents as pdfs.</p>
-<p>Here’s a cool example from the Quarto documentation, showing features like cross-referencing of figures, chunk options using the hash-pipe format, collapsed code, and easy figure legends:</p>
-<section id="air-quality" class="level2">
-<h2 class="anchored" data-anchor-id="air-quality">Air Quality</h2>
-<p><a href="#fig-airquality" class="quarto-xref">Figure&nbsp;1</a> further explores the impact of temperature on ozone level.</p>
+<p>You can download this .qmd file from <a href="https://github.com/proback/264_fall_2025/blob/main/06_code_quality.qmd">here</a>. Just hit the Download Raw File button.</p>
+<section id="code-style" class="level2">
+<h2 class="anchored" data-anchor-id="code-style">Code style</h2>
+<p>We are going to take a timeout at this point to focus a little on code quality. <a href="https://r4ds.hadley.nz/workflow-style">Chapter 4</a> in R4DS provides a nice introduction to code style and why it’s important. As they do in that chapter, we will follow the <a href="https://style.tidyverse.org/">tidyverse style guide</a> in this class.</p>
+<p>Based on those resources, can you improve this poorly styled code chunk using the data from our DS1 Review activity?</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(airquality, <span class="fu">aes</span>(Temp, Ozone)) <span class="sc">+</span> </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div id="fig-airquality" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-airquality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="why_quarto_files/figure-html/fig-airquality-1.png" class="img-fluid figure-img" width="672">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-airquality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Temperature and ozone level.
-</figcaption>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>VACCINE.DATA <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://proback.github.io/264_fall_2025/Data/vaccinations_2021.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3053 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (4): state, county, region, metro_status
+dbl (10): rural_urban_code, perc_complete_vac, tot_pop, votes_Trump, votes_B...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>VACCINE.DATA <span class="sc">|&gt;</span> <span class="fu">filter</span>(state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Minnesota"</span>,<span class="st">"Iowa"</span>,<span class="st">"Wisconsin"</span>,<span class="st">"North Dakota"</span>,<span class="st">"South Dakota"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">state_ordered=</span><span class="fu">fct_reorder2</span>(state,perc_Biden,perc_complete_vac),<span class="at">prop_Biden=</span>perc_Biden<span class="sc">/</span><span class="dv">100</span>,<span class="at">prop_complete_vac=</span>perc_complete_vac<span class="sc">/</span><span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> prop_Biden, <span class="at">y =</span> prop_complete_vac, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">color =</span> state_ordered)) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"State"</span>, <span class="at">x =</span> <span class="st">"Proportion of Biden votes"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Proportion completely vaccinated"</span>, <span class="at">title =</span> <span class="st">"The positive relationship between Biden votes and </span><span class="sc">\n</span><span class="st"> vaccination rates by county differs by state"</span>) <span class="sc">+</span>     </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>), <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">12</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_code_quality_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="code-comments" class="level2">
+<h2 class="anchored" data-anchor-id="code-comments">Code comments</h2>
+<p>Please read <a href="https://hdsr.mitpress.mit.edu/pub/8wsiqh1c/release/4">Fostering Better Coding Practices for Data Scientists</a>, which lays out a nice case for the importance of teaching good coding practices. In particular, their Top 10 List can help achieve the four Cs (correctness, clarity, containment, and consistency) that typify high-quality code:</p>
+<ol type="1">
+<li>Choose good names.</li>
+<li>Follow a style guide consistently.</li>
+<li>Create documents using tools that support reproducible workflows.</li>
+<li>Select a coherent, minimal, yet powerful tool kit.</li>
+<li>Don’t Repeat Yourself (DRY).</li>
+<li>Take advantage of a functional programming style.</li>
+<li>Employ consistency checks.</li>
+<li>Learn how to debug and to ask for help.</li>
+<li>Get (version) control of the situation.</li>
+<li>Be multilingual.</li>
+</ol>
+<p>Please also read the Stack Overflow blog on <a href="https://stackoverflow.blog/2021/12/23/best-practices-for-writing-code-comments/">Best Practices for Writing Code Comments</a> with their set of 9 rules:</p>
+<ul>
+<li>Rule 1: Comments should not duplicate the code.</li>
+<li>Rule 2: Good comments do not excuse unclear code.</li>
+<li>Rule 3: If you can’t write a clear comment, there may be a problem with the code.</li>
+<li>Rule 4: Comments should dispel confusion, not cause it.</li>
+<li>Rule 5: Explain unidiomatic code in comments.</li>
+<li>Rule 6: Provide links to the original source of copied code.</li>
+<li>Rule 7: Include links to external references where they will be most helpful.</li>
+<li>Rule 8: Add comments when fixing bugs.</li>
+<li>Rule 9: Use comments to mark incomplete implementations.</li>
+</ul>
+<p>In your projects and homework for this course, we will look for good style and good commenting to optimize your abilities as a collaborating data scientist!</p>
 
 
 </section>
