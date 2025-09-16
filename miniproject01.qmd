@@ -18,7 +18,9 @@ Your story must contain the following elements:
 - *at least* 3 illustrative, well-labeled plots or tables, one of which is described with alt-text using the Four Ingredients Model
 - a description of what insights can be gained from your plots and tables.  *Be sure you weave a compelling and interesting story!*
 
-Be sure to highlight the elements above so that they are easy for me to spot!  And be sure there is a working link to your code and your report in a GitHub repo!
+Be sure to highlight the elements above so that they are easy for me to spot!  
+
+You will hand in this project by pushing your work (qmd file, data set(s), and rendered pdf) to GitHub and providing me with a link.  If you have a private repository, you might have to add me (proback) as a collaborator.
 
 
 ## Evaluation Rubric
@@ -28,7 +30,7 @@ Available [here](https://drive.google.com/file/d/1QhoyZSA0wm_WnwY1DEDOfCtWXhTaTS
 
 ## Timeline
 
-Mini-Project 1 must be submitted on Moodle by **11:00 PM on Sun Sep 28**.   
+Mini-Project 1 must be submitted on Moodle by **11:00 PM on Wed Oct 1**.   
 
 
 ## Topic Ideas
