@@ -44,6 +44,8 @@ website:
         - 04_strings_part3.qmd
         - 05_text_analysis.qmd
         - 06_code_quality.qmd
+        - 07_data_types.qmd
+        - 08_functions.qmd
 
     - id: projects
       title: "Projects"
