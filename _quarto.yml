@@ -46,6 +46,7 @@ website:
         - 06_code_quality.qmd
         - 07_data_types.qmd
         - 08_functions.qmd
+        - 09_iteration.qmd
 
     - id: projects
       title: "Projects"
