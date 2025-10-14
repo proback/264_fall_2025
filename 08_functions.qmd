@@ -447,7 +447,9 @@ flights |>
   count_missing(c(year, month, day), dep_time)
 ```
 
-The problem is that `group_by()` uses data-masking rather than tidy-selection; it is selecting certain variables rather than evaluating values of those variables.  These are the two most common subtypes of tidy evaluation:
+The problem is that `group_by()` uses data-masking rather than tidy-selection.  Even outside a function, `group_by(year, month, day)` will work, but `group_by(c(year, month, day))` will not.  The above function will work with `count_missing(flights, month, dep_time)` but not `count_missing(flights, c(year, month, day), dep_time)`.
+
+These are the two most common subtypes of tidy evaluation:
 
   - Data-masking is used in functions like arrange(), filter(), mutate(), and summarize() that compute with variables.  Data masking is an R feature that blends programming variables that live inside environments (env-variables) with statistical variables stored in data frames (data-variables).  
   - Tidy-selection is used for functions like select(), relocate(), and rename() that select variables.  Tidy selection provides a concise dialect of R for selecting variables based on their names or properties.

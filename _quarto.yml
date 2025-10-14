@@ -52,6 +52,7 @@ website:
       title: "Projects"
       contents:
         - miniproject01.qmd
+        - miniproject02.qmd
 
 
   page-footer:

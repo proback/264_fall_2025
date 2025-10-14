@@ -197,6 +197,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./miniproject01.html">
  <span class="dropdown-text">Mini-Project 1: Text Analysis</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./miniproject02.html">
+ <span class="dropdown-text">Mini-Project 2: Data Acquisition</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item">
@@ -372,16 +376,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 10 × 4
         a       b       c       d
     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1  0.604  2.06   -0.800   0.891 
- 2  1.29   0.210   1.95    0.236 
- 3  0.169  0.591   1.58   -0.573 
- 4 -0.468 -0.415  -0.0272  1.05  
- 5  0.940  3.09    1.69    0.0268
- 6  0.144  0.492   0.530   1.33  
- 7  2.35   0.893   1.42    0.733 
- 8  1.17  -0.0302  0.794  -0.796 
- 9  0.849  0.200  -0.851  -0.525 
-10  0.843  0.726   1.20    0.577 </code></pre>
+ 1  0.871 -0.835   1.10   -1.27  
+ 2  1.94  -1.38    0.0948 -0.931 
+ 3  0.239 -1.42    0.0963  0.842 
+ 4  0.268  0.106  -0.342  -1.69  
+ 5  0.156 -1.24    0.787  -1.53  
+ 6 -0.555 -0.101   1.26   -0.0244
+ 7  0.747  0.165   0.0787 -0.141 
+ 8 -0.119 -0.0955 -0.428   0.512 
+ 9 -0.116 -1.13    0.664   1.42  
+10  1.35   0.609  -0.530   1.17  </code></pre>
 </div>
 </div>
 <p>This code below for rescaling variables from 0 to 1 is ripe for functions… we did it four times!</p>
@@ -394,18 +398,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
-       a     b      c     d
-   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
- 1 0.381 0.705 0.0180 0.795
- 2 0.625 0.178 1      0.486
- 3 0.226 0.287 0.867  0.105
- 4 0     0     0.294  0.870
- 5 0.501 1     0.905  0.388
- 6 0.218 0.259 0.493  1    
- 7 1     0.373 0.811  0.720
- 8 0.581 0.110 0.587  0    
- 9 0.468 0.176 0      0.128
-10 0.466 0.325 0.731  0.647</code></pre>
+       a      b      c      d
+   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 0.570 0.290  0.911  0.136 
+ 2 1     0.0225 0.349  0.244 
+ 3 0.317 0      0.349  0.813 
+ 4 0.329 0.753  0.105  0     
+ 5 0.284 0.0887 0.735  0.0513
+ 6 0     0.651  1      0.535 
+ 7 0.521 0.782  0.340  0.498 
+ 8 0.174 0.654  0.0566 0.707 
+ 9 0.176 0.147  0.666  1     
+10 0.760 1      0      0.918 </code></pre>
 </div>
 </div>
 <p>Notice first what changes and what stays the same in each line. Then, if we look at the first line above, we see we have one value we’re using over and over: <code>df$a</code>. So our function will have one input. We’ll start with our code from that line, then replace the input (df$a) with x. We should give our function a name that explains what it does. The name should be a verb.</p>
@@ -517,18 +521,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
-        a       b       c       d
-    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 -0.480   0.114 -2.84   -0.140 
- 2  0.546  -0.946  0.0872  0.171 
- 3 -1.89    0.140  0.667   1.13  
- 4  2.04   -2.94   1.11    0.0158
- 5 NA      -0.962 -1.03    0.715 
- 6  0.956 Inf     -0.267  -1.37  
- 7  0.341  -1.24   0.514   0.243 
- 8  0.269   0.511  0.108  -2.63  
- 9  1.91   -1.23   1.24    1.74  
-10  3.32    0.984  0.870  -1.57  </code></pre>
+         a         b      c      d
+     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1  0.419   -0.727    0.192 -0.913
+ 2  0.0290   1.90    -0.990 -0.667
+ 3  0.505    1.79    -0.434 -1.51 
+ 4  1.59     0.280   -1.01   0.128
+ 5 NA       -0.223    0.216 -2.13 
+ 6  0.563  Inf        1.13   0.496
+ 7  1.18    -1.25     0.237 -0.209
+ 8 -0.805    1.37    -0.367 -0.738
+ 9 -1.44     0.00797  0.814  1.95 
+10 -0.416    1.44     0.442 -0.448</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>a_new <span class="ot">&lt;-</span> <span class="fu">rescale1</span>(df<span class="sc">$</span>a)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>b_new <span class="ot">&lt;-</span> <span class="fu">rescale1</span>(df<span class="sc">$</span>b)</span>
@@ -537,18 +541,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 8
-        a       b       c       d  a_new   b_new c_new d_new
-    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1 -0.480   0.114 -2.84   -0.140   0.271   0.778 0     0.569
- 2  0.546  -0.946  0.0872  0.171   0.468   0.508 0.717 0.640
- 3 -1.89    0.140  0.667   1.13    0       0.785 0.860 0.859
- 4  2.04   -2.94   1.11    0.0158  0.754   0     0.968 0.605
- 5 NA      -0.962 -1.03    0.715  NA       0.504 0.443 0.765
- 6  0.956 Inf     -0.267  -1.37    0.547 Inf     0.630 0.288
- 7  0.341  -1.24   0.514   0.243   0.429   0.433 0.822 0.657
- 8  0.269   0.511  0.108  -2.63    0.415   0.880 0.722 0    
- 9  1.91   -1.23   1.24    1.74    0.730   0.435 1     1    
-10  3.32    0.984  0.870  -1.57    1       1     0.909 0.243</code></pre>
+         a         b      c      d  a_new   b_new   c_new d_new
+     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.419   -0.727    0.192 -0.913  0.612   0.166 0.560   0.298
+ 2  0.0290   1.90    -0.990 -0.667  0.484   1     0.00911 0.358
+ 3  0.505    1.79    -0.434 -1.51   0.641   0.966 0.268   0.152
+ 4  1.59     0.280   -1.01   0.128  1       0.486 0       0.553
+ 5 NA       -0.223    0.216 -2.13  NA       0.326 0.571   0    
+ 6  0.563  Inf        1.13   0.496  0.660 Inf     1       0.643
+ 7  1.18    -1.25     0.237 -0.209  0.862   0     0.582   0.470
+ 8 -0.805    1.37    -0.367 -0.738  0.209   0.833 0.300   0.341
+ 9 -1.44     0.00797  0.814  1.95   0       0.399 0.851   1    
+10 -0.416    1.44     0.442 -0.448  0.337   0.854 0.677   0.412</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>) <span class="sc">|&gt;</span></span>
@@ -558,18 +562,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">d_new =</span> <span class="fu">rescale1</span>(d))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 8
-        a       b       c       d  a_new   b_new c_new d_new
-    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1 -0.480   0.114 -2.84   -0.140   0.271   0.778 0     0.569
- 2  0.546  -0.946  0.0872  0.171   0.468   0.508 0.717 0.640
- 3 -1.89    0.140  0.667   1.13    0       0.785 0.860 0.859
- 4  2.04   -2.94   1.11    0.0158  0.754   0     0.968 0.605
- 5 NA      -0.962 -1.03    0.715  NA       0.504 0.443 0.765
- 6  0.956 Inf     -0.267  -1.37    0.547 Inf     0.630 0.288
- 7  0.341  -1.24   0.514   0.243   0.429   0.433 0.822 0.657
- 8  0.269   0.511  0.108  -2.63    0.415   0.880 0.722 0    
- 9  1.91   -1.23   1.24    1.74    0.730   0.435 1     1    
-10  3.32    0.984  0.870  -1.57    1       1     0.909 0.243</code></pre>
+         a         b      c      d  a_new   b_new   c_new d_new
+     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.419   -0.727    0.192 -0.913  0.612   0.166 0.560   0.298
+ 2  0.0290   1.90    -0.990 -0.667  0.484   1     0.00911 0.358
+ 3  0.505    1.79    -0.434 -1.51   0.641   0.966 0.268   0.152
+ 4  1.59     0.280   -1.01   0.128  1       0.486 0       0.553
+ 5 NA       -0.223    0.216 -2.13  NA       0.326 0.571   0    
+ 6  0.563  Inf        1.13   0.496  0.660 Inf     1       0.643
+ 7  1.18    -1.25     0.237 -0.209  0.862   0     0.582   0.470
+ 8 -0.805    1.37    -0.367 -0.738  0.209   0.833 0.300   0.341
+ 9 -1.44     0.00797  0.814  1.95   0       0.399 0.851   1    
+10 -0.416    1.44     0.442 -0.448  0.337   0.854 0.677   0.412</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Even better - from Chapter 26</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
@@ -577,18 +581,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(a<span class="sc">:</span>d, rescale1, <span class="at">.names =</span> <span class="st">"{.col}_new"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 8
-        a       b       c       d  a_new   b_new c_new d_new
-    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1 -0.480   0.114 -2.84   -0.140   0.271   0.778 0     0.569
- 2  0.546  -0.946  0.0872  0.171   0.468   0.508 0.717 0.640
- 3 -1.89    0.140  0.667   1.13    0       0.785 0.860 0.859
- 4  2.04   -2.94   1.11    0.0158  0.754   0     0.968 0.605
- 5 NA      -0.962 -1.03    0.715  NA       0.504 0.443 0.765
- 6  0.956 Inf     -0.267  -1.37    0.547 Inf     0.630 0.288
- 7  0.341  -1.24   0.514   0.243   0.429   0.433 0.822 0.657
- 8  0.269   0.511  0.108  -2.63    0.415   0.880 0.722 0    
- 9  1.91   -1.23   1.24    1.74    0.730   0.435 1     1    
-10  3.32    0.984  0.870  -1.57    1       1     0.909 0.243</code></pre>
+         a         b      c      d  a_new   b_new   c_new d_new
+     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.419   -0.727    0.192 -0.913  0.612   0.166 0.560   0.298
+ 2  0.0290   1.90    -0.990 -0.667  0.484   1     0.00911 0.358
+ 3  0.505    1.79    -0.434 -1.51   0.641   0.966 0.268   0.152
+ 4  1.59     0.280   -1.01   0.128  1       0.486 0       0.553
+ 5 NA       -0.223    0.216 -2.13  NA       0.326 0.571   0    
+ 6  0.563  Inf        1.13   0.496  0.660 Inf     1       0.643
+ 7  1.18    -1.25     0.237 -0.209  0.862   0     0.582   0.470
+ 8 -0.805    1.37    -0.367 -0.738  0.209   0.833 0.300   0.341
+ 9 -1.44     0.00797  0.814  1.95   0       0.399 0.851   1    
+10 -0.416    1.44     0.442 -0.448  0.337   0.854 0.677   0.412</code></pre>
 </div>
 </div>
 </section>
@@ -614,18 +618,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
-        a      b      c        d
-    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
- 1 -0.103  0.261 -2.47  -0.934  
- 2 -1.27   1.77  -0.920 -0.464  
- 3 -0.310  1.45   0.100 -0.00181
- 4 -0.266 -0.563  1.88  -1.18   
- 5 NA     -2.35  -1.21  -0.560  
- 6  0.205  1.38  -1.95  -0.872  
- 7 -0.208  2.03   0.881  0.938  
- 8  0.231 -0.138 -0.722 -0.357  
- 9  2.18   0.294 -0.634  2.27   
-10  0.808  0.203  0.584 -1.08   </code></pre>
+         a       b       c         d
+     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+ 1  0.849   0.375  -0.894   1.14    
+ 2 -0.0100  2.26    0.0332  1.04    
+ 3 -0.190   0.248   0.946  -0.450   
+ 4  0.866  -0.862  -0.479  -0.0962  
+ 5 NA       0.344  -1.65    0.455   
+ 6  0.272   0.680  -0.163   0.298   
+ 7  0.0980 -2.29   -0.873  -0.910   
+ 8 -0.120  -0.116  -0.440  -0.190   
+ 9 -1.15   -0.940  -0.350   0.929   
+10 -1.93    0.0358 -1.85   -0.000302</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>rescale_basic <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  (x <span class="sc">-</span> <span class="fu">min</span>(x)) <span class="sc">/</span> (<span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x))</span>
@@ -636,17 +640,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">new_a =</span> <span class="fu">rescale_basic</span>(a))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 9 × 5
-       a      b      c        d new_a
-   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
-1 -0.103  0.261 -2.47  -0.934   0.337
-2 -1.27   1.77  -0.920 -0.464   0    
-3 -0.310  1.45   0.100 -0.00181 0.278
-4 -0.266 -0.563  1.88  -1.18    0.290
-5  0.205  1.38  -1.95  -0.872   0.427
-6 -0.208  2.03   0.881  0.938   0.307
-7  0.231 -0.138 -0.722 -0.357   0.434
-8  2.18   0.294 -0.634  2.27    1    
-9  0.808  0.203  0.584 -1.08    0.602</code></pre>
+        a       b       c         d new_a
+    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;
+1  0.849   0.375  -0.894   1.14     0.994
+2 -0.0100  2.26    0.0332  1.04     0.686
+3 -0.190   0.248   0.946  -0.450    0.622
+4  0.866  -0.862  -0.479  -0.0962   1    
+5  0.272   0.680  -0.163   0.298    0.787
+6  0.0980 -2.29   -0.873  -0.910    0.725
+7 -0.120  -0.116  -0.440  -0.190    0.647
+8 -1.15   -0.940  -0.350   0.929    0.277
+9 -1.93    0.0358 -1.85   -0.000302 0    </code></pre>
 </div>
 </div>
 <p><strong>[Pause to Ponder:]</strong> Do you notice anything in the output above that gives you pause?</p>
@@ -904,7 +908,8 @@ Caused by error:
 ! `c(year, month, day)` must be size 336776 or 1, not 1010328.</code></pre>
 </div>
 </div>
-<p>The problem is that <code>group_by()</code> uses data-masking rather than tidy-selection; it is selecting certain variables rather than evaluating values of those variables. These are the two most common subtypes of tidy evaluation:</p>
+<p>The problem is that <code>group_by()</code> uses data-masking rather than tidy-selection. Even outside a function, <code>group_by(year, month, day)</code> will work, but <code>group_by(c(year, month, day))</code> will not. The above function will work with <code>count_missing(flights, month, dep_time)</code> but not <code>count_missing(flights, c(year, month, day), dep_time)</code>.</p>
+<p>These are the two most common subtypes of tidy evaluation:</p>
 <ul>
 <li>Data-masking is used in functions like arrange(), filter(), mutate(), and summarize() that compute with variables. Data masking is an R feature that blends programming variables that live inside environments (env-variables) with statistical variables stored in data frames (data-variables).<br>
 </li>
