@@ -1,0 +1,12 @@
+name: sample_quarto_presentation
+title: sample_quarto_presentation
+username: roback
+account: roback
+server: rconnect.stolaf.edu
+hostUrl: https://rconnect.stolaf.edu/__api__
+appId: 1084
+bundleId: 3274
+url: https://rconnect.stolaf.edu/content/1f2d0be3-52ef-415f-ac36-257edcacdf5a/
+version: 1
+asMultiple: FALSE
+asStatic: TRUE

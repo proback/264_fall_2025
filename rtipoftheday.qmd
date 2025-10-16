@@ -9,7 +9,7 @@ sidebar: false
 
 [Code for creating the presentation above](https://github.com/proback/264_fall_2025/blob/main/quarto_presentations/revealjs-demo.qmd)
 
-[My example of an RTD presentation with revealjs in quarto](https://rconnect.stolaf.edu/content/efd3944a-efcc-40cb-9e63-bf30780114a9)
+[My example of an RTD presentation with revealjs in quarto](https://rconnect.stolaf.edu/content/3c3d7259-a2e4-42ed-a41b-028a9fc29d65)
 
 [Code for my example](https://github.com/proback/264_fall_2025/blob/main/quarto_presentations/rtd_example.qmd)
 
