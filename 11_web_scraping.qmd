@@ -14,14 +14,8 @@ Credit to Brianna Heggeseth and Leslie Myint from Macalester College for a few o
 #| include: FALSE
 
 library(tidyverse)
-library(stringr)
 library(rvest)
 library(polite)
-library(sf)
-library(maps)
-library(viridis)
-library(leaflet)
-library(htmltools)
 
 # Starter step: install SelectorGadget (https://selectorgadget.com/) in your browser
 

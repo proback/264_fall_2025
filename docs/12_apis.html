@@ -1,0 +1,8169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Acquisition with APIs in R – SDS 264: Data Science 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e137d14179fa74b23b5b2b66ff8bbb28.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">SDS 264: Data Science 2</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tech-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tech Notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tech-notes">    
+        <li>
+    <a class="dropdown-item" href="./tech_setup.html">
+ <span class="dropdown-text">Tech Setup</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./why_quarto.html">
+ <span class="dropdown-text">Why Quarto?</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./github_intro.html">
+ <span class="dropdown-text">Intro to GitHub</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-activities" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Activities</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-activities">    
+        <li>
+    <a class="dropdown-item" href="./01_review164.html">
+ <span class="dropdown-text">Review of Data Science 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./02_strings_part1.html">
+ <span class="dropdown-text">Strings: In-class Exercises (Part 1)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./03_strings_part2.html">
+ <span class="dropdown-text">Strings: In-class Exercises (Part 2)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./04_strings_part3.html">
+ <span class="dropdown-text">Strings: Extra Practice (Part 3)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./05_text_analysis.html">
+ <span class="dropdown-text">Text analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./06_code_quality.html">
+ <span class="dropdown-text">Code quality</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./07_data_types.html">
+ <span class="dropdown-text">Data types</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./08_functions.html">
+ <span class="dropdown-text">Functions and tidy evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./09_iteration.html">
+ <span class="dropdown-text">Iteration</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./10_table_scraping.html">
+ <span class="dropdown-text">Table Scraping in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./11_web_scraping.html">
+ <span class="dropdown-text">Web Scraping in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./12_apis.html">
+ <span class="dropdown-text">Data Acquisition with APIs in R</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
+        <li>
+    <a class="dropdown-item" href="./miniproject01.html">
+ <span class="dropdown-text">Mini-Project 1: Text Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./miniproject02.html">
+ <span class="dropdown-text">Mini-Project 2: Data Acquisition</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./rtipoftheday.html"> 
+<span class="menu-text">R Tip of the Day</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./12_apis.html">Data Acquisition with APIs in R</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_review164.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Review of Data Science 1</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_strings_part1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 1)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_strings_part2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 2)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_strings_part3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: Extra Practice (Part 3)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_text_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_code_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Code quality</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_data_types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functions and tidy evaluation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_iteration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Iteration</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_table_scraping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Table Scraping in R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_web_scraping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Web Scraping in R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_apis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Acquisition with APIs in R</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-apis" id="toc-introduction-to-apis" class="nav-link active" data-scroll-target="#introduction-to-apis">Introduction to APIs</a></li>
+  <li><a href="#accessing-web-apis-directly" id="toc-accessing-web-apis-directly" class="nav-link" data-scroll-target="#accessing-web-apis-directly">Accessing web APIs directly</a>
+  <ul class="collapse">
+  <li><a href="#movie-data-from-omdb" id="toc-movie-data-from-omdb" class="nav-link" data-scroll-target="#movie-data-from-omdb">Movie data from OMDB</a>
+  <ul class="collapse">
+  <li><a href="#handling-api-keys" id="toc-handling-api-keys" class="nav-link" data-scroll-target="#handling-api-keys">Handling API keys</a></li>
+  <li><a href="#data-from-coco-2017" id="toc-data-from-coco-2017" class="nav-link" data-scroll-target="#data-from-coco-2017">Data from Coco (2017)</a></li>
+  <li><a href="#on-your-own---omdb" id="toc-on-your-own---omdb" class="nav-link" data-scroll-target="#on-your-own---omdb">On Your Own - OMDB</a></li>
+  </ul></li>
+  <li><a href="#national-park-data" id="toc-national-park-data" class="nav-link" data-scroll-target="#national-park-data">National Park data</a></li>
+  <li><a href="#us-census-bureau-data" id="toc-us-census-bureau-data" class="nav-link" data-scroll-target="#us-census-bureau-data">US Census Bureau data</a>
+  <ul class="collapse">
+  <li><a href="#navigating-api-documentation-using-httr" id="toc-navigating-api-documentation-using-httr" class="nav-link" data-scroll-target="#navigating-api-documentation-using-httr">Navigating API documentation using httr</a></li>
+  <li><a href="#wrapper-packages" id="toc-wrapper-packages" class="nav-link" data-scroll-target="#wrapper-packages">Wrapper packages</a></li>
+  <li><a href="#on-your-own---census" id="toc-on-your-own---census" class="nav-link" data-scroll-target="#on-your-own---census">On Your Own - Census</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Acquisition with APIs in R</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>You can download this .qmd file from <a href="https://github.com/proback/264_fall_2025/blob/main/12_apis.qmd">here</a>. Just hit the Download Raw File button.</p>
+<p>Credit to Brianna Heggeseth and Leslie Myint from Macalester College for a few of these descriptions and examples.</p>
+<section id="introduction-to-apis" class="level1">
+<h1>Introduction to APIs</h1>
+<p>When we interact with sites like The New York Times, Zillow, and Google, we are accessing their data via a graphical layout (e.g., images, colors, columns) that is easy for humans to read but hard for computers.</p>
+<p>An <strong>API</strong> stands for <strong>Application Programming Interface</strong>, and this term describes a general class of tool that allows computers, rather than humans, to interact with an organization’s data. How does this work?</p>
+<ul>
+<li>When we use web browsers to navigate the web, our browsers communicate with web servers using a technology called <a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol">HTTP</a> or Hypertext Transfer Protocol to get information that is formatted into the display of a web page.</li>
+<li>Programming languages such as R can also use HTTP to communicate with web servers. The easiest way to do this is via <a href="https://en.wikipedia.org/wiki/Web_API">Web APIs</a>, or Web Application Programming Interfaces, which focus on transmitting raw data, rather than images, colors, or other appearance-related information that humans interact with when viewing a web page.</li>
+</ul>
+<p>A large variety of web APIs provide data accessible to programs written in R (and almost any other programming language!). Almost all reasonably large commercial websites offer APIs. Several developers have tried to maintain lists of public APIs, with various levels of success in maintenance and accuracy; you might check out <a href="https://public-api-lists.github.io/public-api-lists/">here</a> or <a href="https://github.com/toddmotto/public-apis">here</a> or <a href="https://github.com/public-apis/public-apis">here</a> or <a href="https://free-apis.github.io/#/">here</a>.</p>
+<p>For our purposes of obtaining data, APIs exist where website developers make data nicely packaged for consumption. The language HTTP (hypertext transfer protocol) underlies APIs, and the R package <code>httr()</code> (and now the updated <code>httr2()</code>) was written to map closely to HTTP with R. Essentially you send a request to the website (server) where you want data from, and they send a response, which should contain the data (plus other stuff).</p>
+<p>Many APIs (and their wrapper packages) require users to obtain a <strong>key</strong> to use their services.</p>
+<ul>
+<li>This lets organizations keep track of what data is being used.</li>
+<li>It also <strong>rate limits</strong> their API and ensures programs don’t make too many requests per day/minute/hour. Be aware that most APIs do have rate limits — especially for their free tiers.</li>
+</ul>
+<p>The case studies in this document provide a really quick introduction to data acquisition, just to get you started and show you what’s possible. For more information, this link (among others) can be somewhat helpful:</p>
+<ul>
+<li>https://nceas.github.io/oss-lessons/data-liberation/intro-webscraping.html</li>
+</ul>
+</section>
+<section id="accessing-web-apis-directly" class="level1">
+<h1>Accessing web APIs directly</h1>
+<section id="movie-data-from-omdb" class="level2">
+<h2 class="anchored" data-anchor-id="movie-data-from-omdb">Movie data from OMDB</h2>
+<p>Here’s an example of getting data from a website that attempts to make imdb movie data available as an API.</p>
+<p>Initial instructions:</p>
+<ul>
+<li>go to omdbapi.com under the API Key tab and request a free API key</li>
+<li>store your key as discussed below</li>
+<li>explore the examples at omdbapi.com</li>
+</ul>
+<section id="handling-api-keys" class="level3">
+<h3 class="anchored" data-anchor-id="handling-api-keys">Handling API keys</h3>
+<p>You’ll want to keep your API key handy for when you want to make requests for data from omdbapi.com, but you’ll also want to keep in secret so that others can’t use steal your key.</p>
+<p><strong>One approach</strong> is to copy and paste your key into a new text file:</p>
+<ul>
+<li>File &gt; New File &gt; Text File</li>
+<li>Save as <code>omdb_api_key.txt</code> in the same folder as this <code>.qmd</code>.</li>
+</ul>
+<p>You could then read in the key with code like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>omdb_api_key <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/omdb_api_key.txt"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>While this works, the problem is once we start backing up our files to GitHub, your API key will also appear on GitHub, and your API key will no longer be secret. To get around this, you can list <code>omdb_api_key.txt</code> in a <code>.gitignore</code> file, since GitHub does not back up files and folders listed in <code>.gitignore</code>.</p>
+<p>Here are two ways to create the .gitignore file:</p>
+<ol type="1">
+<li>Manually:</li>
+</ol>
+<ul>
+<li>Open a text editor (e.g.&nbsp;File &gt; New File &gt; Text File)</li>
+<li>Save the empty file as .gitignore in the root directory of your R project. Ensure the file name starts with a dot.</li>
+</ul>
+<ol start="2" type="1">
+<li>Using RStudio:</li>
+</ol>
+<ul>
+<li>Go to the Git pane in RStudio</li>
+<li>Right-click on a file you want to ignore and select “Ignore”. RStudio will automatically create or update the .gitignore file with an entry for that file.</li>
+</ul>
+<p>Your .gitignore file can contain file names, folder names, extensions (e.g.&nbsp;*.pdf to ignore all pdf files), etc. For example, in our class folder (264_fall_2025), I have a subfolder called DS2_preview_work where I store all the materials I’m working on but which aren’t quite ready to publish.</p>
+<p>A <strong>second approach</strong> is to use <em>environment variables</em>:</p>
+<p>Environment variables, or envvars for short, are a cross platform way of passing information to processes. For passing envvars to R, you can list name-value pairs in a file called .Renviron in your home directory. The easiest way to edit it is to run:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>(<span class="st">"project"</span>)  <span class="co"># opens an .Renviron window</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a line like: OMDB_KEY='myspecialkey'</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the .Renviron file</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Close down RStudio</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Restart RStudio</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.getenv</span>()   <span class="co"># to see if your new key is listed</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>omdb_api_key <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"OMDB_KEY"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(omdb_api_key)  <span class="co"># see if it works</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-from-coco-2017" class="level3">
+<h3 class="anchored" data-anchor-id="data-from-coco-2017">Data from Coco (2017)</h3>
+<p>We will first obtain data about the movie Coco from 2017.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>omdb_api_key <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/DS2_preview_work/omdb_api_key.txt"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, load your OMDB API key using:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># omdb_api_key &lt;- Sys.getenv("OMDB_KEY")</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Find url exploring examples at omdbapi.com</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"http://www.omdbapi.com/?t=Coco&amp;y=2017&amp;apikey="</span>, omdb_api_key)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>coco <span class="ot">&lt;-</span> <span class="fu">GET</span>(url)   <span class="co"># coco holds response from server</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>coco               <span class="co"># Status of 200 is good!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Response [http://www.omdbapi.com/?t=Coco&amp;y=2017&amp;apikey=4671c2d5]
+  Date: 2025-10-29 01:53
+  Status: 200
+  Content-Type: application/json; charset=utf-8
+  Size: 1.04 kB</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>details <span class="ot">&lt;-</span> <span class="fu">content</span>(coco, <span class="st">"parse"</span>)   </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>details                         <span class="co"># get a list of 25 pieces of information</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Title
+[1] "Coco"
+
+$Year
+[1] "2017"
+
+$Rated
+[1] "PG"
+
+$Released
+[1] "22 Nov 2017"
+
+$Runtime
+[1] "105 min"
+
+$Genre
+[1] "Animation, Adventure, Drama"
+
+$Director
+[1] "Lee Unkrich, Adrian Molina"
+
+$Writer
+[1] "Lee Unkrich, Jason Katz, Matthew Aldrich"
+
+$Actors
+[1] "Anthony Gonzalez, Gael García Bernal, Benjamin Bratt"
+
+$Plot
+[1] "Aspiring musician Miguel, confronted with his family's ancestral ban on music, enters the Land of the Dead to find his great-great-grandfather, a legendary singer."
+
+$Language
+[1] "English, Spanish"
+
+$Country
+[1] "United States, Mexico"
+
+$Awards
+[1] "Won 2 Oscars. 113 wins &amp; 42 nominations total"
+
+$Poster
+[1] "https://m.media-amazon.com/images/M/MV5BMDIyM2E2NTAtMzlhNy00ZGUxLWI1NjgtZDY5MzhiMDc5NGU3XkEyXkFqcGc@._V1_SX300.jpg"
+
+$Ratings
+$Ratings[[1]]
+$Ratings[[1]]$Source
+[1] "Internet Movie Database"
+
+$Ratings[[1]]$Value
+[1] "8.4/10"
+
+
+$Ratings[[2]]
+$Ratings[[2]]$Source
+[1] "Rotten Tomatoes"
+
+$Ratings[[2]]$Value
+[1] "97%"
+
+
+$Ratings[[3]]
+$Ratings[[3]]$Source
+[1] "Metacritic"
+
+$Ratings[[3]]$Value
+[1] "81/100"
+
+
+
+$Metascore
+[1] "81"
+
+$imdbRating
+[1] "8.4"
+
+$imdbVotes
+[1] "669,743"
+
+$imdbID
+[1] "tt2380307"
+
+$Type
+[1] "movie"
+
+$DVD
+[1] "N/A"
+
+$BoxOffice
+[1] "$210,460,015"
+
+$Production
+[1] "N/A"
+
+$Website
+[1] "N/A"
+
+$Response
+[1] "True"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>details<span class="sc">$</span>Year                    <span class="co"># how to access details</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2017"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">2</span>]]                    <span class="co"># since a list, another way to access</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2017"</code></pre>
+</div>
+</div>
+</section>
+<section id="on-your-own---omdb" class="level3">
+<h3 class="anchored" data-anchor-id="on-your-own---omdb">On Your Own - OMDB</h3>
+<ol type="1">
+<li>Build a data set for a collection of movies by completing the <strong>FILL IN</strong> sections in the code below:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a vector of 5 movie names you want to study</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  - must figure out pattern in URL for obtaining different movies</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>movies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">**</span>FILL IN<span class="sc">**</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up empty tibble</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>omdb <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Title =</span> <span class="fu">character</span>(), <span class="at">Rated =</span> <span class="fu">character</span>(), <span class="at">Genre =</span> <span class="fu">character</span>(),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Actors =</span> <span class="fu">character</span>(), <span class="at">Metascore =</span> <span class="fu">double</span>(), <span class="at">imdbRating =</span> <span class="fu">double</span>(),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">BoxOffice =</span> <span class="fu">double</span>())</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Use for loop to run through API request process 5 times,</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   each time filling the next row in the tibble</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#  - can do max of 1000 GETs per day</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="sc">**</span>FILL IN<span class="sc">**</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  onemovie <span class="ot">&lt;-</span> <span class="fu">GET</span>(url)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  details <span class="ot">&lt;-</span> <span class="fu">content</span>(<span class="sc">**</span>FILL IN<span class="sc">**</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">1</span>] <span class="ot">&lt;-</span> details<span class="sc">$</span>Title</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="er">**</span>FILL IN<span class="sc">**</span>  <span class="co"># rating</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="er">**</span>FILL IN<span class="sc">**</span>  <span class="co"># genres (single string - could be more than one)</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="er">**</span>FILL IN<span class="sc">**</span>  <span class="co"># actors (single string - could be more than one)</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="er">**</span>FILL IN<span class="sc">**</span>  <span class="co"># metascore (be sure it is numeric)</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="er">**</span>FILL IN<span class="sc">**</span>  <span class="co"># imdb rating (be sure it is numeric)</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  omdb[i,<span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="er">**</span>FILL IN<span class="sc">**</span>  <span class="co"># box office (be sure it is numeric)</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>omdb</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="co">#  could use stringr functions to further organize this data - separate </span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">#    different genres, different actors, etc.  But don't need to now.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="national-park-data" class="level2">
+<h2 class="anchored" data-anchor-id="national-park-data">National Park data</h2>
+<p>A SDS 264 final project by Mary Wu and Jenna Graff started with a small data set on 56 national parks from <a href="https://www.kaggle.com/datasets/nationalparkservice/park-biodiversity">kaggle</a>, and supplemented with columns for the park address (a single column including address, city, state, and zip code) and a list of available activities (a single character column with activities separated by commas) that they acquired using APIs from the park websites themselves.</p>
+<p>Initial instructions:</p>
+<ul>
+<li>Request API <a href="https://www.nps.gov/subjects/developer/get-started.htm">here</a></li>
+<li>Check out <a href="https://www.nps.gov/subjects/developer/guides.htm">API guide</a></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load in your API key</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>nps_api_key <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/DS2_preview_work/nps_api_key.txt"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, load your NPS API key using:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># nps_api_key &lt;- Sys.getenv("NPS_KEY")</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in park codes from Kaggle</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>np_kaggle <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"~/264_fall_2025/Data/parks.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 56 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): Park Code, Park Name, State
+dbl (3): Acres, Latitude, Longitude
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>park_code <span class="ot">&lt;-</span> np_kaggle<span class="sc">$</span><span class="st">`</span><span class="at">Park Code</span><span class="st">`</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice how far we have to drill down to find addresses and activities!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Try grabbing elements for one park</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>url1 <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://developer.nps.gov/api/v1/parks?parkCode="</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                , park_code[<span class="dv">1</span>], <span class="st">"&amp;api_key="</span>, nps_api_key)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>one_park <span class="ot">&lt;-</span> <span class="fu">GET</span>(url1)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>details <span class="ot">&lt;-</span> <span class="fu">content</span>(one_park, <span class="st">"parse"</span>)  </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># check out what's available</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#str(details)   </span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#details$data[[1]]</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>parks_address <span class="ot">&lt;-</span> <span class="fu">str_c</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>line1, <span class="st">" "</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>line3, <span class="st">" "</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>line2, <span class="st">" "</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>city, <span class="st">" "</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>stateCode, <span class="st">", "</span> ,</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>postalCode</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>park_activities <span class="ot">&lt;-</span> details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>activities[[<span class="dv">1</span>]]<span class="sc">$</span>name</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>activities)) {</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  park_activities <span class="ot">&lt;-</span> <span class="fu">str_c</span>(park_activities, <span class="st">", "</span>,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                         details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>activities[[j]]<span class="sc">$</span>name)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Once we figure out how to get the desired elements for one park, we can use a for loop with changing park_code to get those elements for all 56 parks:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now get addresses for all 56 parks</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>parks_address <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"character"</span>, <span class="at">length =</span> <span class="fu">length</span>(park_code))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">56</span>) {</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  url1 <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://developer.nps.gov/api/v1/parks?parkCode="</span>, </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                park_code[i], <span class="st">"&amp;api_key="</span>, nps_api_key)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  one_park <span class="ot">&lt;-</span> <span class="fu">GET</span>(url1)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  details <span class="ot">&lt;-</span> <span class="fu">content</span>(one_park, <span class="st">"parse"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  parks_address[i] <span class="ot">&lt;-</span> <span class="fu">str_c</span>(</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>line1, <span class="st">" "</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>line3, <span class="st">" "</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>line2, <span class="st">" "</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>city, <span class="st">" "</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>stateCode, <span class="st">", "</span> ,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>addresses[[<span class="dv">1</span>]]<span class="sc">$</span>postalCode</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeat for the list of activities</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>activity_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"character"</span>, <span class="at">length =</span> <span class="fu">length</span>(park_code))</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">56</span>) { </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  url1 <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://developer.nps.gov/api/v1/parks?parkCode="</span>,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                park_code[i], <span class="st">"&amp;api_key="</span>, nps_api_key)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  one_park <span class="ot">&lt;-</span> <span class="fu">GET</span>(url1)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  details <span class="ot">&lt;-</span> <span class="fu">content</span>(one_park, <span class="st">"parse"</span>)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  activity_list[i] <span class="ot">&lt;-</span> details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>activities[[<span class="dv">1</span>]]<span class="sc">$</span>name</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>activities)) {</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    activity_list[i] <span class="ot">&lt;-</span> <span class="fu">str_c</span>(activity_list[i], <span class="st">", "</span>,</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>                              details<span class="sc">$</span>data[[<span class="dv">1</span>]]<span class="sc">$</span>activities[[j]]<span class="sc">$</span>name)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>park_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(park_code, parks_address, activity_list)</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>park_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 56 × 3
+   park_code parks_address                                         activity_list
+   &lt;chr&gt;     &lt;chr&gt;                                                 &lt;chr&gt;        
+ 1 ACAD      25 Visitor Center Road  Hulls Cove Visitor Center Ba… Arts and Cul…
+ 2 ARCH      5 miles north of Moab, Utah, on US 191   Moab UT, 84… Arts and Cul…
+ 3 BADL      25216 Ben Reifel Road   Interior SD, 57750            Auto and ATV…
+ 4 BIBE      1 Panther Junction   Big Bend National Park TX, 79834 Auto and ATV…
+ 5 BISC      9700 SW 328th Street  Sir Lancelot Jones Way Homeste… Boating, Mot…
+ 6 BLCA      South Rim Visitor Center  9800 Highway 347 Montrose … Astronomy, S…
+ 7 BRCA      Highway 63  Bryce Canyon National Park Bryce UT, 847… Astronomy, S…
+ 8 CANY      Island in the Sky - 33 miles from Moab on UT 313 The… Astronomy, S…
+ 9 CARE      52 West Headquarters Drive   Torrey UT, 84775         Arts and Cul…
+10 CAVE      727 Carlsbad Caverns Highway   Carlsbad NM, 88220     Astronomy, S…
+# ℹ 46 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="us-census-bureau-data" class="level2">
+<h2 class="anchored" data-anchor-id="us-census-bureau-data">US Census Bureau data</h2>
+<p>The US Census Bureau produces a ton of publicly-available data that’s useful for creating maps and analyzing demographic trends. As with OMDB and NPS, you can request an API key to request data. But, since so many researchers find census data useful, R developers have created <strong>wrapper packages</strong> to make common requests easier to navigate with customized R functions. In this section, we will compare the direct API approach to a wrapper package approach to acquiring census data.</p>
+<p>Initial instructions:</p>
+<p>Navigate to <a href="https://api.census.gov/data/key_signup.html" class="uri">https://api.census.gov/data/key_signup.html</a> to obtain a Census API key:</p>
+<ul>
+<li>Organization: St.&nbsp;Olaf College</li>
+<li>Email: Your St.&nbsp;Olaf email address</li>
+</ul>
+<p>You will get the message:</p>
+<blockquote class="blockquote">
+<p>Your request for a new API key has been successfully submitted. Please check your email. In a few minutes you should receive a message with instructions on how to activate your new key.</p>
+</blockquote>
+<p>Check your email. Be sure to save your key using a file specified in .gitignore or a variable defined in .Renviron.</p>
+<section id="navigating-api-documentation-using-httr" class="level3">
+<h3 class="anchored" data-anchor-id="navigating-api-documentation-using-httr">Navigating API documentation using httr</h3>
+<p>Navigate to the <a href="https://www.census.gov/data/developers/guidance/api-user-guide.html">Census API user guide</a> and click on the “Example API Queries” tab.</p>
+<p>Let’s look at the Population Estimates Example and the American Community Survey (ACS) Example. These examples walk us through the steps to incrementally build up a URL to obtain desired data. This URL is known as a web API <strong>request</strong>.</p>
+<p>https://api.census.gov/data/2019/acs/acs1?get=NAME,B02015_009E,B02015_009M&amp;for=state:*</p>
+<ul>
+<li><code>https://api.census.gov</code>: This is the <strong>base URL</strong>.
+<ul>
+<li><code>http://</code>: The <strong>scheme</strong>, which tells your browser or program how to communicate with the web server. This will typically be either <code>http:</code> or <code>https:</code>.</li>
+<li><code>api.census.gov</code>: The <strong>hostname</strong>, which is a name that identifies the web server that will process the request.</li>
+</ul></li>
+<li><code>data/2019/acs/acs1</code>: The <strong>path</strong>, which tells the web server how to get to the desired resource.
+<ul>
+<li>In the case of the Census API, this locates a desired dataset in a particular year.</li>
+<li>Other APIs allow search functionality. (e.g., News organizations have article searches.) In these cases, the path locates the search function we would like to call.</li>
+</ul></li>
+<li><code>?get=NAME,B02015_009E,B02015_009M&amp;for=state:*</code>: The <strong>query parameters</strong>, which provide the parameters for the function you would like to call.
+<ul>
+<li>We can view this as a string of key-value pairs separated by <code>&amp;</code>. That is, the general structure of this part is <code>key1=value1&amp;key2=value2</code>.</li>
+</ul></li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">key</th>
+<th style="text-align: left;">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">get</td>
+<td style="text-align: left;">NAME,B02015_009E,B02015_009M</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">for</td>
+<td style="text-align: left;">state:*</td>
+</tr>
+</tbody>
+</table>
+<p>Typically, each of these URL components will be specified in the API documentation. Sometimes, the scheme, hostname, and path (<code>https://api.census.gov/data/2019/acs/acs1</code>) will be referred to as the <strong><a href="https://en.wikipedia.org/wiki/Web_API#Endpoints">endpoint</a></strong> for the API call.</p>
+<p>All right, let’s try this! Let’s grab total population and median household income for all census tracts in MN using httr:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load in your API key</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>census_api_key <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/DS2_preview_work/census_api_key.txt"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, load your NPS API key using:</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># census_api_key &lt;- Sys.getenv("CENSUS_API_KEY")</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Finally using httr</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://api.census.gov/data/2020/acs/acs5?get=NAME,B01003_001E,B19013_001E&amp;for=tract:*&amp;in=state:27&amp;in=county:053"</span>, <span class="st">"&amp;key="</span>, census_api_key)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>acs5 <span class="ot">&lt;-</span> <span class="fu">GET</span>(url)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>details <span class="ot">&lt;-</span> <span class="fu">content</span>(acs5, <span class="st">"parsed"</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>details </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[[1]][[1]]
+[1] "NAME"
+
+[[1]][[2]]
+[1] "B01003_001E"
+
+[[1]][[3]]
+[1] "B19013_001E"
+
+[[1]][[4]]
+[1] "state"
+
+[[1]][[5]]
+[1] "county"
+
+[[1]][[6]]
+[1] "tract"
+
+
+[[2]]
+[[2]][[1]]
+[1] "Census Tract 1.01, Hennepin County, Minnesota"
+
+[[2]][[2]]
+[1] "3472"
+
+[[2]][[3]]
+[1] "70927"
+
+[[2]][[4]]
+[1] "27"
+
+[[2]][[5]]
+[1] "053"
+
+[[2]][[6]]
+[1] "000101"
+
+
+[[3]]
+[[3]][[1]]
+[1] "Census Tract 1.02, Hennepin County, Minnesota"
+
+[[3]][[2]]
+[1] "4992"
+
+[[3]][[3]]
+[1] "46333"
+
+[[3]][[4]]
+[1] "27"
+
+[[3]][[5]]
+[1] "053"
+
+[[3]][[6]]
+[1] "000102"
+
+
+[[4]]
+[[4]][[1]]
+[1] "Census Tract 3, Hennepin County, Minnesota"
+
+[[4]][[2]]
+[1] "3404"
+
+[[4]][[3]]
+[1] "82098"
+
+[[4]][[4]]
+[1] "27"
+
+[[4]][[5]]
+[1] "053"
+
+[[4]][[6]]
+[1] "000300"
+
+
+[[5]]
+[[5]][[1]]
+[1] "Census Tract 6.01, Hennepin County, Minnesota"
+
+[[5]][[2]]
+[1] "4706"
+
+[[5]][[3]]
+[1] "71122"
+
+[[5]][[4]]
+[1] "27"
+
+[[5]][[5]]
+[1] "053"
+
+[[5]][[6]]
+[1] "000601"
+
+
+[[6]]
+[[6]][[1]]
+[1] "Census Tract 6.03, Hennepin County, Minnesota"
+
+[[6]][[2]]
+[1] "3301"
+
+[[6]][[3]]
+[1] "96875"
+
+[[6]][[4]]
+[1] "27"
+
+[[6]][[5]]
+[1] "053"
+
+[[6]][[6]]
+[1] "000603"
+
+
+[[7]]
+[[7]][[1]]
+[1] "Census Tract 11, Hennepin County, Minnesota"
+
+[[7]][[2]]
+[1] "2004"
+
+[[7]][[3]]
+[1] "69509"
+
+[[7]][[4]]
+[1] "27"
+
+[[7]][[5]]
+[1] "053"
+
+[[7]][[6]]
+[1] "001100"
+
+
+[[8]]
+[[8]][[1]]
+[1] "Census Tract 17, Hennepin County, Minnesota"
+
+[[8]][[2]]
+[1] "2462"
+
+[[8]][[3]]
+[1] "56338"
+
+[[8]][[4]]
+[1] "27"
+
+[[8]][[5]]
+[1] "053"
+
+[[8]][[6]]
+[1] "001700"
+
+
+[[9]]
+[[9]][[1]]
+[1] "Census Tract 22, Hennepin County, Minnesota"
+
+[[9]][[2]]
+[1] "1622"
+
+[[9]][[3]]
+[1] "47688"
+
+[[9]][[4]]
+[1] "27"
+
+[[9]][[5]]
+[1] "053"
+
+[[9]][[6]]
+[1] "002200"
+
+
+[[10]]
+[[10]][[1]]
+[1] "Census Tract 24, Hennepin County, Minnesota"
+
+[[10]][[2]]
+[1] "2415"
+
+[[10]][[3]]
+[1] "65772"
+
+[[10]][[4]]
+[1] "27"
+
+[[10]][[5]]
+[1] "053"
+
+[[10]][[6]]
+[1] "002400"
+
+
+[[11]]
+[[11]][[1]]
+[1] "Census Tract 27, Hennepin County, Minnesota"
+
+[[11]][[2]]
+[1] "2837"
+
+[[11]][[3]]
+[1] "47197"
+
+[[11]][[4]]
+[1] "27"
+
+[[11]][[5]]
+[1] "053"
+
+[[11]][[6]]
+[1] "002700"
+
+
+[[12]]
+[[12]][[1]]
+[1] "Census Tract 32, Hennepin County, Minnesota"
+
+[[12]][[2]]
+[1] "2228"
+
+[[12]][[3]]
+[1] "65329"
+
+[[12]][[4]]
+[1] "27"
+
+[[12]][[5]]
+[1] "053"
+
+[[12]][[6]]
+[1] "003200"
+
+
+[[13]]
+[[13]][[1]]
+[1] "Census Tract 33, Hennepin County, Minnesota"
+
+[[13]][[2]]
+[1] "2935"
+
+[[13]][[3]]
+[1] "38286"
+
+[[13]][[4]]
+[1] "27"
+
+[[13]][[5]]
+[1] "053"
+
+[[13]][[6]]
+[1] "003300"
+
+
+[[14]]
+[[14]][[1]]
+[1] "Census Tract 38.01, Hennepin County, Minnesota"
+
+[[14]][[2]]
+[1] "2357"
+
+[[14]][[3]]
+[1] "43750"
+
+[[14]][[4]]
+[1] "27"
+
+[[14]][[5]]
+[1] "053"
+
+[[14]][[6]]
+[1] "003801"
+
+
+[[15]]
+[[15]][[1]]
+[1] "Census Tract 38.02, Hennepin County, Minnesota"
+
+[[15]][[2]]
+[1] "3913"
+
+[[15]][[3]]
+[1] "40400"
+
+[[15]][[4]]
+[1] "27"
+
+[[15]][[5]]
+[1] "053"
+
+[[15]][[6]]
+[1] "003802"
+
+
+[[16]]
+[[16]][[1]]
+[1] "Census Tract 59.01, Hennepin County, Minnesota"
+
+[[16]][[2]]
+[1] "2994"
+
+[[16]][[3]]
+[1] "23256"
+
+[[16]][[4]]
+[1] "27"
+
+[[16]][[5]]
+[1] "053"
+
+[[16]][[6]]
+[1] "005901"
+
+
+[[17]]
+[[17]][[1]]
+[1] "Census Tract 59.02, Hennepin County, Minnesota"
+
+[[17]][[2]]
+[1] "3896"
+
+[[17]][[3]]
+[1] "38554"
+
+[[17]][[4]]
+[1] "27"
+
+[[17]][[5]]
+[1] "053"
+
+[[17]][[6]]
+[1] "005902"
+
+
+[[18]]
+[[18]][[1]]
+[1] "Census Tract 68, Hennepin County, Minnesota"
+
+[[18]][[2]]
+[1] "3811"
+
+[[18]][[3]]
+[1] "42753"
+
+[[18]][[4]]
+[1] "27"
+
+[[18]][[5]]
+[1] "053"
+
+[[18]][[6]]
+[1] "006800"
+
+
+[[19]]
+[[19]][[1]]
+[1] "Census Tract 77, Hennepin County, Minnesota"
+
+[[19]][[2]]
+[1] "4718"
+
+[[19]][[3]]
+[1] "71670"
+
+[[19]][[4]]
+[1] "27"
+
+[[19]][[5]]
+[1] "053"
+
+[[19]][[6]]
+[1] "007700"
+
+
+[[20]]
+[[20]][[1]]
+[1] "Census Tract 78.01, Hennepin County, Minnesota"
+
+[[20]][[2]]
+[1] "1973"
+
+[[20]][[3]]
+[1] "43036"
+
+[[20]][[4]]
+[1] "27"
+
+[[20]][[5]]
+[1] "053"
+
+[[20]][[6]]
+[1] "007801"
+
+
+[[21]]
+[[21]][[1]]
+[1] "Census Tract 81, Hennepin County, Minnesota"
+
+[[21]][[2]]
+[1] "3703"
+
+[[21]][[3]]
+[1] "57802"
+
+[[21]][[4]]
+[1] "27"
+
+[[21]][[5]]
+[1] "053"
+
+[[21]][[6]]
+[1] "008100"
+
+
+[[22]]
+[[22]][[1]]
+[1] "Census Tract 82, Hennepin County, Minnesota"
+
+[[22]][[2]]
+[1] "3890"
+
+[[22]][[3]]
+[1] "39420"
+
+[[22]][[4]]
+[1] "27"
+
+[[22]][[5]]
+[1] "053"
+
+[[22]][[6]]
+[1] "008200"
+
+
+[[23]]
+[[23]][[1]]
+[1] "Census Tract 83, Hennepin County, Minnesota"
+
+[[23]][[2]]
+[1] "2061"
+
+[[23]][[3]]
+[1] "51250"
+
+[[23]][[4]]
+[1] "27"
+
+[[23]][[5]]
+[1] "053"
+
+[[23]][[6]]
+[1] "008300"
+
+
+[[24]]
+[[24]][[1]]
+[1] "Census Tract 84, Hennepin County, Minnesota"
+
+[[24]][[2]]
+[1] "2594"
+
+[[24]][[3]]
+[1] "69600"
+
+[[24]][[4]]
+[1] "27"
+
+[[24]][[5]]
+[1] "053"
+
+[[24]][[6]]
+[1] "008400"
+
+
+[[25]]
+[[25]][[1]]
+[1] "Census Tract 85, Hennepin County, Minnesota"
+
+[[25]][[2]]
+[1] "5107"
+
+[[25]][[3]]
+[1] "45640"
+
+[[25]][[4]]
+[1] "27"
+
+[[25]][[5]]
+[1] "053"
+
+[[25]][[6]]
+[1] "008500"
+
+
+[[26]]
+[[26]][[1]]
+[1] "Census Tract 95, Hennepin County, Minnesota"
+
+[[26]][[2]]
+[1] "3077"
+
+[[26]][[3]]
+[1] "72766"
+
+[[26]][[4]]
+[1] "27"
+
+[[26]][[5]]
+[1] "053"
+
+[[26]][[6]]
+[1] "009500"
+
+
+[[27]]
+[[27]][[1]]
+[1] "Census Tract 96, Hennepin County, Minnesota"
+
+[[27]][[2]]
+[1] "3466"
+
+[[27]][[3]]
+[1] "71250"
+
+[[27]][[4]]
+[1] "27"
+
+[[27]][[5]]
+[1] "053"
+
+[[27]][[6]]
+[1] "009600"
+
+
+[[28]]
+[[28]][[1]]
+[1] "Census Tract 106, Hennepin County, Minnesota"
+
+[[28]][[2]]
+[1] "3305"
+
+[[28]][[3]]
+[1] "127396"
+
+[[28]][[4]]
+[1] "27"
+
+[[28]][[5]]
+[1] "053"
+
+[[28]][[6]]
+[1] "010600"
+
+
+[[29]]
+[[29]][[1]]
+[1] "Census Tract 107, Hennepin County, Minnesota"
+
+[[29]][[2]]
+[1] "2499"
+
+[[29]][[3]]
+[1] "125750"
+
+[[29]][[4]]
+[1] "27"
+
+[[29]][[5]]
+[1] "053"
+
+[[29]][[6]]
+[1] "010700"
+
+
+[[30]]
+[[30]][[1]]
+[1] "Census Tract 110, Hennepin County, Minnesota"
+
+[[30]][[2]]
+[1] "3673"
+
+[[30]][[3]]
+[1] "104306"
+
+[[30]][[4]]
+[1] "27"
+
+[[30]][[5]]
+[1] "053"
+
+[[30]][[6]]
+[1] "011000"
+
+
+[[31]]
+[[31]][[1]]
+[1] "Census Tract 117.03, Hennepin County, Minnesota"
+
+[[31]][[2]]
+[1] "4219"
+
+[[31]][[3]]
+[1] "133859"
+
+[[31]][[4]]
+[1] "27"
+
+[[31]][[5]]
+[1] "053"
+
+[[31]][[6]]
+[1] "011703"
+
+
+[[32]]
+[[32]][[1]]
+[1] "Census Tract 117.04, Hennepin County, Minnesota"
+
+[[32]][[2]]
+[1] "3236"
+
+[[32]][[3]]
+[1] "126250"
+
+[[32]][[4]]
+[1] "27"
+
+[[32]][[5]]
+[1] "053"
+
+[[32]][[6]]
+[1] "011704"
+
+
+[[33]]
+[[33]][[1]]
+[1] "Census Tract 118, Hennepin County, Minnesota"
+
+[[33]][[2]]
+[1] "4815"
+
+[[33]][[3]]
+[1] "111364"
+
+[[33]][[4]]
+[1] "27"
+
+[[33]][[5]]
+[1] "053"
+
+[[33]][[6]]
+[1] "011800"
+
+
+[[34]]
+[[34]][[1]]
+[1] "Census Tract 119.98, Hennepin County, Minnesota"
+
+[[34]][[2]]
+[1] "3862"
+
+[[34]][[3]]
+[1] "80966"
+
+[[34]][[4]]
+[1] "27"
+
+[[34]][[5]]
+[1] "053"
+
+[[34]][[6]]
+[1] "011998"
+
+
+[[35]]
+[[35]][[1]]
+[1] "Census Tract 120.01, Hennepin County, Minnesota"
+
+[[35]][[2]]
+[1] "6102"
+
+[[35]][[3]]
+[1] "117631"
+
+[[35]][[4]]
+[1] "27"
+
+[[35]][[5]]
+[1] "053"
+
+[[35]][[6]]
+[1] "012001"
+
+
+[[36]]
+[[36]][[1]]
+[1] "Census Tract 120.03, Hennepin County, Minnesota"
+
+[[36]][[2]]
+[1] "6071"
+
+[[36]][[3]]
+[1] "82014"
+
+[[36]][[4]]
+[1] "27"
+
+[[36]][[5]]
+[1] "053"
+
+[[36]][[6]]
+[1] "012003"
+
+
+[[37]]
+[[37]][[1]]
+[1] "Census Tract 121.01, Hennepin County, Minnesota"
+
+[[37]][[2]]
+[1] "3037"
+
+[[37]][[3]]
+[1] "60375"
+
+[[37]][[4]]
+[1] "27"
+
+[[37]][[5]]
+[1] "053"
+
+[[37]][[6]]
+[1] "012101"
+
+
+[[38]]
+[[38]][[1]]
+[1] "Census Tract 121.02, Hennepin County, Minnesota"
+
+[[38]][[2]]
+[1] "3224"
+
+[[38]][[3]]
+[1] "81977"
+
+[[38]][[4]]
+[1] "27"
+
+[[38]][[5]]
+[1] "053"
+
+[[38]][[6]]
+[1] "012102"
+
+
+[[39]]
+[[39]][[1]]
+[1] "Census Tract 201.01, Hennepin County, Minnesota"
+
+[[39]][[2]]
+[1] "3127"
+
+[[39]][[3]]
+[1] "118594"
+
+[[39]][[4]]
+[1] "27"
+
+[[39]][[5]]
+[1] "053"
+
+[[39]][[6]]
+[1] "020101"
+
+
+[[40]]
+[[40]][[1]]
+[1] "Census Tract 201.02, Hennepin County, Minnesota"
+
+[[40]][[2]]
+[1] "2484"
+
+[[40]][[3]]
+[1] "73482"
+
+[[40]][[4]]
+[1] "27"
+
+[[40]][[5]]
+[1] "053"
+
+[[40]][[6]]
+[1] "020102"
+
+
+[[41]]
+[[41]][[1]]
+[1] "Census Tract 202.01, Hennepin County, Minnesota"
+
+[[41]][[2]]
+[1] "2012"
+
+[[41]][[3]]
+[1] "65455"
+
+[[41]][[4]]
+[1] "27"
+
+[[41]][[5]]
+[1] "053"
+
+[[41]][[6]]
+[1] "020201"
+
+
+[[42]]
+[[42]][[1]]
+[1] "Census Tract 202.02, Hennepin County, Minnesota"
+
+[[42]][[2]]
+[1] "5459"
+
+[[42]][[3]]
+[1] "59876"
+
+[[42]][[4]]
+[1] "27"
+
+[[42]][[5]]
+[1] "053"
+
+[[42]][[6]]
+[1] "020202"
+
+
+[[43]]
+[[43]][[1]]
+[1] "Census Tract 203.01, Hennepin County, Minnesota"
+
+[[43]][[2]]
+[1] "2780"
+
+[[43]][[3]]
+[1] "75147"
+
+[[43]][[4]]
+[1] "27"
+
+[[43]][[5]]
+[1] "053"
+
+[[43]][[6]]
+[1] "020301"
+
+
+[[44]]
+[[44]][[1]]
+[1] "Census Tract 203.02, Hennepin County, Minnesota"
+
+[[44]][[2]]
+[1] "2511"
+
+[[44]][[3]]
+[1] "51705"
+
+[[44]][[4]]
+[1] "27"
+
+[[44]][[5]]
+[1] "053"
+
+[[44]][[6]]
+[1] "020302"
+
+
+[[45]]
+[[45]][[1]]
+[1] "Census Tract 203.03, Hennepin County, Minnesota"
+
+[[45]][[2]]
+[1] "3805"
+
+[[45]][[3]]
+[1] "81411"
+
+[[45]][[4]]
+[1] "27"
+
+[[45]][[5]]
+[1] "053"
+
+[[45]][[6]]
+[1] "020303"
+
+
+[[46]]
+[[46]][[1]]
+[1] "Census Tract 203.04, Hennepin County, Minnesota"
+
+[[46]][[2]]
+[1] "3676"
+
+[[46]][[3]]
+[1] "57875"
+
+[[46]][[4]]
+[1] "27"
+
+[[46]][[5]]
+[1] "053"
+
+[[46]][[6]]
+[1] "020304"
+
+
+[[47]]
+[[47]][[1]]
+[1] "Census Tract 204, Hennepin County, Minnesota"
+
+[[47]][[2]]
+[1] "5150"
+
+[[47]][[3]]
+[1] "55321"
+
+[[47]][[4]]
+[1] "27"
+
+[[47]][[5]]
+[1] "053"
+
+[[47]][[6]]
+[1] "020400"
+
+
+[[48]]
+[[48]][[1]]
+[1] "Census Tract 205, Hennepin County, Minnesota"
+
+[[48]][[2]]
+[1] "3251"
+
+[[48]][[3]]
+[1] "70970"
+
+[[48]][[4]]
+[1] "27"
+
+[[48]][[5]]
+[1] "053"
+
+[[48]][[6]]
+[1] "020500"
+
+
+[[49]]
+[[49]][[1]]
+[1] "Census Tract 206, Hennepin County, Minnesota"
+
+[[49]][[2]]
+[1] "2111"
+
+[[49]][[3]]
+[1] "70089"
+
+[[49]][[4]]
+[1] "27"
+
+[[49]][[5]]
+[1] "053"
+
+[[49]][[6]]
+[1] "020600"
+
+
+[[50]]
+[[50]][[1]]
+[1] "Census Tract 207, Hennepin County, Minnesota"
+
+[[50]][[2]]
+[1] "4295"
+
+[[50]][[3]]
+[1] "62404"
+
+[[50]][[4]]
+[1] "27"
+
+[[50]][[5]]
+[1] "053"
+
+[[50]][[6]]
+[1] "020700"
+
+
+[[51]]
+[[51]][[1]]
+[1] "Census Tract 208.01, Hennepin County, Minnesota"
+
+[[51]][[2]]
+[1] "1942"
+
+[[51]][[3]]
+[1] "57469"
+
+[[51]][[4]]
+[1] "27"
+
+[[51]][[5]]
+[1] "053"
+
+[[51]][[6]]
+[1] "020801"
+
+
+[[52]]
+[[52]][[1]]
+[1] "Census Tract 208.04, Hennepin County, Minnesota"
+
+[[52]][[2]]
+[1] "3274"
+
+[[52]][[3]]
+[1] "66875"
+
+[[52]][[4]]
+[1] "27"
+
+[[52]][[5]]
+[1] "053"
+
+[[52]][[6]]
+[1] "020804"
+
+
+[[53]]
+[[53]][[1]]
+[1] "Census Tract 209.02, Hennepin County, Minnesota"
+
+[[53]][[2]]
+[1] "2341"
+
+[[53]][[3]]
+[1] "95855"
+
+[[53]][[4]]
+[1] "27"
+
+[[53]][[5]]
+[1] "053"
+
+[[53]][[6]]
+[1] "020902"
+
+
+[[54]]
+[[54]][[1]]
+[1] "Census Tract 209.03, Hennepin County, Minnesota"
+
+[[54]][[2]]
+[1] "2820"
+
+[[54]][[3]]
+[1] "84792"
+
+[[54]][[4]]
+[1] "27"
+
+[[54]][[5]]
+[1] "053"
+
+[[54]][[6]]
+[1] "020903"
+
+
+[[55]]
+[[55]][[1]]
+[1] "Census Tract 210.01, Hennepin County, Minnesota"
+
+[[55]][[2]]
+[1] "6308"
+
+[[55]][[3]]
+[1] "67473"
+
+[[55]][[4]]
+[1] "27"
+
+[[55]][[5]]
+[1] "053"
+
+[[55]][[6]]
+[1] "021001"
+
+
+[[56]]
+[[56]][[1]]
+[1] "Census Tract 210.02, Hennepin County, Minnesota"
+
+[[56]][[2]]
+[1] "1798"
+
+[[56]][[3]]
+[1] "75556"
+
+[[56]][[4]]
+[1] "27"
+
+[[56]][[5]]
+[1] "053"
+
+[[56]][[6]]
+[1] "021002"
+
+
+[[57]]
+[[57]][[1]]
+[1] "Census Tract 211, Hennepin County, Minnesota"
+
+[[57]][[2]]
+[1] "2150"
+
+[[57]][[3]]
+[1] "99853"
+
+[[57]][[4]]
+[1] "27"
+
+[[57]][[5]]
+[1] "053"
+
+[[57]][[6]]
+[1] "021100"
+
+
+[[58]]
+[[58]][[1]]
+[1] "Census Tract 212, Hennepin County, Minnesota"
+
+[[58]][[2]]
+[1] "4460"
+
+[[58]][[3]]
+[1] "87599"
+
+[[58]][[4]]
+[1] "27"
+
+[[58]][[5]]
+[1] "053"
+
+[[58]][[6]]
+[1] "021200"
+
+
+[[59]]
+[[59]][[1]]
+[1] "Census Tract 213, Hennepin County, Minnesota"
+
+[[59]][[2]]
+[1] "4747"
+
+[[59]][[3]]
+[1] "39630"
+
+[[59]][[4]]
+[1] "27"
+
+[[59]][[5]]
+[1] "053"
+
+[[59]][[6]]
+[1] "021300"
+
+
+[[60]]
+[[60]][[1]]
+[1] "Census Tract 214, Hennepin County, Minnesota"
+
+[[60]][[2]]
+[1] "3036"
+
+[[60]][[3]]
+[1] "76839"
+
+[[60]][[4]]
+[1] "27"
+
+[[60]][[5]]
+[1] "053"
+
+[[60]][[6]]
+[1] "021400"
+
+
+[[61]]
+[[61]][[1]]
+[1] "Census Tract 215.01, Hennepin County, Minnesota"
+
+[[61]][[2]]
+[1] "4466"
+
+[[61]][[3]]
+[1] "64621"
+
+[[61]][[4]]
+[1] "27"
+
+[[61]][[5]]
+[1] "053"
+
+[[61]][[6]]
+[1] "021501"
+
+
+[[62]]
+[[62]][[1]]
+[1] "Census Tract 215.02, Hennepin County, Minnesota"
+
+[[62]][[2]]
+[1] "4013"
+
+[[62]][[3]]
+[1] "37413"
+
+[[62]][[4]]
+[1] "27"
+
+[[62]][[5]]
+[1] "053"
+
+[[62]][[6]]
+[1] "021502"
+
+
+[[63]]
+[[63]][[1]]
+[1] "Census Tract 215.03, Hennepin County, Minnesota"
+
+[[63]][[2]]
+[1] "4126"
+
+[[63]][[3]]
+[1] "54026"
+
+[[63]][[4]]
+[1] "27"
+
+[[63]][[5]]
+[1] "053"
+
+[[63]][[6]]
+[1] "021503"
+
+
+[[64]]
+[[64]][[1]]
+[1] "Census Tract 215.04, Hennepin County, Minnesota"
+
+[[64]][[2]]
+[1] "3739"
+
+[[64]][[3]]
+[1] "61547"
+
+[[64]][[4]]
+[1] "27"
+
+[[64]][[5]]
+[1] "053"
+
+[[64]][[6]]
+[1] "021504"
+
+
+[[65]]
+[[65]][[1]]
+[1] "Census Tract 215.05, Hennepin County, Minnesota"
+
+[[65]][[2]]
+[1] "4728"
+
+[[65]][[3]]
+[1] "83380"
+
+[[65]][[4]]
+[1] "27"
+
+[[65]][[5]]
+[1] "053"
+
+[[65]][[6]]
+[1] "021505"
+
+
+[[66]]
+[[66]][[1]]
+[1] "Census Tract 216.01, Hennepin County, Minnesota"
+
+[[66]][[2]]
+[1] "4671"
+
+[[66]][[3]]
+[1] "79167"
+
+[[66]][[4]]
+[1] "27"
+
+[[66]][[5]]
+[1] "053"
+
+[[66]][[6]]
+[1] "021601"
+
+
+[[67]]
+[[67]][[1]]
+[1] "Census Tract 216.02, Hennepin County, Minnesota"
+
+[[67]][[2]]
+[1] "5831"
+
+[[67]][[3]]
+[1] "67132"
+
+[[67]][[4]]
+[1] "27"
+
+[[67]][[5]]
+[1] "053"
+
+[[67]][[6]]
+[1] "021602"
+
+
+[[68]]
+[[68]][[1]]
+[1] "Census Tract 217, Hennepin County, Minnesota"
+
+[[68]][[2]]
+[1] "5262"
+
+[[68]][[3]]
+[1] "130404"
+
+[[68]][[4]]
+[1] "27"
+
+[[68]][[5]]
+[1] "053"
+
+[[68]][[6]]
+[1] "021700"
+
+
+[[69]]
+[[69]][[1]]
+[1] "Census Tract 218, Hennepin County, Minnesota"
+
+[[69]][[2]]
+[1] "2272"
+
+[[69]][[3]]
+[1] "108510"
+
+[[69]][[4]]
+[1] "27"
+
+[[69]][[5]]
+[1] "053"
+
+[[69]][[6]]
+[1] "021800"
+
+
+[[70]]
+[[70]][[1]]
+[1] "Census Tract 219, Hennepin County, Minnesota"
+
+[[70]][[2]]
+[1] "3575"
+
+[[70]][[3]]
+[1] "100761"
+
+[[70]][[4]]
+[1] "27"
+
+[[70]][[5]]
+[1] "053"
+
+[[70]][[6]]
+[1] "021900"
+
+
+[[71]]
+[[71]][[1]]
+[1] "Census Tract 220, Hennepin County, Minnesota"
+
+[[71]][[2]]
+[1] "2067"
+
+[[71]][[3]]
+[1] "82340"
+
+[[71]][[4]]
+[1] "27"
+
+[[71]][[5]]
+[1] "053"
+
+[[71]][[6]]
+[1] "022000"
+
+
+[[72]]
+[[72]][[1]]
+[1] "Census Tract 221.01, Hennepin County, Minnesota"
+
+[[72]][[2]]
+[1] "2605"
+
+[[72]][[3]]
+[1] "89792"
+
+[[72]][[4]]
+[1] "27"
+
+[[72]][[5]]
+[1] "053"
+
+[[72]][[6]]
+[1] "022101"
+
+
+[[73]]
+[[73]][[1]]
+[1] "Census Tract 221.02, Hennepin County, Minnesota"
+
+[[73]][[2]]
+[1] "2954"
+
+[[73]][[3]]
+[1] "61213"
+
+[[73]][[4]]
+[1] "27"
+
+[[73]][[5]]
+[1] "053"
+
+[[73]][[6]]
+[1] "022102"
+
+
+[[74]]
+[[74]][[1]]
+[1] "Census Tract 222, Hennepin County, Minnesota"
+
+[[74]][[2]]
+[1] "4584"
+
+[[74]][[3]]
+[1] "87054"
+
+[[74]][[4]]
+[1] "27"
+
+[[74]][[5]]
+[1] "053"
+
+[[74]][[6]]
+[1] "022200"
+
+
+[[75]]
+[[75]][[1]]
+[1] "Census Tract 223.01, Hennepin County, Minnesota"
+
+[[75]][[2]]
+[1] "2123"
+
+[[75]][[3]]
+[1] "94656"
+
+[[75]][[4]]
+[1] "27"
+
+[[75]][[5]]
+[1] "053"
+
+[[75]][[6]]
+[1] "022301"
+
+
+[[76]]
+[[76]][[1]]
+[1] "Census Tract 223.02, Hennepin County, Minnesota"
+
+[[76]][[2]]
+[1] "3150"
+
+[[76]][[3]]
+[1] "53393"
+
+[[76]][[4]]
+[1] "27"
+
+[[76]][[5]]
+[1] "053"
+
+[[76]][[6]]
+[1] "022302"
+
+
+[[77]]
+[[77]][[1]]
+[1] "Census Tract 224, Hennepin County, Minnesota"
+
+[[77]][[2]]
+[1] "4086"
+
+[[77]][[3]]
+[1] "89891"
+
+[[77]][[4]]
+[1] "27"
+
+[[77]][[5]]
+[1] "053"
+
+[[77]][[6]]
+[1] "022400"
+
+
+[[78]]
+[[78]][[1]]
+[1] "Census Tract 227, Hennepin County, Minnesota"
+
+[[78]][[2]]
+[1] "4063"
+
+[[78]][[3]]
+[1] "74817"
+
+[[78]][[4]]
+[1] "27"
+
+[[78]][[5]]
+[1] "053"
+
+[[78]][[6]]
+[1] "022700"
+
+
+[[79]]
+[[79]][[1]]
+[1] "Census Tract 228.01, Hennepin County, Minnesota"
+
+[[79]][[2]]
+[1] "2532"
+
+[[79]][[3]]
+[1] "179743"
+
+[[79]][[4]]
+[1] "27"
+
+[[79]][[5]]
+[1] "053"
+
+[[79]][[6]]
+[1] "022801"
+
+
+[[80]]
+[[80]][[1]]
+[1] "Census Tract 228.02, Hennepin County, Minnesota"
+
+[[80]][[2]]
+[1] "3326"
+
+[[80]][[3]]
+[1] "66364"
+
+[[80]][[4]]
+[1] "27"
+
+[[80]][[5]]
+[1] "053"
+
+[[80]][[6]]
+[1] "022802"
+
+
+[[81]]
+[[81]][[1]]
+[1] "Census Tract 229.01, Hennepin County, Minnesota"
+
+[[81]][[2]]
+[1] "4972"
+
+[[81]][[3]]
+[1] "80012"
+
+[[81]][[4]]
+[1] "27"
+
+[[81]][[5]]
+[1] "053"
+
+[[81]][[6]]
+[1] "022901"
+
+
+[[82]]
+[[82]][[1]]
+[1] "Census Tract 229.02, Hennepin County, Minnesota"
+
+[[82]][[2]]
+[1] "1766"
+
+[[82]][[3]]
+[1] "134250"
+
+[[82]][[4]]
+[1] "27"
+
+[[82]][[5]]
+[1] "053"
+
+[[82]][[6]]
+[1] "022902"
+
+
+[[83]]
+[[83]][[1]]
+[1] "Census Tract 230, Hennepin County, Minnesota"
+
+[[83]][[2]]
+[1] "4587"
+
+[[83]][[3]]
+[1] "86106"
+
+[[83]][[4]]
+[1] "27"
+
+[[83]][[5]]
+[1] "053"
+
+[[83]][[6]]
+[1] "023000"
+
+
+[[84]]
+[[84]][[1]]
+[1] "Census Tract 231, Hennepin County, Minnesota"
+
+[[84]][[2]]
+[1] "1935"
+
+[[84]][[3]]
+[1] "161458"
+
+[[84]][[4]]
+[1] "27"
+
+[[84]][[5]]
+[1] "053"
+
+[[84]][[6]]
+[1] "023100"
+
+
+[[85]]
+[[85]][[1]]
+[1] "Census Tract 232.01, Hennepin County, Minnesota"
+
+[[85]][[2]]
+[1] "2038"
+
+[[85]][[3]]
+[1] "68434"
+
+[[85]][[4]]
+[1] "27"
+
+[[85]][[5]]
+[1] "053"
+
+[[85]][[6]]
+[1] "023201"
+
+
+[[86]]
+[[86]][[1]]
+[1] "Census Tract 232.02, Hennepin County, Minnesota"
+
+[[86]][[2]]
+[1] "4286"
+
+[[86]][[3]]
+[1] "52370"
+
+[[86]][[4]]
+[1] "27"
+
+[[86]][[5]]
+[1] "053"
+
+[[86]][[6]]
+[1] "023202"
+
+
+[[87]]
+[[87]][[1]]
+[1] "Census Tract 233, Hennepin County, Minnesota"
+
+[[87]][[2]]
+[1] "5781"
+
+[[87]][[3]]
+[1] "64792"
+
+[[87]][[4]]
+[1] "27"
+
+[[87]][[5]]
+[1] "053"
+
+[[87]][[6]]
+[1] "023300"
+
+
+[[88]]
+[[88]][[1]]
+[1] "Census Tract 234.01, Hennepin County, Minnesota"
+
+[[88]][[2]]
+[1] "4535"
+
+[[88]][[3]]
+[1] "49659"
+
+[[88]][[4]]
+[1] "27"
+
+[[88]][[5]]
+[1] "053"
+
+[[88]][[6]]
+[1] "023401"
+
+
+[[89]]
+[[89]][[1]]
+[1] "Census Tract 234.02, Hennepin County, Minnesota"
+
+[[89]][[2]]
+[1] "1760"
+
+[[89]][[3]]
+[1] "63990"
+
+[[89]][[4]]
+[1] "27"
+
+[[89]][[5]]
+[1] "053"
+
+[[89]][[6]]
+[1] "023402"
+
+
+[[90]]
+[[90]][[1]]
+[1] "Census Tract 235.01, Hennepin County, Minnesota"
+
+[[90]][[2]]
+[1] "3710"
+
+[[90]][[3]]
+[1] "73984"
+
+[[90]][[4]]
+[1] "27"
+
+[[90]][[5]]
+[1] "053"
+
+[[90]][[6]]
+[1] "023501"
+
+
+[[91]]
+[[91]][[1]]
+[1] "Census Tract 235.02, Hennepin County, Minnesota"
+
+[[91]][[2]]
+[1] "5980"
+
+[[91]][[3]]
+[1] "107303"
+
+[[91]][[4]]
+[1] "27"
+
+[[91]][[5]]
+[1] "053"
+
+[[91]][[6]]
+[1] "023502"
+
+
+[[92]]
+[[92]][[1]]
+[1] "Census Tract 236, Hennepin County, Minnesota"
+
+[[92]][[2]]
+[1] "3974"
+
+[[92]][[3]]
+[1] "250001"
+
+[[92]][[4]]
+[1] "27"
+
+[[92]][[5]]
+[1] "053"
+
+[[92]][[6]]
+[1] "023600"
+
+
+[[93]]
+[[93]][[1]]
+[1] "Census Tract 237, Hennepin County, Minnesota"
+
+[[93]][[2]]
+[1] "5213"
+
+[[93]][[3]]
+[1] "165865"
+
+[[93]][[4]]
+[1] "27"
+
+[[93]][[5]]
+[1] "053"
+
+[[93]][[6]]
+[1] "023700"
+
+
+[[94]]
+[[94]][[1]]
+[1] "Census Tract 238.01, Hennepin County, Minnesota"
+
+[[94]][[2]]
+[1] "5541"
+
+[[94]][[3]]
+[1] "153917"
+
+[[94]][[4]]
+[1] "27"
+
+[[94]][[5]]
+[1] "053"
+
+[[94]][[6]]
+[1] "023801"
+
+
+[[95]]
+[[95]][[1]]
+[1] "Census Tract 238.02, Hennepin County, Minnesota"
+
+[[95]][[2]]
+[1] "2675"
+
+[[95]][[3]]
+[1] "133333"
+
+[[95]][[4]]
+[1] "27"
+
+[[95]][[5]]
+[1] "053"
+
+[[95]][[6]]
+[1] "023802"
+
+
+[[96]]
+[[96]][[1]]
+[1] "Census Tract 239.01, Hennepin County, Minnesota"
+
+[[96]][[2]]
+[1] "4371"
+
+[[96]][[3]]
+[1] "146328"
+
+[[96]][[4]]
+[1] "27"
+
+[[96]][[5]]
+[1] "053"
+
+[[96]][[6]]
+[1] "023901"
+
+
+[[97]]
+[[97]][[1]]
+[1] "Census Tract 239.02, Hennepin County, Minnesota"
+
+[[97]][[2]]
+[1] "1877"
+
+[[97]][[3]]
+[1] "200438"
+
+[[97]][[4]]
+[1] "27"
+
+[[97]][[5]]
+[1] "053"
+
+[[97]][[6]]
+[1] "023902"
+
+
+[[98]]
+[[98]][[1]]
+[1] "Census Tract 239.03, Hennepin County, Minnesota"
+
+[[98]][[2]]
+[1] "3168"
+
+[[98]][[3]]
+[1] "107232"
+
+[[98]][[4]]
+[1] "27"
+
+[[98]][[5]]
+[1] "053"
+
+[[98]][[6]]
+[1] "023903"
+
+
+[[99]]
+[[99]][[1]]
+[1] "Census Tract 240.03, Hennepin County, Minnesota"
+
+[[99]][[2]]
+[1] "4919"
+
+[[99]][[3]]
+[1] "86904"
+
+[[99]][[4]]
+[1] "27"
+
+[[99]][[5]]
+[1] "053"
+
+[[99]][[6]]
+[1] "024003"
+
+
+[[100]]
+[[100]][[1]]
+[1] "Census Tract 240.04, Hennepin County, Minnesota"
+
+[[100]][[2]]
+[1] "4008"
+
+[[100]][[3]]
+[1] "47857"
+
+[[100]][[4]]
+[1] "27"
+
+[[100]][[5]]
+[1] "053"
+
+[[100]][[6]]
+[1] "024004"
+
+
+[[101]]
+[[101]][[1]]
+[1] "Census Tract 240.05, Hennepin County, Minnesota"
+
+[[101]][[2]]
+[1] "2681"
+
+[[101]][[3]]
+[1] "62426"
+
+[[101]][[4]]
+[1] "27"
+
+[[101]][[5]]
+[1] "053"
+
+[[101]][[6]]
+[1] "024005"
+
+
+[[102]]
+[[102]][[1]]
+[1] "Census Tract 240.06, Hennepin County, Minnesota"
+
+[[102]][[2]]
+[1] "2163"
+
+[[102]][[3]]
+[1] "132604"
+
+[[102]][[4]]
+[1] "27"
+
+[[102]][[5]]
+[1] "053"
+
+[[102]][[6]]
+[1] "024006"
+
+
+[[103]]
+[[103]][[1]]
+[1] "Census Tract 241, Hennepin County, Minnesota"
+
+[[103]][[2]]
+[1] "3152"
+
+[[103]][[3]]
+[1] "73897"
+
+[[103]][[4]]
+[1] "27"
+
+[[103]][[5]]
+[1] "053"
+
+[[103]][[6]]
+[1] "024100"
+
+
+[[104]]
+[[104]][[1]]
+[1] "Census Tract 242, Hennepin County, Minnesota"
+
+[[104]][[2]]
+[1] "2853"
+
+[[104]][[3]]
+[1] "108476"
+
+[[104]][[4]]
+[1] "27"
+
+[[104]][[5]]
+[1] "053"
+
+[[104]][[6]]
+[1] "024200"
+
+
+[[105]]
+[[105]][[1]]
+[1] "Census Tract 243, Hennepin County, Minnesota"
+
+[[105]][[2]]
+[1] "4789"
+
+[[105]][[3]]
+[1] "71071"
+
+[[105]][[4]]
+[1] "27"
+
+[[105]][[5]]
+[1] "053"
+
+[[105]][[6]]
+[1] "024300"
+
+
+[[106]]
+[[106]][[1]]
+[1] "Census Tract 244, Hennepin County, Minnesota"
+
+[[106]][[2]]
+[1] "4228"
+
+[[106]][[3]]
+[1] "52304"
+
+[[106]][[4]]
+[1] "27"
+
+[[106]][[5]]
+[1] "053"
+
+[[106]][[6]]
+[1] "024400"
+
+
+[[107]]
+[[107]][[1]]
+[1] "Census Tract 245, Hennepin County, Minnesota"
+
+[[107]][[2]]
+[1] "2399"
+
+[[107]][[3]]
+[1] "91827"
+
+[[107]][[4]]
+[1] "27"
+
+[[107]][[5]]
+[1] "053"
+
+[[107]][[6]]
+[1] "024500"
+
+
+[[108]]
+[[108]][[1]]
+[1] "Census Tract 246, Hennepin County, Minnesota"
+
+[[108]][[2]]
+[1] "4097"
+
+[[108]][[3]]
+[1] "73527"
+
+[[108]][[4]]
+[1] "27"
+
+[[108]][[5]]
+[1] "053"
+
+[[108]][[6]]
+[1] "024600"
+
+
+[[109]]
+[[109]][[1]]
+[1] "Census Tract 247, Hennepin County, Minnesota"
+
+[[109]][[2]]
+[1] "3474"
+
+[[109]][[3]]
+[1] "80080"
+
+[[109]][[4]]
+[1] "27"
+
+[[109]][[5]]
+[1] "053"
+
+[[109]][[6]]
+[1] "024700"
+
+
+[[110]]
+[[110]][[1]]
+[1] "Census Tract 248.01, Hennepin County, Minnesota"
+
+[[110]][[2]]
+[1] "2656"
+
+[[110]][[3]]
+[1] "62279"
+
+[[110]][[4]]
+[1] "27"
+
+[[110]][[5]]
+[1] "053"
+
+[[110]][[6]]
+[1] "024801"
+
+
+[[111]]
+[[111]][[1]]
+[1] "Census Tract 248.02, Hennepin County, Minnesota"
+
+[[111]][[2]]
+[1] "2511"
+
+[[111]][[3]]
+[1] "48690"
+
+[[111]][[4]]
+[1] "27"
+
+[[111]][[5]]
+[1] "053"
+
+[[111]][[6]]
+[1] "024802"
+
+
+[[112]]
+[[112]][[1]]
+[1] "Census Tract 249.03, Hennepin County, Minnesota"
+
+[[112]][[2]]
+[1] "2460"
+
+[[112]][[3]]
+[1] "64250"
+
+[[112]][[4]]
+[1] "27"
+
+[[112]][[5]]
+[1] "053"
+
+[[112]][[6]]
+[1] "024903"
+
+
+[[113]]
+[[113]][[1]]
+[1] "Census Tract 249.04, Hennepin County, Minnesota"
+
+[[113]][[2]]
+[1] "3634"
+
+[[113]][[3]]
+[1] "74286"
+
+[[113]][[4]]
+[1] "27"
+
+[[113]][[5]]
+[1] "053"
+
+[[113]][[6]]
+[1] "024904"
+
+
+[[114]]
+[[114]][[1]]
+[1] "Census Tract 251, Hennepin County, Minnesota"
+
+[[114]][[2]]
+[1] "2944"
+
+[[114]][[3]]
+[1] "68913"
+
+[[114]][[4]]
+[1] "27"
+
+[[114]][[5]]
+[1] "053"
+
+[[114]][[6]]
+[1] "025100"
+
+
+[[115]]
+[[115]][[1]]
+[1] "Census Tract 252.01, Hennepin County, Minnesota"
+
+[[115]][[2]]
+[1] "5442"
+
+[[115]][[3]]
+[1] "65590"
+
+[[115]][[4]]
+[1] "27"
+
+[[115]][[5]]
+[1] "053"
+
+[[115]][[6]]
+[1] "025201"
+
+
+[[116]]
+[[116]][[1]]
+[1] "Census Tract 252.05, Hennepin County, Minnesota"
+
+[[116]][[2]]
+[1] "4874"
+
+[[116]][[3]]
+[1] "76164"
+
+[[116]][[4]]
+[1] "27"
+
+[[116]][[5]]
+[1] "053"
+
+[[116]][[6]]
+[1] "025205"
+
+
+[[117]]
+[[117]][[1]]
+[1] "Census Tract 253.01, Hennepin County, Minnesota"
+
+[[117]][[2]]
+[1] "2625"
+
+[[117]][[3]]
+[1] "84583"
+
+[[117]][[4]]
+[1] "27"
+
+[[117]][[5]]
+[1] "053"
+
+[[117]][[6]]
+[1] "025301"
+
+
+[[118]]
+[[118]][[1]]
+[1] "Census Tract 253.02, Hennepin County, Minnesota"
+
+[[118]][[2]]
+[1] "4665"
+
+[[118]][[3]]
+[1] "44867"
+
+[[118]][[4]]
+[1] "27"
+
+[[118]][[5]]
+[1] "053"
+
+[[118]][[6]]
+[1] "025302"
+
+
+[[119]]
+[[119]][[1]]
+[1] "Census Tract 254.01, Hennepin County, Minnesota"
+
+[[119]][[2]]
+[1] "3801"
+
+[[119]][[3]]
+[1] "67102"
+
+[[119]][[4]]
+[1] "27"
+
+[[119]][[5]]
+[1] "053"
+
+[[119]][[6]]
+[1] "025401"
+
+
+[[120]]
+[[120]][[1]]
+[1] "Census Tract 254.03, Hennepin County, Minnesota"
+
+[[120]][[2]]
+[1] "4200"
+
+[[120]][[3]]
+[1] "55430"
+
+[[120]][[4]]
+[1] "27"
+
+[[120]][[5]]
+[1] "053"
+
+[[120]][[6]]
+[1] "025403"
+
+
+[[121]]
+[[121]][[1]]
+[1] "Census Tract 256.01, Hennepin County, Minnesota"
+
+[[121]][[2]]
+[1] "2283"
+
+[[121]][[3]]
+[1] "88542"
+
+[[121]][[4]]
+[1] "27"
+
+[[121]][[5]]
+[1] "053"
+
+[[121]][[6]]
+[1] "025601"
+
+
+[[122]]
+[[122]][[1]]
+[1] "Census Tract 256.03, Hennepin County, Minnesota"
+
+[[122]][[2]]
+[1] "3386"
+
+[[122]][[3]]
+[1] "93011"
+
+[[122]][[4]]
+[1] "27"
+
+[[122]][[5]]
+[1] "053"
+
+[[122]][[6]]
+[1] "025603"
+
+
+[[123]]
+[[123]][[1]]
+[1] "Census Tract 256.05, Hennepin County, Minnesota"
+
+[[123]][[2]]
+[1] "3656"
+
+[[123]][[3]]
+[1] "68417"
+
+[[123]][[4]]
+[1] "27"
+
+[[123]][[5]]
+[1] "053"
+
+[[123]][[6]]
+[1] "025605"
+
+
+[[124]]
+[[124]][[1]]
+[1] "Census Tract 257.02, Hennepin County, Minnesota"
+
+[[124]][[2]]
+[1] "5244"
+
+[[124]][[3]]
+[1] "96983"
+
+[[124]][[4]]
+[1] "27"
+
+[[124]][[5]]
+[1] "053"
+
+[[124]][[6]]
+[1] "025702"
+
+
+[[125]]
+[[125]][[1]]
+[1] "Census Tract 257.03, Hennepin County, Minnesota"
+
+[[125]][[2]]
+[1] "2092"
+
+[[125]][[3]]
+[1] "81341"
+
+[[125]][[4]]
+[1] "27"
+
+[[125]][[5]]
+[1] "053"
+
+[[125]][[6]]
+[1] "025703"
+
+
+[[126]]
+[[126]][[1]]
+[1] "Census Tract 257.04, Hennepin County, Minnesota"
+
+[[126]][[2]]
+[1] "4366"
+
+[[126]][[3]]
+[1] "83250"
+
+[[126]][[4]]
+[1] "27"
+
+[[126]][[5]]
+[1] "053"
+
+[[126]][[6]]
+[1] "025704"
+
+
+[[127]]
+[[127]][[1]]
+[1] "Census Tract 258.01, Hennepin County, Minnesota"
+
+[[127]][[2]]
+[1] "3047"
+
+[[127]][[3]]
+[1] "76111"
+
+[[127]][[4]]
+[1] "27"
+
+[[127]][[5]]
+[1] "053"
+
+[[127]][[6]]
+[1] "025801"
+
+
+[[128]]
+[[128]][[1]]
+[1] "Census Tract 258.02, Hennepin County, Minnesota"
+
+[[128]][[2]]
+[1] "2419"
+
+[[128]][[3]]
+[1] "104904"
+
+[[128]][[4]]
+[1] "27"
+
+[[128]][[5]]
+[1] "053"
+
+[[128]][[6]]
+[1] "025802"
+
+
+[[129]]
+[[129]][[1]]
+[1] "Census Tract 258.03, Hennepin County, Minnesota"
+
+[[129]][[2]]
+[1] "3075"
+
+[[129]][[3]]
+[1] "78605"
+
+[[129]][[4]]
+[1] "27"
+
+[[129]][[5]]
+[1] "053"
+
+[[129]][[6]]
+[1] "025803"
+
+
+[[130]]
+[[130]][[1]]
+[1] "Census Tract 258.05, Hennepin County, Minnesota"
+
+[[130]][[2]]
+[1] "2756"
+
+[[130]][[3]]
+[1] "103750"
+
+[[130]][[4]]
+[1] "27"
+
+[[130]][[5]]
+[1] "053"
+
+[[130]][[6]]
+[1] "025805"
+
+
+[[131]]
+[[131]][[1]]
+[1] "Census Tract 259.05, Hennepin County, Minnesota"
+
+[[131]][[2]]
+[1] "3671"
+
+[[131]][[3]]
+[1] "98550"
+
+[[131]][[4]]
+[1] "27"
+
+[[131]][[5]]
+[1] "053"
+
+[[131]][[6]]
+[1] "025905"
+
+
+[[132]]
+[[132]][[1]]
+[1] "Census Tract 259.06, Hennepin County, Minnesota"
+
+[[132]][[2]]
+[1] "6025"
+
+[[132]][[3]]
+[1] "79191"
+
+[[132]][[4]]
+[1] "27"
+
+[[132]][[5]]
+[1] "053"
+
+[[132]][[6]]
+[1] "025906"
+
+
+[[133]]
+[[133]][[1]]
+[1] "Census Tract 259.07, Hennepin County, Minnesota"
+
+[[133]][[2]]
+[1] "4412"
+
+[[133]][[3]]
+[1] "75833"
+
+[[133]][[4]]
+[1] "27"
+
+[[133]][[5]]
+[1] "053"
+
+[[133]][[6]]
+[1] "025907"
+
+
+[[134]]
+[[134]][[1]]
+[1] "Census Tract 259.08, Hennepin County, Minnesota"
+
+[[134]][[2]]
+[1] "3454"
+
+[[134]][[3]]
+[1] "110339"
+
+[[134]][[4]]
+[1] "27"
+
+[[134]][[5]]
+[1] "053"
+
+[[134]][[6]]
+[1] "025908"
+
+
+[[135]]
+[[135]][[1]]
+[1] "Census Tract 259.09, Hennepin County, Minnesota"
+
+[[135]][[2]]
+[1] "2865"
+
+[[135]][[3]]
+[1] "104412"
+
+[[135]][[4]]
+[1] "27"
+
+[[135]][[5]]
+[1] "053"
+
+[[135]][[6]]
+[1] "025909"
+
+
+[[136]]
+[[136]][[1]]
+[1] "Census Tract 260.05, Hennepin County, Minnesota"
+
+[[136]][[2]]
+[1] "4036"
+
+[[136]][[3]]
+[1] "98137"
+
+[[136]][[4]]
+[1] "27"
+
+[[136]][[5]]
+[1] "053"
+
+[[136]][[6]]
+[1] "026005"
+
+
+[[137]]
+[[137]][[1]]
+[1] "Census Tract 260.06, Hennepin County, Minnesota"
+
+[[137]][[2]]
+[1] "3193"
+
+[[137]][[3]]
+[1] "85938"
+
+[[137]][[4]]
+[1] "27"
+
+[[137]][[5]]
+[1] "053"
+
+[[137]][[6]]
+[1] "026006"
+
+
+[[138]]
+[[138]][[1]]
+[1] "Census Tract 260.07, Hennepin County, Minnesota"
+
+[[138]][[2]]
+[1] "4769"
+
+[[138]][[3]]
+[1] "89417"
+
+[[138]][[4]]
+[1] "27"
+
+[[138]][[5]]
+[1] "053"
+
+[[138]][[6]]
+[1] "026007"
+
+
+[[139]]
+[[139]][[1]]
+[1] "Census Tract 260.13, Hennepin County, Minnesota"
+
+[[139]][[2]]
+[1] "5386"
+
+[[139]][[3]]
+[1] "143935"
+
+[[139]][[4]]
+[1] "27"
+
+[[139]][[5]]
+[1] "053"
+
+[[139]][[6]]
+[1] "026013"
+
+
+[[140]]
+[[140]][[1]]
+[1] "Census Tract 260.14, Hennepin County, Minnesota"
+
+[[140]][[2]]
+[1] "5541"
+
+[[140]][[3]]
+[1] "119821"
+
+[[140]][[4]]
+[1] "27"
+
+[[140]][[5]]
+[1] "053"
+
+[[140]][[6]]
+[1] "026014"
+
+
+[[141]]
+[[141]][[1]]
+[1] "Census Tract 260.15, Hennepin County, Minnesota"
+
+[[141]][[2]]
+[1] "4767"
+
+[[141]][[3]]
+[1] "112104"
+
+[[141]][[4]]
+[1] "27"
+
+[[141]][[5]]
+[1] "053"
+
+[[141]][[6]]
+[1] "026015"
+
+
+[[142]]
+[[142]][[1]]
+[1] "Census Tract 260.19, Hennepin County, Minnesota"
+
+[[142]][[2]]
+[1] "5313"
+
+[[142]][[3]]
+[1] "78333"
+
+[[142]][[4]]
+[1] "27"
+
+[[142]][[5]]
+[1] "053"
+
+[[142]][[6]]
+[1] "026019"
+
+
+[[143]]
+[[143]][[1]]
+[1] "Census Tract 260.20, Hennepin County, Minnesota"
+
+[[143]][[2]]
+[1] "5099"
+
+[[143]][[3]]
+[1] "84063"
+
+[[143]][[4]]
+[1] "27"
+
+[[143]][[5]]
+[1] "053"
+
+[[143]][[6]]
+[1] "026020"
+
+
+[[144]]
+[[144]][[1]]
+[1] "Census Tract 260.21, Hennepin County, Minnesota"
+
+[[144]][[2]]
+[1] "3631"
+
+[[144]][[3]]
+[1] "147237"
+
+[[144]][[4]]
+[1] "27"
+
+[[144]][[5]]
+[1] "053"
+
+[[144]][[6]]
+[1] "026021"
+
+
+[[145]]
+[[145]][[1]]
+[1] "Census Tract 260.23, Hennepin County, Minnesota"
+
+[[145]][[2]]
+[1] "3829"
+
+[[145]][[3]]
+[1] "115934"
+
+[[145]][[4]]
+[1] "27"
+
+[[145]][[5]]
+[1] "053"
+
+[[145]][[6]]
+[1] "026023"
+
+
+[[146]]
+[[146]][[1]]
+[1] "Census Tract 260.24, Hennepin County, Minnesota"
+
+[[146]][[2]]
+[1] "3222"
+
+[[146]][[3]]
+[1] "100054"
+
+[[146]][[4]]
+[1] "27"
+
+[[146]][[5]]
+[1] "053"
+
+[[146]][[6]]
+[1] "026024"
+
+
+[[147]]
+[[147]][[1]]
+[1] "Census Tract 260.25, Hennepin County, Minnesota"
+
+[[147]][[2]]
+[1] "3001"
+
+[[147]][[3]]
+[1] "202098"
+
+[[147]][[4]]
+[1] "27"
+
+[[147]][[5]]
+[1] "053"
+
+[[147]][[6]]
+[1] "026025"
+
+
+[[148]]
+[[148]][[1]]
+[1] "Census Tract 260.26, Hennepin County, Minnesota"
+
+[[148]][[2]]
+[1] "5510"
+
+[[148]][[3]]
+[1] "194417"
+
+[[148]][[4]]
+[1] "27"
+
+[[148]][[5]]
+[1] "053"
+
+[[148]][[6]]
+[1] "026026"
+
+
+[[149]]
+[[149]][[1]]
+[1] "Census Tract 260.27, Hennepin County, Minnesota"
+
+[[149]][[2]]
+[1] "3960"
+
+[[149]][[3]]
+[1] "148512"
+
+[[149]][[4]]
+[1] "27"
+
+[[149]][[5]]
+[1] "053"
+
+[[149]][[6]]
+[1] "026027"
+
+
+[[150]]
+[[150]][[1]]
+[1] "Census Tract 260.28, Hennepin County, Minnesota"
+
+[[150]][[2]]
+[1] "3224"
+
+[[150]][[3]]
+[1] "176580"
+
+[[150]][[4]]
+[1] "27"
+
+[[150]][[5]]
+[1] "053"
+
+[[150]][[6]]
+[1] "026028"
+
+
+[[151]]
+[[151]][[1]]
+[1] "Census Tract 261.01, Hennepin County, Minnesota"
+
+[[151]][[2]]
+[1] "3341"
+
+[[151]][[3]]
+[1] "101578"
+
+[[151]][[4]]
+[1] "27"
+
+[[151]][[5]]
+[1] "053"
+
+[[151]][[6]]
+[1] "026101"
+
+
+[[152]]
+[[152]][[1]]
+[1] "Census Tract 261.03, Hennepin County, Minnesota"
+
+[[152]][[2]]
+[1] "3498"
+
+[[152]][[3]]
+[1] "122206"
+
+[[152]][[4]]
+[1] "27"
+
+[[152]][[5]]
+[1] "053"
+
+[[152]][[6]]
+[1] "026103"
+
+
+[[153]]
+[[153]][[1]]
+[1] "Census Tract 261.04, Hennepin County, Minnesota"
+
+[[153]][[2]]
+[1] "3853"
+
+[[153]][[3]]
+[1] "76792"
+
+[[153]][[4]]
+[1] "27"
+
+[[153]][[5]]
+[1] "053"
+
+[[153]][[6]]
+[1] "026104"
+
+
+[[154]]
+[[154]][[1]]
+[1] "Census Tract 262.01, Hennepin County, Minnesota"
+
+[[154]][[2]]
+[1] "4025"
+
+[[154]][[3]]
+[1] "132361"
+
+[[154]][[4]]
+[1] "27"
+
+[[154]][[5]]
+[1] "053"
+
+[[154]][[6]]
+[1] "026201"
+
+
+[[155]]
+[[155]][[1]]
+[1] "Census Tract 262.02, Hennepin County, Minnesota"
+
+[[155]][[2]]
+[1] "3138"
+
+[[155]][[3]]
+[1] "96328"
+
+[[155]][[4]]
+[1] "27"
+
+[[155]][[5]]
+[1] "053"
+
+[[155]][[6]]
+[1] "026202"
+
+
+[[156]]
+[[156]][[1]]
+[1] "Census Tract 262.05, Hennepin County, Minnesota"
+
+[[156]][[2]]
+[1] "2984"
+
+[[156]][[3]]
+[1] "130486"
+
+[[156]][[4]]
+[1] "27"
+
+[[156]][[5]]
+[1] "053"
+
+[[156]][[6]]
+[1] "026205"
+
+
+[[157]]
+[[157]][[1]]
+[1] "Census Tract 262.06, Hennepin County, Minnesota"
+
+[[157]][[2]]
+[1] "3119"
+
+[[157]][[3]]
+[1] "103611"
+
+[[157]][[4]]
+[1] "27"
+
+[[157]][[5]]
+[1] "053"
+
+[[157]][[6]]
+[1] "026206"
+
+
+[[158]]
+[[158]][[1]]
+[1] "Census Tract 262.07, Hennepin County, Minnesota"
+
+[[158]][[2]]
+[1] "3654"
+
+[[158]][[3]]
+[1] "89740"
+
+[[158]][[4]]
+[1] "27"
+
+[[158]][[5]]
+[1] "053"
+
+[[158]][[6]]
+[1] "026207"
+
+
+[[159]]
+[[159]][[1]]
+[1] "Census Tract 262.08, Hennepin County, Minnesota"
+
+[[159]][[2]]
+[1] "3124"
+
+[[159]][[3]]
+[1] "113750"
+
+[[159]][[4]]
+[1] "27"
+
+[[159]][[5]]
+[1] "053"
+
+[[159]][[6]]
+[1] "026208"
+
+
+[[160]]
+[[160]][[1]]
+[1] "Census Tract 263.01, Hennepin County, Minnesota"
+
+[[160]][[2]]
+[1] "3989"
+
+[[160]][[3]]
+[1] "147672"
+
+[[160]][[4]]
+[1] "27"
+
+[[160]][[5]]
+[1] "053"
+
+[[160]][[6]]
+[1] "026301"
+
+
+[[161]]
+[[161]][[1]]
+[1] "Census Tract 263.02, Hennepin County, Minnesota"
+
+[[161]][[2]]
+[1] "3431"
+
+[[161]][[3]]
+[1] "103531"
+
+[[161]][[4]]
+[1] "27"
+
+[[161]][[5]]
+[1] "053"
+
+[[161]][[6]]
+[1] "026302"
+
+
+[[162]]
+[[162]][[1]]
+[1] "Census Tract 264.03, Hennepin County, Minnesota"
+
+[[162]][[2]]
+[1] "3372"
+
+[[162]][[3]]
+[1] "72054"
+
+[[162]][[4]]
+[1] "27"
+
+[[162]][[5]]
+[1] "053"
+
+[[162]][[6]]
+[1] "026403"
+
+
+[[163]]
+[[163]][[1]]
+[1] "Census Tract 264.04, Hennepin County, Minnesota"
+
+[[163]][[2]]
+[1] "6265"
+
+[[163]][[3]]
+[1] "141984"
+
+[[163]][[4]]
+[1] "27"
+
+[[163]][[5]]
+[1] "053"
+
+[[163]][[6]]
+[1] "026404"
+
+
+[[164]]
+[[164]][[1]]
+[1] "Census Tract 264.05, Hennepin County, Minnesota"
+
+[[164]][[2]]
+[1] "2339"
+
+[[164]][[3]]
+[1] "97609"
+
+[[164]][[4]]
+[1] "27"
+
+[[164]][[5]]
+[1] "053"
+
+[[164]][[6]]
+[1] "026405"
+
+
+[[165]]
+[[165]][[1]]
+[1] "Census Tract 264.06, Hennepin County, Minnesota"
+
+[[165]][[2]]
+[1] "3628"
+
+[[165]][[3]]
+[1] "58426"
+
+[[165]][[4]]
+[1] "27"
+
+[[165]][[5]]
+[1] "053"
+
+[[165]][[6]]
+[1] "026406"
+
+
+[[166]]
+[[166]][[1]]
+[1] "Census Tract 265.05, Hennepin County, Minnesota"
+
+[[166]][[2]]
+[1] "3978"
+
+[[166]][[3]]
+[1] "100652"
+
+[[166]][[4]]
+[1] "27"
+
+[[166]][[5]]
+[1] "053"
+
+[[166]][[6]]
+[1] "026505"
+
+
+[[167]]
+[[167]][[1]]
+[1] "Census Tract 265.07, Hennepin County, Minnesota"
+
+[[167]][[2]]
+[1] "4385"
+
+[[167]][[3]]
+[1] "92941"
+
+[[167]][[4]]
+[1] "27"
+
+[[167]][[5]]
+[1] "053"
+
+[[167]][[6]]
+[1] "026507"
+
+
+[[168]]
+[[168]][[1]]
+[1] "Census Tract 265.08, Hennepin County, Minnesota"
+
+[[168]][[2]]
+[1] "4472"
+
+[[168]][[3]]
+[1] "112566"
+
+[[168]][[4]]
+[1] "27"
+
+[[168]][[5]]
+[1] "053"
+
+[[168]][[6]]
+[1] "026508"
+
+
+[[169]]
+[[169]][[1]]
+[1] "Census Tract 265.09, Hennepin County, Minnesota"
+
+[[169]][[2]]
+[1] "4696"
+
+[[169]][[3]]
+[1] "144318"
+
+[[169]][[4]]
+[1] "27"
+
+[[169]][[5]]
+[1] "053"
+
+[[169]][[6]]
+[1] "026509"
+
+
+[[170]]
+[[170]][[1]]
+[1] "Census Tract 265.10, Hennepin County, Minnesota"
+
+[[170]][[2]]
+[1] "3513"
+
+[[170]][[3]]
+[1] "74330"
+
+[[170]][[4]]
+[1] "27"
+
+[[170]][[5]]
+[1] "053"
+
+[[170]][[6]]
+[1] "026510"
+
+
+[[171]]
+[[171]][[1]]
+[1] "Census Tract 265.11, Hennepin County, Minnesota"
+
+[[171]][[2]]
+[1] "3980"
+
+[[171]][[3]]
+[1] "68369"
+
+[[171]][[4]]
+[1] "27"
+
+[[171]][[5]]
+[1] "053"
+
+[[171]][[6]]
+[1] "026511"
+
+
+[[172]]
+[[172]][[1]]
+[1] "Census Tract 265.14, Hennepin County, Minnesota"
+
+[[172]][[2]]
+[1] "5195"
+
+[[172]][[3]]
+[1] "73514"
+
+[[172]][[4]]
+[1] "27"
+
+[[172]][[5]]
+[1] "053"
+
+[[172]][[6]]
+[1] "026514"
+
+
+[[173]]
+[[173]][[1]]
+[1] "Census Tract 265.15, Hennepin County, Minnesota"
+
+[[173]][[2]]
+[1] "2000"
+
+[[173]][[3]]
+[1] "68971"
+
+[[173]][[4]]
+[1] "27"
+
+[[173]][[5]]
+[1] "053"
+
+[[173]][[6]]
+[1] "026515"
+
+
+[[174]]
+[[174]][[1]]
+[1] "Census Tract 265.16, Hennepin County, Minnesota"
+
+[[174]][[2]]
+[1] "3896"
+
+[[174]][[3]]
+[1] "84569"
+
+[[174]][[4]]
+[1] "27"
+
+[[174]][[5]]
+[1] "053"
+
+[[174]][[6]]
+[1] "026516"
+
+
+[[175]]
+[[175]][[1]]
+[1] "Census Tract 266.05, Hennepin County, Minnesota"
+
+[[175]][[2]]
+[1] "3930"
+
+[[175]][[3]]
+[1] "131023"
+
+[[175]][[4]]
+[1] "27"
+
+[[175]][[5]]
+[1] "053"
+
+[[175]][[6]]
+[1] "026605"
+
+
+[[176]]
+[[176]][[1]]
+[1] "Census Tract 266.06, Hennepin County, Minnesota"
+
+[[176]][[2]]
+[1] "5065"
+
+[[176]][[3]]
+[1] "127375"
+
+[[176]][[4]]
+[1] "27"
+
+[[176]][[5]]
+[1] "053"
+
+[[176]][[6]]
+[1] "026606"
+
+
+[[177]]
+[[177]][[1]]
+[1] "Census Tract 266.09, Hennepin County, Minnesota"
+
+[[177]][[2]]
+[1] "2878"
+
+[[177]][[3]]
+[1] "116281"
+
+[[177]][[4]]
+[1] "27"
+
+[[177]][[5]]
+[1] "053"
+
+[[177]][[6]]
+[1] "026609"
+
+
+[[178]]
+[[178]][[1]]
+[1] "Census Tract 266.10, Hennepin County, Minnesota"
+
+[[178]][[2]]
+[1] "4651"
+
+[[178]][[3]]
+[1] "136369"
+
+[[178]][[4]]
+[1] "27"
+
+[[178]][[5]]
+[1] "053"
+
+[[178]][[6]]
+[1] "026610"
+
+
+[[179]]
+[[179]][[1]]
+[1] "Census Tract 266.11, Hennepin County, Minnesota"
+
+[[179]][[2]]
+[1] "4855"
+
+[[179]][[3]]
+[1] "79366"
+
+[[179]][[4]]
+[1] "27"
+
+[[179]][[5]]
+[1] "053"
+
+[[179]][[6]]
+[1] "026611"
+
+
+[[180]]
+[[180]][[1]]
+[1] "Census Tract 266.14, Hennepin County, Minnesota"
+
+[[180]][[2]]
+[1] "3404"
+
+[[180]][[3]]
+[1] "141528"
+
+[[180]][[4]]
+[1] "27"
+
+[[180]][[5]]
+[1] "053"
+
+[[180]][[6]]
+[1] "026614"
+
+
+[[181]]
+[[181]][[1]]
+[1] "Census Tract 266.15, Hennepin County, Minnesota"
+
+[[181]][[2]]
+[1] "6928"
+
+[[181]][[3]]
+[1] "136012"
+
+[[181]][[4]]
+[1] "27"
+
+[[181]][[5]]
+[1] "053"
+
+[[181]][[6]]
+[1] "026615"
+
+
+[[182]]
+[[182]][[1]]
+[1] "Census Tract 266.16, Hennepin County, Minnesota"
+
+[[182]][[2]]
+[1] "9680"
+
+[[182]][[3]]
+[1] "194882"
+
+[[182]][[4]]
+[1] "27"
+
+[[182]][[5]]
+[1] "053"
+
+[[182]][[6]]
+[1] "026616"
+
+
+[[183]]
+[[183]][[1]]
+[1] "Census Tract 266.17, Hennepin County, Minnesota"
+
+[[183]][[2]]
+[1] "1848"
+
+[[183]][[3]]
+[1] "104795"
+
+[[183]][[4]]
+[1] "27"
+
+[[183]][[5]]
+[1] "053"
+
+[[183]][[6]]
+[1] "026617"
+
+
+[[184]]
+[[184]][[1]]
+[1] "Census Tract 267.02, Hennepin County, Minnesota"
+
+[[184]][[2]]
+[1] "2738"
+
+[[184]][[3]]
+[1] "54636"
+
+[[184]][[4]]
+[1] "27"
+
+[[184]][[5]]
+[1] "053"
+
+[[184]][[6]]
+[1] "026702"
+
+
+[[185]]
+[[185]][[1]]
+[1] "Census Tract 267.06, Hennepin County, Minnesota"
+
+[[185]][[2]]
+[1] "3486"
+
+[[185]][[3]]
+[1] "106518"
+
+[[185]][[4]]
+[1] "27"
+
+[[185]][[5]]
+[1] "053"
+
+[[185]][[6]]
+[1] "026706"
+
+
+[[186]]
+[[186]][[1]]
+[1] "Census Tract 267.07, Hennepin County, Minnesota"
+
+[[186]][[2]]
+[1] "4983"
+
+[[186]][[3]]
+[1] "101194"
+
+[[186]][[4]]
+[1] "27"
+
+[[186]][[5]]
+[1] "053"
+
+[[186]][[6]]
+[1] "026707"
+
+
+[[187]]
+[[187]][[1]]
+[1] "Census Tract 267.08, Hennepin County, Minnesota"
+
+[[187]][[2]]
+[1] "6069"
+
+[[187]][[3]]
+[1] "95980"
+
+[[187]][[4]]
+[1] "27"
+
+[[187]][[5]]
+[1] "053"
+
+[[187]][[6]]
+[1] "026708"
+
+
+[[188]]
+[[188]][[1]]
+[1] "Census Tract 267.11, Hennepin County, Minnesota"
+
+[[188]][[2]]
+[1] "3976"
+
+[[188]][[3]]
+[1] "91250"
+
+[[188]][[4]]
+[1] "27"
+
+[[188]][[5]]
+[1] "053"
+
+[[188]][[6]]
+[1] "026711"
+
+
+[[189]]
+[[189]][[1]]
+[1] "Census Tract 267.12, Hennepin County, Minnesota"
+
+[[189]][[2]]
+[1] "3806"
+
+[[189]][[3]]
+[1] "90167"
+
+[[189]][[4]]
+[1] "27"
+
+[[189]][[5]]
+[1] "053"
+
+[[189]][[6]]
+[1] "026712"
+
+
+[[190]]
+[[190]][[1]]
+[1] "Census Tract 267.13, Hennepin County, Minnesota"
+
+[[190]][[2]]
+[1] "4319"
+
+[[190]][[3]]
+[1] "91230"
+
+[[190]][[4]]
+[1] "27"
+
+[[190]][[5]]
+[1] "053"
+
+[[190]][[6]]
+[1] "026713"
+
+
+[[191]]
+[[191]][[1]]
+[1] "Census Tract 267.17, Hennepin County, Minnesota"
+
+[[191]][[2]]
+[1] "6249"
+
+[[191]][[3]]
+[1] "110125"
+
+[[191]][[4]]
+[1] "27"
+
+[[191]][[5]]
+[1] "053"
+
+[[191]][[6]]
+[1] "026717"
+
+
+[[192]]
+[[192]][[1]]
+[1] "Census Tract 267.18, Hennepin County, Minnesota"
+
+[[192]][[2]]
+[1] "3799"
+
+[[192]][[3]]
+[1] "110774"
+
+[[192]][[4]]
+[1] "27"
+
+[[192]][[5]]
+[1] "053"
+
+[[192]][[6]]
+[1] "026718"
+
+
+[[193]]
+[[193]][[1]]
+[1] "Census Tract 267.19, Hennepin County, Minnesota"
+
+[[193]][[2]]
+[1] "6166"
+
+[[193]][[3]]
+[1] "159857"
+
+[[193]][[4]]
+[1] "27"
+
+[[193]][[5]]
+[1] "053"
+
+[[193]][[6]]
+[1] "026719"
+
+
+[[194]]
+[[194]][[1]]
+[1] "Census Tract 267.20, Hennepin County, Minnesota"
+
+[[194]][[2]]
+[1] "5364"
+
+[[194]][[3]]
+[1] "122180"
+
+[[194]][[4]]
+[1] "27"
+
+[[194]][[5]]
+[1] "053"
+
+[[194]][[6]]
+[1] "026720"
+
+
+[[195]]
+[[195]][[1]]
+[1] "Census Tract 267.21, Hennepin County, Minnesota"
+
+[[195]][[2]]
+[1] "2848"
+
+[[195]][[3]]
+[1] "120769"
+
+[[195]][[4]]
+[1] "27"
+
+[[195]][[5]]
+[1] "053"
+
+[[195]][[6]]
+[1] "026721"
+
+
+[[196]]
+[[196]][[1]]
+[1] "Census Tract 267.22, Hennepin County, Minnesota"
+
+[[196]][[2]]
+[1] "5295"
+
+[[196]][[3]]
+[1] "161471"
+
+[[196]][[4]]
+[1] "27"
+
+[[196]][[5]]
+[1] "053"
+
+[[196]][[6]]
+[1] "026722"
+
+
+[[197]]
+[[197]][[1]]
+[1] "Census Tract 267.23, Hennepin County, Minnesota"
+
+[[197]][[2]]
+[1] "4789"
+
+[[197]][[3]]
+[1] "185357"
+
+[[197]][[4]]
+[1] "27"
+
+[[197]][[5]]
+[1] "053"
+
+[[197]][[6]]
+[1] "026723"
+
+
+[[198]]
+[[198]][[1]]
+[1] "Census Tract 267.24, Hennepin County, Minnesota"
+
+[[198]][[2]]
+[1] "3364"
+
+[[198]][[3]]
+[1] "119214"
+
+[[198]][[4]]
+[1] "27"
+
+[[198]][[5]]
+[1] "053"
+
+[[198]][[6]]
+[1] "026724"
+
+
+[[199]]
+[[199]][[1]]
+[1] "Census Tract 267.25, Hennepin County, Minnesota"
+
+[[199]][[2]]
+[1] "3046"
+
+[[199]][[3]]
+[1] "87390"
+
+[[199]][[4]]
+[1] "27"
+
+[[199]][[5]]
+[1] "053"
+
+[[199]][[6]]
+[1] "026725"
+
+
+[[200]]
+[[200]][[1]]
+[1] "Census Tract 267.26, Hennepin County, Minnesota"
+
+[[200]][[2]]
+[1] "4010"
+
+[[200]][[3]]
+[1] "96378"
+
+[[200]][[4]]
+[1] "27"
+
+[[200]][[5]]
+[1] "053"
+
+[[200]][[6]]
+[1] "026726"
+
+
+[[201]]
+[[201]][[1]]
+[1] "Census Tract 268.07, Hennepin County, Minnesota"
+
+[[201]][[2]]
+[1] "5415"
+
+[[201]][[3]]
+[1] "53564"
+
+[[201]][[4]]
+[1] "27"
+
+[[201]][[5]]
+[1] "053"
+
+[[201]][[6]]
+[1] "026807"
+
+
+[[202]]
+[[202]][[1]]
+[1] "Census Tract 268.09, Hennepin County, Minnesota"
+
+[[202]][[2]]
+[1] "5709"
+
+[[202]][[3]]
+[1] "53952"
+
+[[202]][[4]]
+[1] "27"
+
+[[202]][[5]]
+[1] "053"
+
+[[202]][[6]]
+[1] "026809"
+
+
+[[203]]
+[[203]][[1]]
+[1] "Census Tract 268.11, Hennepin County, Minnesota"
+
+[[203]][[2]]
+[1] "5305"
+
+[[203]][[3]]
+[1] "78137"
+
+[[203]][[4]]
+[1] "27"
+
+[[203]][[5]]
+[1] "053"
+
+[[203]][[6]]
+[1] "026811"
+
+
+[[204]]
+[[204]][[1]]
+[1] "Census Tract 268.12, Hennepin County, Minnesota"
+
+[[204]][[2]]
+[1] "7828"
+
+[[204]][[3]]
+[1] "92683"
+
+[[204]][[4]]
+[1] "27"
+
+[[204]][[5]]
+[1] "053"
+
+[[204]][[6]]
+[1] "026812"
+
+
+[[205]]
+[[205]][[1]]
+[1] "Census Tract 268.14, Hennepin County, Minnesota"
+
+[[205]][[2]]
+[1] "5821"
+
+[[205]][[3]]
+[1] "83315"
+
+[[205]][[4]]
+[1] "27"
+
+[[205]][[5]]
+[1] "053"
+
+[[205]][[6]]
+[1] "026814"
+
+
+[[206]]
+[[206]][[1]]
+[1] "Census Tract 268.15, Hennepin County, Minnesota"
+
+[[206]][[2]]
+[1] "5725"
+
+[[206]][[3]]
+[1] "81341"
+
+[[206]][[4]]
+[1] "27"
+
+[[206]][[5]]
+[1] "053"
+
+[[206]][[6]]
+[1] "026815"
+
+
+[[207]]
+[[207]][[1]]
+[1] "Census Tract 268.16, Hennepin County, Minnesota"
+
+[[207]][[2]]
+[1] "6709"
+
+[[207]][[3]]
+[1] "78728"
+
+[[207]][[4]]
+[1] "27"
+
+[[207]][[5]]
+[1] "053"
+
+[[207]][[6]]
+[1] "026816"
+
+
+[[208]]
+[[208]][[1]]
+[1] "Census Tract 268.18, Hennepin County, Minnesota"
+
+[[208]][[2]]
+[1] "6595"
+
+[[208]][[3]]
+[1] "68114"
+
+[[208]][[4]]
+[1] "27"
+
+[[208]][[5]]
+[1] "053"
+
+[[208]][[6]]
+[1] "026818"
+
+
+[[209]]
+[[209]][[1]]
+[1] "Census Tract 268.19, Hennepin County, Minnesota"
+
+[[209]][[2]]
+[1] "4899"
+
+[[209]][[3]]
+[1] "37315"
+
+[[209]][[4]]
+[1] "27"
+
+[[209]][[5]]
+[1] "053"
+
+[[209]][[6]]
+[1] "026819"
+
+
+[[210]]
+[[210]][[1]]
+[1] "Census Tract 268.22, Hennepin County, Minnesota"
+
+[[210]][[2]]
+[1] "4326"
+
+[[210]][[3]]
+[1] "87426"
+
+[[210]][[4]]
+[1] "27"
+
+[[210]][[5]]
+[1] "053"
+
+[[210]][[6]]
+[1] "026822"
+
+
+[[211]]
+[[211]][[1]]
+[1] "Census Tract 268.23, Hennepin County, Minnesota"
+
+[[211]][[2]]
+[1] "4693"
+
+[[211]][[3]]
+[1] "123312"
+
+[[211]][[4]]
+[1] "27"
+
+[[211]][[5]]
+[1] "053"
+
+[[211]][[6]]
+[1] "026823"
+
+
+[[212]]
+[[212]][[1]]
+[1] "Census Tract 268.24, Hennepin County, Minnesota"
+
+[[212]][[2]]
+[1] "4098"
+
+[[212]][[3]]
+[1] "111950"
+
+[[212]][[4]]
+[1] "27"
+
+[[212]][[5]]
+[1] "053"
+
+[[212]][[6]]
+[1] "026824"
+
+
+[[213]]
+[[213]][[1]]
+[1] "Census Tract 268.25, Hennepin County, Minnesota"
+
+[[213]][[2]]
+[1] "2969"
+
+[[213]][[3]]
+[1] "110694"
+
+[[213]][[4]]
+[1] "27"
+
+[[213]][[5]]
+[1] "053"
+
+[[213]][[6]]
+[1] "026825"
+
+
+[[214]]
+[[214]][[1]]
+[1] "Census Tract 268.26, Hennepin County, Minnesota"
+
+[[214]][[2]]
+[1] "3225"
+
+[[214]][[3]]
+[1] "133504"
+
+[[214]][[4]]
+[1] "27"
+
+[[214]][[5]]
+[1] "053"
+
+[[214]][[6]]
+[1] "026826"
+
+
+[[215]]
+[[215]][[1]]
+[1] "Census Tract 268.27, Hennepin County, Minnesota"
+
+[[215]][[2]]
+[1] "3048"
+
+[[215]][[3]]
+[1] "31981"
+
+[[215]][[4]]
+[1] "27"
+
+[[215]][[5]]
+[1] "053"
+
+[[215]][[6]]
+[1] "026827"
+
+
+[[216]]
+[[216]][[1]]
+[1] "Census Tract 268.28, Hennepin County, Minnesota"
+
+[[216]][[2]]
+[1] "3808"
+
+[[216]][[3]]
+[1] "46596"
+
+[[216]][[4]]
+[1] "27"
+
+[[216]][[5]]
+[1] "053"
+
+[[216]][[6]]
+[1] "026828"
+
+
+[[217]]
+[[217]][[1]]
+[1] "Census Tract 269.03, Hennepin County, Minnesota"
+
+[[217]][[2]]
+[1] "5267"
+
+[[217]][[3]]
+[1] "101156"
+
+[[217]][[4]]
+[1] "27"
+
+[[217]][[5]]
+[1] "053"
+
+[[217]][[6]]
+[1] "026903"
+
+
+[[218]]
+[[218]][[1]]
+[1] "Census Tract 269.06, Hennepin County, Minnesota"
+
+[[218]][[2]]
+[1] "7604"
+
+[[218]][[3]]
+[1] "88895"
+
+[[218]][[4]]
+[1] "27"
+
+[[218]][[5]]
+[1] "053"
+
+[[218]][[6]]
+[1] "026906"
+
+
+[[219]]
+[[219]][[1]]
+[1] "Census Tract 269.07, Hennepin County, Minnesota"
+
+[[219]][[2]]
+[1] "5880"
+
+[[219]][[3]]
+[1] "99792"
+
+[[219]][[4]]
+[1] "27"
+
+[[219]][[5]]
+[1] "053"
+
+[[219]][[6]]
+[1] "026907"
+
+
+[[220]]
+[[220]][[1]]
+[1] "Census Tract 269.08, Hennepin County, Minnesota"
+
+[[220]][[2]]
+[1] "6229"
+
+[[220]][[3]]
+[1] "103049"
+
+[[220]][[4]]
+[1] "27"
+
+[[220]][[5]]
+[1] "053"
+
+[[220]][[6]]
+[1] "026908"
+
+
+[[221]]
+[[221]][[1]]
+[1] "Census Tract 269.10, Hennepin County, Minnesota"
+
+[[221]][[2]]
+[1] "6258"
+
+[[221]][[3]]
+[1] "112557"
+
+[[221]][[4]]
+[1] "27"
+
+[[221]][[5]]
+[1] "053"
+
+[[221]][[6]]
+[1] "026910"
+
+
+[[222]]
+[[222]][[1]]
+[1] "Census Tract 269.11, Hennepin County, Minnesota"
+
+[[222]][[2]]
+[1] "4378"
+
+[[222]][[3]]
+[1] "113563"
+
+[[222]][[4]]
+[1] "27"
+
+[[222]][[5]]
+[1] "053"
+
+[[222]][[6]]
+[1] "026911"
+
+
+[[223]]
+[[223]][[1]]
+[1] "Census Tract 269.12, Hennepin County, Minnesota"
+
+[[223]][[2]]
+[1] "9486"
+
+[[223]][[3]]
+[1] "143744"
+
+[[223]][[4]]
+[1] "27"
+
+[[223]][[5]]
+[1] "053"
+
+[[223]][[6]]
+[1] "026912"
+
+
+[[224]]
+[[224]][[1]]
+[1] "Census Tract 270.01, Hennepin County, Minnesota"
+
+[[224]][[2]]
+[1] "3439"
+
+[[224]][[3]]
+[1] "116861"
+
+[[224]][[4]]
+[1] "27"
+
+[[224]][[5]]
+[1] "053"
+
+[[224]][[6]]
+[1] "027001"
+
+
+[[225]]
+[[225]][[1]]
+[1] "Census Tract 270.02, Hennepin County, Minnesota"
+
+[[225]][[2]]
+[1] "5515"
+
+[[225]][[3]]
+[1] "109722"
+
+[[225]][[4]]
+[1] "27"
+
+[[225]][[5]]
+[1] "053"
+
+[[225]][[6]]
+[1] "027002"
+
+
+[[226]]
+[[226]][[1]]
+[1] "Census Tract 271.01, Hennepin County, Minnesota"
+
+[[226]][[2]]
+[1] "7286"
+
+[[226]][[3]]
+[1] "133472"
+
+[[226]][[4]]
+[1] "27"
+
+[[226]][[5]]
+[1] "053"
+
+[[226]][[6]]
+[1] "027101"
+
+
+[[227]]
+[[227]][[1]]
+[1] "Census Tract 271.02, Hennepin County, Minnesota"
+
+[[227]][[2]]
+[1] "6113"
+
+[[227]][[3]]
+[1] "138848"
+
+[[227]][[4]]
+[1] "27"
+
+[[227]][[5]]
+[1] "053"
+
+[[227]][[6]]
+[1] "027102"
+
+
+[[228]]
+[[228]][[1]]
+[1] "Census Tract 272.02, Hennepin County, Minnesota"
+
+[[228]][[2]]
+[1] "1779"
+
+[[228]][[3]]
+[1] "76417"
+
+[[228]][[4]]
+[1] "27"
+
+[[228]][[5]]
+[1] "053"
+
+[[228]][[6]]
+[1] "027202"
+
+
+[[229]]
+[[229]][[1]]
+[1] "Census Tract 272.03, Hennepin County, Minnesota"
+
+[[229]][[2]]
+[1] "3877"
+
+[[229]][[3]]
+[1] "65323"
+
+[[229]][[4]]
+[1] "27"
+
+[[229]][[5]]
+[1] "053"
+
+[[229]][[6]]
+[1] "027203"
+
+
+[[230]]
+[[230]][[1]]
+[1] "Census Tract 272.04, Hennepin County, Minnesota"
+
+[[230]][[2]]
+[1] "3687"
+
+[[230]][[3]]
+[1] "180463"
+
+[[230]][[4]]
+[1] "27"
+
+[[230]][[5]]
+[1] "053"
+
+[[230]][[6]]
+[1] "027204"
+
+
+[[231]]
+[[231]][[1]]
+[1] "Census Tract 272.05, Hennepin County, Minnesota"
+
+[[231]][[2]]
+[1] "3379"
+
+[[231]][[3]]
+[1] "179926"
+
+[[231]][[4]]
+[1] "27"
+
+[[231]][[5]]
+[1] "053"
+
+[[231]][[6]]
+[1] "027205"
+
+
+[[232]]
+[[232]][[1]]
+[1] "Census Tract 273, Hennepin County, Minnesota"
+
+[[232]][[2]]
+[1] "4591"
+
+[[232]][[3]]
+[1] "88431"
+
+[[232]][[4]]
+[1] "27"
+
+[[232]][[5]]
+[1] "053"
+
+[[232]][[6]]
+[1] "027300"
+
+
+[[233]]
+[[233]][[1]]
+[1] "Census Tract 274, Hennepin County, Minnesota"
+
+[[233]][[2]]
+[1] "4441"
+
+[[233]][[3]]
+[1] "143125"
+
+[[233]][[4]]
+[1] "27"
+
+[[233]][[5]]
+[1] "053"
+
+[[233]][[6]]
+[1] "027400"
+
+
+[[234]]
+[[234]][[1]]
+[1] "Census Tract 275.01, Hennepin County, Minnesota"
+
+[[234]][[2]]
+[1] "4622"
+
+[[234]][[3]]
+[1] "110729"
+
+[[234]][[4]]
+[1] "27"
+
+[[234]][[5]]
+[1] "053"
+
+[[234]][[6]]
+[1] "027501"
+
+
+[[235]]
+[[235]][[1]]
+[1] "Census Tract 275.03, Hennepin County, Minnesota"
+
+[[235]][[2]]
+[1] "4273"
+
+[[235]][[3]]
+[1] "142500"
+
+[[235]][[4]]
+[1] "27"
+
+[[235]][[5]]
+[1] "053"
+
+[[235]][[6]]
+[1] "027503"
+
+
+[[236]]
+[[236]][[1]]
+[1] "Census Tract 275.04, Hennepin County, Minnesota"
+
+[[236]][[2]]
+[1] "3666"
+
+[[236]][[3]]
+[1] "148611"
+
+[[236]][[4]]
+[1] "27"
+
+[[236]][[5]]
+[1] "053"
+
+[[236]][[6]]
+[1] "027504"
+
+
+[[237]]
+[[237]][[1]]
+[1] "Census Tract 276.01, Hennepin County, Minnesota"
+
+[[237]][[2]]
+[1] "4132"
+
+[[237]][[3]]
+[1] "78171"
+
+[[237]][[4]]
+[1] "27"
+
+[[237]][[5]]
+[1] "053"
+
+[[237]][[6]]
+[1] "027601"
+
+
+[[238]]
+[[238]][[1]]
+[1] "Census Tract 276.02, Hennepin County, Minnesota"
+
+[[238]][[2]]
+[1] "5366"
+
+[[238]][[3]]
+[1] "72853"
+
+[[238]][[4]]
+[1] "27"
+
+[[238]][[5]]
+[1] "053"
+
+[[238]][[6]]
+[1] "027602"
+
+
+[[239]]
+[[239]][[1]]
+[1] "Census Tract 277.01, Hennepin County, Minnesota"
+
+[[239]][[2]]
+[1] "3810"
+
+[[239]][[3]]
+[1] "149934"
+
+[[239]][[4]]
+[1] "27"
+
+[[239]][[5]]
+[1] "053"
+
+[[239]][[6]]
+[1] "027701"
+
+
+[[240]]
+[[240]][[1]]
+[1] "Census Tract 277.02, Hennepin County, Minnesota"
+
+[[240]][[2]]
+[1] "2017"
+
+[[240]][[3]]
+[1] "95750"
+
+[[240]][[4]]
+[1] "27"
+
+[[240]][[5]]
+[1] "053"
+
+[[240]][[6]]
+[1] "027702"
+
+
+[[241]]
+[[241]][[1]]
+[1] "Census Tract 277.03, Hennepin County, Minnesota"
+
+[[241]][[2]]
+[1] "4179"
+
+[[241]][[3]]
+[1] "142889"
+
+[[241]][[4]]
+[1] "27"
+
+[[241]][[5]]
+[1] "053"
+
+[[241]][[6]]
+[1] "027703"
+
+
+[[242]]
+[[242]][[1]]
+[1] "Census Tract 1002, Hennepin County, Minnesota"
+
+[[242]][[2]]
+[1] "3903"
+
+[[242]][[3]]
+[1] "50935"
+
+[[242]][[4]]
+[1] "27"
+
+[[242]][[5]]
+[1] "053"
+
+[[242]][[6]]
+[1] "100200"
+
+
+[[243]]
+[[243]][[1]]
+[1] "Census Tract 1004, Hennepin County, Minnesota"
+
+[[243]][[2]]
+[1] "3418"
+
+[[243]][[3]]
+[1] "37346"
+
+[[243]][[4]]
+[1] "27"
+
+[[243]][[5]]
+[1] "053"
+
+[[243]][[6]]
+[1] "100400"
+
+
+[[244]]
+[[244]][[1]]
+[1] "Census Tract 1005, Hennepin County, Minnesota"
+
+[[244]][[2]]
+[1] "1926"
+
+[[244]][[3]]
+[1] "50741"
+
+[[244]][[4]]
+[1] "27"
+
+[[244]][[5]]
+[1] "053"
+
+[[244]][[6]]
+[1] "100500"
+
+
+[[245]]
+[[245]][[1]]
+[1] "Census Tract 1007, Hennepin County, Minnesota"
+
+[[245]][[2]]
+[1] "3298"
+
+[[245]][[3]]
+[1] "51923"
+
+[[245]][[4]]
+[1] "27"
+
+[[245]][[5]]
+[1] "053"
+
+[[245]][[6]]
+[1] "100700"
+
+
+[[246]]
+[[246]][[1]]
+[1] "Census Tract 1008, Hennepin County, Minnesota"
+
+[[246]][[2]]
+[1] "4359"
+
+[[246]][[3]]
+[1] "48464"
+
+[[246]][[4]]
+[1] "27"
+
+[[246]][[5]]
+[1] "053"
+
+[[246]][[6]]
+[1] "100800"
+
+
+[[247]]
+[[247]][[1]]
+[1] "Census Tract 1009, Hennepin County, Minnesota"
+
+[[247]][[2]]
+[1] "5030"
+
+[[247]][[3]]
+[1] "49139"
+
+[[247]][[4]]
+[1] "27"
+
+[[247]][[5]]
+[1] "053"
+
+[[247]][[6]]
+[1] "100900"
+
+
+[[248]]
+[[248]][[1]]
+[1] "Census Tract 1012, Hennepin County, Minnesota"
+
+[[248]][[2]]
+[1] "5033"
+
+[[248]][[3]]
+[1] "104242"
+
+[[248]][[4]]
+[1] "27"
+
+[[248]][[5]]
+[1] "053"
+
+[[248]][[6]]
+[1] "101200"
+
+
+[[249]]
+[[249]][[1]]
+[1] "Census Tract 1013, Hennepin County, Minnesota"
+
+[[249]][[2]]
+[1] "2274"
+
+[[249]][[3]]
+[1] "55833"
+
+[[249]][[4]]
+[1] "27"
+
+[[249]][[5]]
+[1] "053"
+
+[[249]][[6]]
+[1] "101300"
+
+
+[[250]]
+[[250]][[1]]
+[1] "Census Tract 1016, Hennepin County, Minnesota"
+
+[[250]][[2]]
+[1] "2808"
+
+[[250]][[3]]
+[1] "35368"
+
+[[250]][[4]]
+[1] "27"
+
+[[250]][[5]]
+[1] "053"
+
+[[250]][[6]]
+[1] "101600"
+
+
+[[251]]
+[[251]][[1]]
+[1] "Census Tract 1018, Hennepin County, Minnesota"
+
+[[251]][[2]]
+[1] "3967"
+
+[[251]][[3]]
+[1] "52169"
+
+[[251]][[4]]
+[1] "27"
+
+[[251]][[5]]
+[1] "053"
+
+[[251]][[6]]
+[1] "101800"
+
+
+[[252]]
+[[252]][[1]]
+[1] "Census Tract 1019, Hennepin County, Minnesota"
+
+[[252]][[2]]
+[1] "2551"
+
+[[252]][[3]]
+[1] "49028"
+
+[[252]][[4]]
+[1] "27"
+
+[[252]][[5]]
+[1] "053"
+
+[[252]][[6]]
+[1] "101900"
+
+
+[[253]]
+[[253]][[1]]
+[1] "Census Tract 1020, Hennepin County, Minnesota"
+
+[[253]][[2]]
+[1] "2280"
+
+[[253]][[3]]
+[1] "52917"
+
+[[253]][[4]]
+[1] "27"
+
+[[253]][[5]]
+[1] "053"
+
+[[253]][[6]]
+[1] "102000"
+
+
+[[254]]
+[[254]][[1]]
+[1] "Census Tract 1021, Hennepin County, Minnesota"
+
+[[254]][[2]]
+[1] "2724"
+
+[[254]][[3]]
+[1] "39605"
+
+[[254]][[4]]
+[1] "27"
+
+[[254]][[5]]
+[1] "053"
+
+[[254]][[6]]
+[1] "102100"
+
+
+[[255]]
+[[255]][[1]]
+[1] "Census Tract 1025, Hennepin County, Minnesota"
+
+[[255]][[2]]
+[1] "2916"
+
+[[255]][[3]]
+[1] "50755"
+
+[[255]][[4]]
+[1] "27"
+
+[[255]][[5]]
+[1] "053"
+
+[[255]][[6]]
+[1] "102500"
+
+
+[[256]]
+[[256]][[1]]
+[1] "Census Tract 1026, Hennepin County, Minnesota"
+
+[[256]][[2]]
+[1] "2058"
+
+[[256]][[3]]
+[1] "64676"
+
+[[256]][[4]]
+[1] "27"
+
+[[256]][[5]]
+[1] "053"
+
+[[256]][[6]]
+[1] "102600"
+
+
+[[257]]
+[[257]][[1]]
+[1] "Census Tract 1028, Hennepin County, Minnesota"
+
+[[257]][[2]]
+[1] "3331"
+
+[[257]][[3]]
+[1] "40476"
+
+[[257]][[4]]
+[1] "27"
+
+[[257]][[5]]
+[1] "053"
+
+[[257]][[6]]
+[1] "102800"
+
+
+[[258]]
+[[258]][[1]]
+[1] "Census Tract 1030, Hennepin County, Minnesota"
+
+[[258]][[2]]
+[1] "1915"
+
+[[258]][[3]]
+[1] "71146"
+
+[[258]][[4]]
+[1] "27"
+
+[[258]][[5]]
+[1] "053"
+
+[[258]][[6]]
+[1] "103000"
+
+
+[[259]]
+[[259]][[1]]
+[1] "Census Tract 1031, Hennepin County, Minnesota"
+
+[[259]][[2]]
+[1] "2256"
+
+[[259]][[3]]
+[1] "68158"
+
+[[259]][[4]]
+[1] "27"
+
+[[259]][[5]]
+[1] "053"
+
+[[259]][[6]]
+[1] "103100"
+
+
+[[260]]
+[[260]][[1]]
+[1] "Census Tract 1034, Hennepin County, Minnesota"
+
+[[260]][[2]]
+[1] "3038"
+
+[[260]][[3]]
+[1] "39609"
+
+[[260]][[4]]
+[1] "27"
+
+[[260]][[5]]
+[1] "053"
+
+[[260]][[6]]
+[1] "103400"
+
+
+[[261]]
+[[261]][[1]]
+[1] "Census Tract 1036, Hennepin County, Minnesota"
+
+[[261]][[2]]
+[1] "2658"
+
+[[261]][[3]]
+[1] "93750"
+
+[[261]][[4]]
+[1] "27"
+
+[[261]][[5]]
+[1] "053"
+
+[[261]][[6]]
+[1] "103600"
+
+
+[[262]]
+[[262]][[1]]
+[1] "Census Tract 1037, Hennepin County, Minnesota"
+
+[[262]][[2]]
+[1] "4237"
+
+[[262]][[3]]
+[1] "50000"
+
+[[262]][[4]]
+[1] "27"
+
+[[262]][[5]]
+[1] "053"
+
+[[262]][[6]]
+[1] "103700"
+
+
+[[263]]
+[[263]][[1]]
+[1] "Census Tract 1039, Hennepin County, Minnesota"
+
+[[263]][[2]]
+[1] "4613"
+
+[[263]][[3]]
+[1] "23391"
+
+[[263]][[4]]
+[1] "27"
+
+[[263]][[5]]
+[1] "053"
+
+[[263]][[6]]
+[1] "103900"
+
+
+[[264]]
+[[264]][[1]]
+[1] "Census Tract 1040.01, Hennepin County, Minnesota"
+
+[[264]][[2]]
+[1] "2130"
+
+[[264]][[3]]
+[1] "42426"
+
+[[264]][[4]]
+[1] "27"
+
+[[264]][[5]]
+[1] "053"
+
+[[264]][[6]]
+[1] "104001"
+
+
+[[265]]
+[[265]][[1]]
+[1] "Census Tract 1040.02, Hennepin County, Minnesota"
+
+[[265]][[2]]
+[1] "4305"
+
+[[265]][[3]]
+[1] "61354"
+
+[[265]][[4]]
+[1] "27"
+
+[[265]][[5]]
+[1] "053"
+
+[[265]][[6]]
+[1] "104002"
+
+
+[[266]]
+[[266]][[1]]
+[1] "Census Tract 1041, Hennepin County, Minnesota"
+
+[[266]][[2]]
+[1] "3750"
+
+[[266]][[3]]
+[1] "51513"
+
+[[266]][[4]]
+[1] "27"
+
+[[266]][[5]]
+[1] "053"
+
+[[266]][[6]]
+[1] "104100"
+
+
+[[267]]
+[[267]][[1]]
+[1] "Census Tract 1044, Hennepin County, Minnesota"
+
+[[267]][[2]]
+[1] "2315"
+
+[[267]][[3]]
+[1] "59704"
+
+[[267]][[4]]
+[1] "27"
+
+[[267]][[5]]
+[1] "053"
+
+[[267]][[6]]
+[1] "104400"
+
+
+[[268]]
+[[268]][[1]]
+[1] "Census Tract 1048.01, Hennepin County, Minnesota"
+
+[[268]][[2]]
+[1] "5085"
+
+[[268]][[3]]
+[1] "14748"
+
+[[268]][[4]]
+[1] "27"
+
+[[268]][[5]]
+[1] "053"
+
+[[268]][[6]]
+[1] "104801"
+
+
+[[269]]
+[[269]][[1]]
+[1] "Census Tract 1048.02, Hennepin County, Minnesota"
+
+[[269]][[2]]
+[1] "4713"
+
+[[269]][[3]]
+[1] "32321"
+
+[[269]][[4]]
+[1] "27"
+
+[[269]][[5]]
+[1] "053"
+
+[[269]][[6]]
+[1] "104802"
+
+
+[[270]]
+[[270]][[1]]
+[1] "Census Tract 1049.01, Hennepin County, Minnesota"
+
+[[270]][[2]]
+[1] "6482"
+
+[[270]][[3]]
+[1] "-666666666"
+
+[[270]][[4]]
+[1] "27"
+
+[[270]][[5]]
+[1] "053"
+
+[[270]][[6]]
+[1] "104901"
+
+
+[[271]]
+[[271]][[1]]
+[1] "Census Tract 1049.02, Hennepin County, Minnesota"
+
+[[271]][[2]]
+[1] "4629"
+
+[[271]][[3]]
+[1] "31513"
+
+[[271]][[4]]
+[1] "27"
+
+[[271]][[5]]
+[1] "053"
+
+[[271]][[6]]
+[1] "104902"
+
+
+[[272]]
+[[272]][[1]]
+[1] "Census Tract 1051, Hennepin County, Minnesota"
+
+[[272]][[2]]
+[1] "2876"
+
+[[272]][[3]]
+[1] "106310"
+
+[[272]][[4]]
+[1] "27"
+
+[[272]][[5]]
+[1] "053"
+
+[[272]][[6]]
+[1] "105100"
+
+
+[[273]]
+[[273]][[1]]
+[1] "Census Tract 1052.01, Hennepin County, Minnesota"
+
+[[273]][[2]]
+[1] "2950"
+
+[[273]][[3]]
+[1] "71818"
+
+[[273]][[4]]
+[1] "27"
+
+[[273]][[5]]
+[1] "053"
+
+[[273]][[6]]
+[1] "105201"
+
+
+[[274]]
+[[274]][[1]]
+[1] "Census Tract 1052.04, Hennepin County, Minnesota"
+
+[[274]][[2]]
+[1] "2570"
+
+[[274]][[3]]
+[1] "35855"
+
+[[274]][[4]]
+[1] "27"
+
+[[274]][[5]]
+[1] "053"
+
+[[274]][[6]]
+[1] "105204"
+
+
+[[275]]
+[[275]][[1]]
+[1] "Census Tract 1054, Hennepin County, Minnesota"
+
+[[275]][[2]]
+[1] "3762"
+
+[[275]][[3]]
+[1] "42550"
+
+[[275]][[4]]
+[1] "27"
+
+[[275]][[5]]
+[1] "053"
+
+[[275]][[6]]
+[1] "105400"
+
+
+[[276]]
+[[276]][[1]]
+[1] "Census Tract 1055, Hennepin County, Minnesota"
+
+[[276]][[2]]
+[1] "3903"
+
+[[276]][[3]]
+[1] "82527"
+
+[[276]][[4]]
+[1] "27"
+
+[[276]][[5]]
+[1] "053"
+
+[[276]][[6]]
+[1] "105500"
+
+
+[[277]]
+[[277]][[1]]
+[1] "Census Tract 1056, Hennepin County, Minnesota"
+
+[[277]][[2]]
+[1] "4455"
+
+[[277]][[3]]
+[1] "40867"
+
+[[277]][[4]]
+[1] "27"
+
+[[277]][[5]]
+[1] "053"
+
+[[277]][[6]]
+[1] "105600"
+
+
+[[278]]
+[[278]][[1]]
+[1] "Census Tract 1057, Hennepin County, Minnesota"
+
+[[278]][[2]]
+[1] "2528"
+
+[[278]][[3]]
+[1] "32758"
+
+[[278]][[4]]
+[1] "27"
+
+[[278]][[5]]
+[1] "053"
+
+[[278]][[6]]
+[1] "105700"
+
+
+[[279]]
+[[279]][[1]]
+[1] "Census Tract 1060, Hennepin County, Minnesota"
+
+[[279]][[2]]
+[1] "3512"
+
+[[279]][[3]]
+[1] "22768"
+
+[[279]][[4]]
+[1] "27"
+
+[[279]][[5]]
+[1] "053"
+
+[[279]][[6]]
+[1] "106000"
+
+
+[[280]]
+[[280]][[1]]
+[1] "Census Tract 1062, Hennepin County, Minnesota"
+
+[[280]][[2]]
+[1] "3832"
+
+[[280]][[3]]
+[1] "40603"
+
+[[280]][[4]]
+[1] "27"
+
+[[280]][[5]]
+[1] "053"
+
+[[280]][[6]]
+[1] "106200"
+
+
+[[281]]
+[[281]][[1]]
+[1] "Census Tract 1064, Hennepin County, Minnesota"
+
+[[281]][[2]]
+[1] "1844"
+
+[[281]][[3]]
+[1] "67614"
+
+[[281]][[4]]
+[1] "27"
+
+[[281]][[5]]
+[1] "053"
+
+[[281]][[6]]
+[1] "106400"
+
+
+[[282]]
+[[282]][[1]]
+[1] "Census Tract 1065, Hennepin County, Minnesota"
+
+[[282]][[2]]
+[1] "4355"
+
+[[282]][[3]]
+[1] "131042"
+
+[[282]][[4]]
+[1] "27"
+
+[[282]][[5]]
+[1] "053"
+
+[[282]][[6]]
+[1] "106500"
+
+
+[[283]]
+[[283]][[1]]
+[1] "Census Tract 1066, Hennepin County, Minnesota"
+
+[[283]][[2]]
+[1] "2670"
+
+[[283]][[3]]
+[1] "91333"
+
+[[283]][[4]]
+[1] "27"
+
+[[283]][[5]]
+[1] "053"
+
+[[283]][[6]]
+[1] "106600"
+
+
+[[284]]
+[[284]][[1]]
+[1] "Census Tract 1067, Hennepin County, Minnesota"
+
+[[284]][[2]]
+[1] "4678"
+
+[[284]][[3]]
+[1] "53542"
+
+[[284]][[4]]
+[1] "27"
+
+[[284]][[5]]
+[1] "053"
+
+[[284]][[6]]
+[1] "106700"
+
+
+[[285]]
+[[285]][[1]]
+[1] "Census Tract 1069, Hennepin County, Minnesota"
+
+[[285]][[2]]
+[1] "2763"
+
+[[285]][[3]]
+[1] "36700"
+
+[[285]][[4]]
+[1] "27"
+
+[[285]][[5]]
+[1] "053"
+
+[[285]][[6]]
+[1] "106900"
+
+
+[[286]]
+[[286]][[1]]
+[1] "Census Tract 1070, Hennepin County, Minnesota"
+
+[[286]][[2]]
+[1] "3885"
+
+[[286]][[3]]
+[1] "52781"
+
+[[286]][[4]]
+[1] "27"
+
+[[286]][[5]]
+[1] "053"
+
+[[286]][[6]]
+[1] "107000"
+
+
+[[287]]
+[[287]][[1]]
+[1] "Census Tract 1074, Hennepin County, Minnesota"
+
+[[287]][[2]]
+[1] "2013"
+
+[[287]][[3]]
+[1] "56955"
+
+[[287]][[4]]
+[1] "27"
+
+[[287]][[5]]
+[1] "053"
+
+[[287]][[6]]
+[1] "107400"
+
+
+[[288]]
+[[288]][[1]]
+[1] "Census Tract 1075, Hennepin County, Minnesota"
+
+[[288]][[2]]
+[1] "1897"
+
+[[288]][[3]]
+[1] "77500"
+
+[[288]][[4]]
+[1] "27"
+
+[[288]][[5]]
+[1] "053"
+
+[[288]][[6]]
+[1] "107500"
+
+
+[[289]]
+[[289]][[1]]
+[1] "Census Tract 1076, Hennepin County, Minnesota"
+
+[[289]][[2]]
+[1] "3607"
+
+[[289]][[3]]
+[1] "85221"
+
+[[289]][[4]]
+[1] "27"
+
+[[289]][[5]]
+[1] "053"
+
+[[289]][[6]]
+[1] "107600"
+
+
+[[290]]
+[[290]][[1]]
+[1] "Census Tract 1080, Hennepin County, Minnesota"
+
+[[290]][[2]]
+[1] "3335"
+
+[[290]][[3]]
+[1] "79750"
+
+[[290]][[4]]
+[1] "27"
+
+[[290]][[5]]
+[1] "053"
+
+[[290]][[6]]
+[1] "108000"
+
+
+[[291]]
+[[291]][[1]]
+[1] "Census Tract 1086, Hennepin County, Minnesota"
+
+[[291]][[2]]
+[1] "2822"
+
+[[291]][[3]]
+[1] "59013"
+
+[[291]][[4]]
+[1] "27"
+
+[[291]][[5]]
+[1] "053"
+
+[[291]][[6]]
+[1] "108600"
+
+
+[[292]]
+[[292]][[1]]
+[1] "Census Tract 1087, Hennepin County, Minnesota"
+
+[[292]][[2]]
+[1] "3765"
+
+[[292]][[3]]
+[1] "72102"
+
+[[292]][[4]]
+[1] "27"
+
+[[292]][[5]]
+[1] "053"
+
+[[292]][[6]]
+[1] "108700"
+
+
+[[293]]
+[[293]][[1]]
+[1] "Census Tract 1088, Hennepin County, Minnesota"
+
+[[293]][[2]]
+[1] "3444"
+
+[[293]][[3]]
+[1] "62188"
+
+[[293]][[4]]
+[1] "27"
+
+[[293]][[5]]
+[1] "053"
+
+[[293]][[6]]
+[1] "108800"
+
+
+[[294]]
+[[294]][[1]]
+[1] "Census Tract 1089, Hennepin County, Minnesota"
+
+[[294]][[2]]
+[1] "2416"
+
+[[294]][[3]]
+[1] "78418"
+
+[[294]][[4]]
+[1] "27"
+
+[[294]][[5]]
+[1] "053"
+
+[[294]][[6]]
+[1] "108900"
+
+
+[[295]]
+[[295]][[1]]
+[1] "Census Tract 1090, Hennepin County, Minnesota"
+
+[[295]][[2]]
+[1] "1672"
+
+[[295]][[3]]
+[1] "118333"
+
+[[295]][[4]]
+[1] "27"
+
+[[295]][[5]]
+[1] "053"
+
+[[295]][[6]]
+[1] "109000"
+
+
+[[296]]
+[[296]][[1]]
+[1] "Census Tract 1091, Hennepin County, Minnesota"
+
+[[296]][[2]]
+[1] "4978"
+
+[[296]][[3]]
+[1] "98986"
+
+[[296]][[4]]
+[1] "27"
+
+[[296]][[5]]
+[1] "053"
+
+[[296]][[6]]
+[1] "109100"
+
+
+[[297]]
+[[297]][[1]]
+[1] "Census Tract 1092, Hennepin County, Minnesota"
+
+[[297]][[2]]
+[1] "3557"
+
+[[297]][[3]]
+[1] "66549"
+
+[[297]][[4]]
+[1] "27"
+
+[[297]][[5]]
+[1] "053"
+
+[[297]][[6]]
+[1] "109200"
+
+
+[[298]]
+[[298]][[1]]
+[1] "Census Tract 1093, Hennepin County, Minnesota"
+
+[[298]][[2]]
+[1] "4321"
+
+[[298]][[3]]
+[1] "68796"
+
+[[298]][[4]]
+[1] "27"
+
+[[298]][[5]]
+[1] "053"
+
+[[298]][[6]]
+[1] "109300"
+
+
+[[299]]
+[[299]][[1]]
+[1] "Census Tract 1094, Hennepin County, Minnesota"
+
+[[299]][[2]]
+[1] "2235"
+
+[[299]][[3]]
+[1] "66452"
+
+[[299]][[4]]
+[1] "27"
+
+[[299]][[5]]
+[1] "053"
+
+[[299]][[6]]
+[1] "109400"
+
+
+[[300]]
+[[300]][[1]]
+[1] "Census Tract 1097, Hennepin County, Minnesota"
+
+[[300]][[2]]
+[1] "2476"
+
+[[300]][[3]]
+[1] "86111"
+
+[[300]][[4]]
+[1] "27"
+
+[[300]][[5]]
+[1] "053"
+
+[[300]][[6]]
+[1] "109700"
+
+
+[[301]]
+[[301]][[1]]
+[1] "Census Tract 1098, Hennepin County, Minnesota"
+
+[[301]][[2]]
+[1] "3995"
+
+[[301]][[3]]
+[1] "111635"
+
+[[301]][[4]]
+[1] "27"
+
+[[301]][[5]]
+[1] "053"
+
+[[301]][[6]]
+[1] "109800"
+
+
+[[302]]
+[[302]][[1]]
+[1] "Census Tract 1099, Hennepin County, Minnesota"
+
+[[302]][[2]]
+[1] "3842"
+
+[[302]][[3]]
+[1] "83090"
+
+[[302]][[4]]
+[1] "27"
+
+[[302]][[5]]
+[1] "053"
+
+[[302]][[6]]
+[1] "109900"
+
+
+[[303]]
+[[303]][[1]]
+[1] "Census Tract 1100, Hennepin County, Minnesota"
+
+[[303]][[2]]
+[1] "1514"
+
+[[303]][[3]]
+[1] "65395"
+
+[[303]][[4]]
+[1] "27"
+
+[[303]][[5]]
+[1] "053"
+
+[[303]][[6]]
+[1] "110000"
+
+
+[[304]]
+[[304]][[1]]
+[1] "Census Tract 1101, Hennepin County, Minnesota"
+
+[[304]][[2]]
+[1] "2668"
+
+[[304]][[3]]
+[1] "85078"
+
+[[304]][[4]]
+[1] "27"
+
+[[304]][[5]]
+[1] "053"
+
+[[304]][[6]]
+[1] "110100"
+
+
+[[305]]
+[[305]][[1]]
+[1] "Census Tract 1102, Hennepin County, Minnesota"
+
+[[305]][[2]]
+[1] "3317"
+
+[[305]][[3]]
+[1] "80350"
+
+[[305]][[4]]
+[1] "27"
+
+[[305]][[5]]
+[1] "053"
+
+[[305]][[6]]
+[1] "110200"
+
+
+[[306]]
+[[306]][[1]]
+[1] "Census Tract 1104, Hennepin County, Minnesota"
+
+[[306]][[2]]
+[1] "3574"
+
+[[306]][[3]]
+[1] "63750"
+
+[[306]][[4]]
+[1] "27"
+
+[[306]][[5]]
+[1] "053"
+
+[[306]][[6]]
+[1] "110400"
+
+
+[[307]]
+[[307]][[1]]
+[1] "Census Tract 1105, Hennepin County, Minnesota"
+
+[[307]][[2]]
+[1] "4930"
+
+[[307]][[3]]
+[1] "78509"
+
+[[307]][[4]]
+[1] "27"
+
+[[307]][[5]]
+[1] "053"
+
+[[307]][[6]]
+[1] "110500"
+
+
+[[308]]
+[[308]][[1]]
+[1] "Census Tract 1108, Hennepin County, Minnesota"
+
+[[308]][[2]]
+[1] "4481"
+
+[[308]][[3]]
+[1] "91637"
+
+[[308]][[4]]
+[1] "27"
+
+[[308]][[5]]
+[1] "053"
+
+[[308]][[6]]
+[1] "110800"
+
+
+[[309]]
+[[309]][[1]]
+[1] "Census Tract 1109, Hennepin County, Minnesota"
+
+[[309]][[2]]
+[1] "3714"
+
+[[309]][[3]]
+[1] "96667"
+
+[[309]][[4]]
+[1] "27"
+
+[[309]][[5]]
+[1] "053"
+
+[[309]][[6]]
+[1] "110900"
+
+
+[[310]]
+[[310]][[1]]
+[1] "Census Tract 1111, Hennepin County, Minnesota"
+
+[[310]][[2]]
+[1] "3573"
+
+[[310]][[3]]
+[1] "89922"
+
+[[310]][[4]]
+[1] "27"
+
+[[310]][[5]]
+[1] "053"
+
+[[310]][[6]]
+[1] "111100"
+
+
+[[311]]
+[[311]][[1]]
+[1] "Census Tract 1112, Hennepin County, Minnesota"
+
+[[311]][[2]]
+[1] "3317"
+
+[[311]][[3]]
+[1] "144282"
+
+[[311]][[4]]
+[1] "27"
+
+[[311]][[5]]
+[1] "053"
+
+[[311]][[6]]
+[1] "111200"
+
+
+[[312]]
+[[312]][[1]]
+[1] "Census Tract 1113, Hennepin County, Minnesota"
+
+[[312]][[2]]
+[1] "5041"
+
+[[312]][[3]]
+[1] "154306"
+
+[[312]][[4]]
+[1] "27"
+
+[[312]][[5]]
+[1] "053"
+
+[[312]][[6]]
+[1] "111300"
+
+
+[[313]]
+[[313]][[1]]
+[1] "Census Tract 1114, Hennepin County, Minnesota"
+
+[[313]][[2]]
+[1] "4503"
+
+[[313]][[3]]
+[1] "178259"
+
+[[313]][[4]]
+[1] "27"
+
+[[313]][[5]]
+[1] "053"
+
+[[313]][[6]]
+[1] "111400"
+
+
+[[314]]
+[[314]][[1]]
+[1] "Census Tract 1115, Hennepin County, Minnesota"
+
+[[314]][[2]]
+[1] "5587"
+
+[[314]][[3]]
+[1] "118697"
+
+[[314]][[4]]
+[1] "27"
+
+[[314]][[5]]
+[1] "053"
+
+[[314]][[6]]
+[1] "111500"
+
+
+[[315]]
+[[315]][[1]]
+[1] "Census Tract 1116, Hennepin County, Minnesota"
+
+[[315]][[2]]
+[1] "3376"
+
+[[315]][[3]]
+[1] "118828"
+
+[[315]][[4]]
+[1] "27"
+
+[[315]][[5]]
+[1] "053"
+
+[[315]][[6]]
+[1] "111600"
+
+
+[[316]]
+[[316]][[1]]
+[1] "Census Tract 1225, Hennepin County, Minnesota"
+
+[[316]][[2]]
+[1] "3764"
+
+[[316]][[3]]
+[1] "92019"
+
+[[316]][[4]]
+[1] "27"
+
+[[316]][[5]]
+[1] "053"
+
+[[316]][[6]]
+[1] "122500"
+
+
+[[317]]
+[[317]][[1]]
+[1] "Census Tract 1226, Hennepin County, Minnesota"
+
+[[317]][[2]]
+[1] "2295"
+
+[[317]][[3]]
+[1] "101440"
+
+[[317]][[4]]
+[1] "27"
+
+[[317]][[5]]
+[1] "053"
+
+[[317]][[6]]
+[1] "122600"
+
+
+[[318]]
+[[318]][[1]]
+[1] "Census Tract 1255, Hennepin County, Minnesota"
+
+[[318]][[2]]
+[1] "3924"
+
+[[318]][[3]]
+[1] "62770"
+
+[[318]][[4]]
+[1] "27"
+
+[[318]][[5]]
+[1] "053"
+
+[[318]][[6]]
+[1] "125500"
+
+
+[[319]]
+[[319]][[1]]
+[1] "Census Tract 1256, Hennepin County, Minnesota"
+
+[[319]][[2]]
+[1] "3895"
+
+[[319]][[3]]
+[1] "64333"
+
+[[319]][[4]]
+[1] "27"
+
+[[319]][[5]]
+[1] "053"
+
+[[319]][[6]]
+[1] "125600"
+
+
+[[320]]
+[[320]][[1]]
+[1] "Census Tract 1257, Hennepin County, Minnesota"
+
+[[320]][[2]]
+[1] "3585"
+
+[[320]][[3]]
+[1] "46157"
+
+[[320]][[4]]
+[1] "27"
+
+[[320]][[5]]
+[1] "053"
+
+[[320]][[6]]
+[1] "125700"
+
+
+[[321]]
+[[321]][[1]]
+[1] "Census Tract 1258, Hennepin County, Minnesota"
+
+[[321]][[2]]
+[1] "5385"
+
+[[321]][[3]]
+[1] "48750"
+
+[[321]][[4]]
+[1] "27"
+
+[[321]][[5]]
+[1] "053"
+
+[[321]][[6]]
+[1] "125800"
+
+
+[[322]]
+[[322]][[1]]
+[1] "Census Tract 1259, Hennepin County, Minnesota"
+
+[[322]][[2]]
+[1] "4855"
+
+[[322]][[3]]
+[1] "47139"
+
+[[322]][[4]]
+[1] "27"
+
+[[322]][[5]]
+[1] "053"
+
+[[322]][[6]]
+[1] "125900"
+
+
+[[323]]
+[[323]][[1]]
+[1] "Census Tract 1260, Hennepin County, Minnesota"
+
+[[323]][[2]]
+[1] "5507"
+
+[[323]][[3]]
+[1] "25708"
+
+[[323]][[4]]
+[1] "27"
+
+[[323]][[5]]
+[1] "053"
+
+[[323]][[6]]
+[1] "126000"
+
+
+[[324]]
+[[324]][[1]]
+[1] "Census Tract 1261.01, Hennepin County, Minnesota"
+
+[[324]][[2]]
+[1] "2796"
+
+[[324]][[3]]
+[1] "87857"
+
+[[324]][[4]]
+[1] "27"
+
+[[324]][[5]]
+[1] "053"
+
+[[324]][[6]]
+[1] "126101"
+
+
+[[325]]
+[[325]][[1]]
+[1] "Census Tract 1261.02, Hennepin County, Minnesota"
+
+[[325]][[2]]
+[1] "5872"
+
+[[325]][[3]]
+[1] "96856"
+
+[[325]][[4]]
+[1] "27"
+
+[[325]][[5]]
+[1] "053"
+
+[[325]][[6]]
+[1] "126102"
+
+
+[[326]]
+[[326]][[1]]
+[1] "Census Tract 1262.01, Hennepin County, Minnesota"
+
+[[326]][[2]]
+[1] "3162"
+
+[[326]][[3]]
+[1] "100329"
+
+[[326]][[4]]
+[1] "27"
+
+[[326]][[5]]
+[1] "053"
+
+[[326]][[6]]
+[1] "126201"
+
+
+[[327]]
+[[327]][[1]]
+[1] "Census Tract 1262.02, Hennepin County, Minnesota"
+
+[[327]][[2]]
+[1] "3972"
+
+[[327]][[3]]
+[1] "114550"
+
+[[327]][[4]]
+[1] "27"
+
+[[327]][[5]]
+[1] "053"
+
+[[327]][[6]]
+[1] "126202"
+
+
+[[328]]
+[[328]][[1]]
+[1] "Census Tract 1263, Hennepin County, Minnesota"
+
+[[328]][[2]]
+[1] "2971"
+
+[[328]][[3]]
+[1] "34273"
+
+[[328]][[4]]
+[1] "27"
+
+[[328]][[5]]
+[1] "053"
+
+[[328]][[6]]
+[1] "126300"
+
+
+[[329]]
+[[329]][[1]]
+[1] "Census Tract 9800, Hennepin County, Minnesota"
+
+[[329]][[2]]
+[1] "0"
+
+[[329]][[3]]
+[1] "-666666666"
+
+[[329]][[4]]
+[1] "27"
+
+[[329]][[5]]
+[1] "053"
+
+[[329]][[6]]
+[1] "980000"
+
+
+[[330]]
+[[330]][[1]]
+[1] "Census Tract 9801, Hennepin County, Minnesota"
+
+[[330]][[2]]
+[1] "223"
+
+[[330]][[3]]
+[1] "20000"
+
+[[330]][[4]]
+[1] "27"
+
+[[330]][[5]]
+[1] "053"
+
+[[330]][[6]]
+[1] "980100"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">1</span>]]  <span class="co"># variable names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "NAME"
+
+[[2]]
+[1] "B01003_001E"
+
+[[3]]
+[1] "B19013_001E"
+
+[[4]]
+[1] "state"
+
+[[5]]
+[1] "county"
+
+[[6]]
+[1] "tract"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">2</span>]]  <span class="co"># list with information on 1st tract</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "Census Tract 1.01, Hennepin County, Minnesota"
+
+[[2]]
+[1] "3472"
+
+[[3]]
+[1] "70927"
+
+[[4]]
+[1] "27"
+
+[[5]]
+[1] "053"
+
+[[6]]
+[1] "000101"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>name <span class="ot">=</span> <span class="fu">character</span>()</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>population <span class="ot">=</span> <span class="fu">double</span>()</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>median_income <span class="ot">=</span> <span class="fu">double</span>()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>tract <span class="ot">=</span> <span class="fu">character</span>()</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">330</span>) {</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  name[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  population[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">2</span>]][<span class="dv">1</span>]</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  median_income[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">3</span>]][<span class="dv">1</span>]</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  tract[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">6</span>]][<span class="dv">1</span>]</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>hennepin_httr <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> name,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">population =</span> <span class="fu">parse_number</span>(population),</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">median_income =</span> <span class="fu">parse_number</span>(median_income),</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">tract =</span> tract</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>hennepin_httr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 329 × 4
+   name                                          population median_income tract 
+   &lt;chr&gt;                                              &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt; 
+ 1 Census Tract 1.01, Hennepin County, Minnesota       3472         70927 000101
+ 2 Census Tract 1.02, Hennepin County, Minnesota       4992         46333 000102
+ 3 Census Tract 3, Hennepin County, Minnesota          3404         82098 000300
+ 4 Census Tract 6.01, Hennepin County, Minnesota       4706         71122 000601
+ 5 Census Tract 6.03, Hennepin County, Minnesota       3301         96875 000603
+ 6 Census Tract 11, Hennepin County, Minnesota         2004         69509 001100
+ 7 Census Tract 17, Hennepin County, Minnesota         2462         56338 001700
+ 8 Census Tract 22, Hennepin County, Minnesota         1622         47688 002200
+ 9 Census Tract 24, Hennepin County, Minnesota         2415         65772 002400
+10 Census Tract 27, Hennepin County, Minnesota         2837         47197 002700
+# ℹ 319 more rows</code></pre>
+</div>
+</div>
+<p>Note: there has been a recently developed <a href="https://httr2.r-lib.org/"><code>httr2</code> package</a>, but we will stick with the OG version, which has similar functionality and in some ways is simpler to use.</p>
+</section>
+<section id="wrapper-packages" class="level3">
+<h3 class="anchored" data-anchor-id="wrapper-packages">Wrapper packages</h3>
+<p>In R, it is often easiest to use Web APIs through a <strong>wrapper package</strong>, an R package written specifically for a particular Web API, if one has been written to support a particular website.</p>
+<ul>
+<li>The R development community has already contributed wrapper packages for many large Web APIs (e.g.&nbsp;ZillowR, rtweet, genius, spotifyr, tidycensus, Quandl, nytimes, etc.)</li>
+<li>To find a wrapper package, search the web for “R package” and the name of the website. For example:
+<ul>
+<li>Searching for “R Reddit package” returns <a href="https://github.com/ivan-rivera/RedditExtractor">RedditExtractor</a></li>
+<li>Searching for “R Weather.com package” returns <a href="https://ram-n.github.io/weatherData/">weatherData</a></li>
+</ul></li>
+<li><a href="https://ropensci.org/packages/">rOpenSci</a> also has a good collection of wrapper packages.</li>
+</ul>
+<p>Here are two wrapper packages of particular interest to us:</p>
+<ul>
+<li><code>tidycensus</code>: wrapper package that provides an interface to a few census datasets <em>with map geometry included!</em>
+<ul>
+<li>Full documentation is available at <a href="https://walker-data.com/tidycensus/" class="uri">https://walker-data.com/tidycensus/</a></li>
+</ul></li>
+<li><code>censusapi</code>: wrapper package that offers an interface to all census datasets
+<ul>
+<li>Full documentation is available at <a href="https://www.hrecht.com/censusapi/" class="uri">https://www.hrecht.com/censusapi/</a></li>
+</ul></li>
+</ul>
+<p><code>get_acs()</code> is one of the functions that is part of <code>tidycensus</code>. Here we use <code>get_acs()</code> to obtain the same variables we acquired above using <code>httr</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus <span class="ot">&lt;-</span> tidycensus<span class="sc">::</span><span class="fu">get_acs</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="dv">2021</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> <span class="st">"MN"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">geography =</span> <span class="st">"tract"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">"B01003_001"</span>, <span class="st">"B19013_001"</span>),</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">output =</span> <span class="st">"wide"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">geometry =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">county =</span> <span class="st">"Hennepin"</span>,   <span class="co"># specify county in call</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_call =</span> <span class="cn">TRUE</span>       <span class="co"># see resulting query</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Getting data from the 2017-2021 5-year ACS</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Downloading feature geometry from the Census website.  To cache shapefiles for use in future sessions, set `options(tigris_use_cache = TRUE)`.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Census API call: https://api.census.gov/data/2021/acs/acs5?get=B01003_001E%2CB01003_001M%2CB19013_001E%2CB19013_001M%2CNAME&amp;for=tract%3A%2A&amp;in=state%3A27%2Bcounty%3A053</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |==                                                                    |   3%
+  |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |===                                                                   |   5%
+  |                                                                            
+  |====                                                                  |   5%
+  |                                                                            
+  |====                                                                  |   6%
+  |                                                                            
+  |=====                                                                 |   8%
+  |                                                                            
+  |======                                                                |   9%
+  |                                                                            
+  |========                                                              |  11%
+  |                                                                            
+  |========                                                              |  12%
+  |                                                                            
+  |=========                                                             |  13%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |===========                                                           |  15%
+  |                                                                            
+  |===========                                                           |  16%
+  |                                                                            
+  |============                                                          |  17%
+  |                                                                            
+  |=============                                                         |  19%
+  |                                                                            
+  |==============                                                        |  21%
+  |                                                                            
+  |===============                                                       |  21%
+  |                                                                            
+  |================                                                      |  23%
+  |                                                                            
+  |=================                                                     |  24%
+  |                                                                            
+  |==================                                                    |  26%
+  |                                                                            
+  |===================                                                   |  28%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |======================                                                |  31%
+  |                                                                            
+  |=======================                                               |  32%
+  |                                                                            
+  |========================                                              |  34%
+  |                                                                            
+  |=========================                                             |  36%
+  |                                                                            
+  |==========================                                            |  37%
+  |                                                                            
+  |===========================                                           |  39%
+  |                                                                            
+  |============================                                          |  40%
+  |                                                                            
+  |=============================                                         |  42%
+  |                                                                            
+  |==============================                                        |  43%
+  |                                                                            
+  |================================                                      |  45%
+  |                                                                            
+  |=================================                                     |  47%
+  |                                                                            
+  |==================================                                    |  48%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |====================================                                  |  51%
+  |                                                                            
+  |=====================================                                 |  53%
+  |                                                                            
+  |======================================                                |  55%
+  |                                                                            
+  |=======================================                               |  56%
+  |                                                                            
+  |========================================                              |  58%
+  |                                                                            
+  |==========================================                            |  59%
+  |                                                                            
+  |===========================================                           |  61%
+  |                                                                            
+  |============================================                          |  63%
+  |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |==============================================                        |  66%
+  |                                                                            
+  |===============================================                       |  67%
+  |                                                                            
+  |================================================                      |  69%
+  |                                                                            
+  |=================================================                     |  71%
+  |                                                                            
+  |==================================================                    |  72%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |=====================================================                 |  75%
+  |                                                                            
+  |======================================================                |  77%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |========================================================              |  80%
+  |                                                                            
+  |=========================================================             |  82%
+  |                                                                            
+  |==========================================================            |  83%
+  |                                                                            
+  |===========================================================           |  85%
+  |                                                                            
+  |=============================================================         |  86%
+  |                                                                            
+  |==============================================================        |  88%
+  |                                                                            
+  |===============================================================       |  90%
+  |                                                                            
+  |================================================================      |  91%
+  |                                                                            
+  |=================================================================     |  93%
+  |                                                                            
+  |==================================================================    |  94%
+  |                                                                            
+  |===================================================================   |  96%
+  |                                                                            
+  |====================================================================  |  98%
+  |                                                                            
+  |===================================================================== |  99%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 329 features and 6 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -93.76838 ymin: 44.78538 xmax: -93.17722 ymax: 45.24662
+Geodetic CRS:  NAD83
+First 10 features:
+         GEOID                                            NAME B01003_001E
+1  27053024300    Census Tract 243, Hennepin County, Minnesota        4744
+2  27053110500   Census Tract 1105, Hennepin County, Minnesota        4969
+3  27053024006 Census Tract 240.06, Hennepin County, Minnesota        2205
+4  27053022801 Census Tract 228.01, Hennepin County, Minnesota        2481
+5  27053026908 Census Tract 269.08, Hennepin County, Minnesota        6139
+6  27053025401 Census Tract 254.01, Hennepin County, Minnesota        4428
+7  27053108600   Census Tract 1086, Hennepin County, Minnesota        2947
+8  27053026824 Census Tract 268.24, Hennepin County, Minnesota        4551
+9  27053106000   Census Tract 1060, Hennepin County, Minnesota        3375
+10 27053000102   Census Tract 1.02, Hennepin County, Minnesota        4896
+   B01003_001M B19013_001E B19013_001M                       geometry
+1          481       72240        5745 MULTIPOLYGON (((-93.31881 4...
+2          651       80157        5307 MULTIPOLYGON (((-93.22237 4...
+3          270      143125       22624 MULTIPOLYGON (((-93.35044 4...
+4          359      133958       34619 MULTIPOLYGON (((-93.34793 4...
+5          792      110246        3614 MULTIPOLYGON (((-93.39145 4...
+6          648       68711       11097 MULTIPOLYGON (((-93.28347 4...
+7          587       57470       15799 MULTIPOLYGON (((-93.24995 4...
+8          483      127819       26964 MULTIPOLYGON (((-93.36073 4...
+9          622       23492        5316 MULTIPOLYGON (((-93.25966 4...
+10         597       59750       11634 MULTIPOLYGON (((-93.29919 4...</code></pre>
+</div>
+</div>
+<p>Obtaining raw data from the Census Bureau was that easy! Often we will have to obtain and use a secret API key to access the data, but that’s not always necessary with <code>tidycensus</code>. (Note: most wrappers DO require an API key!)</p>
+<p>Now we can tidy that data and produce plots and analyses.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename cryptic variables from the census form</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus <span class="ot">&lt;-</span> hennepin_tidycensus <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">population =</span> B01003_001E,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">population_moe =</span> B01003_001M,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_income =</span> B19013_001E,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_income_moe =</span> B19013_001M)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Look for relationships between variables with 1 row per tract</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(hennepin_tidycensus) <span class="sc">|&gt;</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> population, <span class="at">y =</span> median_income)) <span class="sc">+</span> </span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_apis_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Since census data comes with the geometry of census tracts, we can </span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   plot with geom_sf</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> hennepin_tidycensus) <span class="sc">+</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> median_income), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12_apis_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="on-your-own---census" class="level3">
+<h3 class="anchored" data-anchor-id="on-your-own---census">On Your Own - Census</h3>
+<ol start="2" type="1">
+<li><p>Adapt the code in <code>hennepin_tidycensus</code> to write a function called <code>MN_tract_data</code> to give the user choices about year, county, and variables to pull off. Show that <code>MN_tract_data(year = 2021, county = "Hennepin", variables = c("B01003_001", "B19013_001"))</code> works as expected. Make sure it also works for other years, counties, and variables (e.g.&nbsp;B25077_001 is median home price and B02001_002 is number of white residents).</p></li>
+<li><p>Use your function from (2) along with <code>map</code> and <code>list_rbind</code> to build a data set for Rice county for the years 2019-2021. Use your scraped data to plot trends in income over time and population over time.</p></li>
+</ol>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Paul Roback, 2025<br> All content licensed under <img src="https://static.thenounproject.com/png/70967-200.png" height="20"> (<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Site built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

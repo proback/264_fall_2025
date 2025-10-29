@@ -194,6 +194,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./11_web_scraping.html">
  <span class="dropdown-text">Web Scraping in R</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./12_apis.html">
+ <span class="dropdown-text">Data Acquisition with APIs in R</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -302,6 +306,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./11_web_scraping.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Web Scraping in R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_apis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Acquisition with APIs in R</span></a>
   </div>
 </li>
     </ul>
@@ -430,17 +440,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  [1] 1 0 0 1 1 0 0 0 1 0 0 0 0 0 1 0 0 0 1 0 0 1 1 1 1 1 1 1 1 1 0 0 1 1 0 1 0
- [38] 0 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1 1 0 1 1 1 0 0 0 0 1 0 0 1 0 1 1 1 0 0 1
- [75] 0 1 0 1 1 1 1 0 1 0 1 0 1 1 1 0 1 1 0 0 1 1 1 0 1 0</code></pre>
+<pre><code>  [1] 0 0 0 1 0 1 0 0 0 0 0 1 1 1 0 0 1 1 0 0 0 1 1 0 1 0 1 0 0 1 0 0 0 1 1 0 0
+ [38] 1 1 1 1 0 0 1 0 0 1 0 1 1 1 1 0 0 1 0 0 1 1 1 1 0 1 0 1 0 0 0 1 0 1 0 1 0
+ [75] 0 0 1 1 1 0 1 0 0 1 0 0 1 0 0 0 1 1 1 0 1 1 0 1 0 0</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(y)  <span class="co"># how many are greater than 10?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 48</code></pre>
+<pre><code>[1] 46</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(y) <span class="co"># what proportion are greater than 10?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.48</code></pre>
+<pre><code>[1] 0.46</code></pre>
 </div>
 </div>
 <p>If there are multiple data types in a vector, then the most complex type wins, because you cannot mix types in a vector (although you can in a list)</p>
@@ -1393,7 +1403,7 @@ F-statistic:  2459 on 1 and 232 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>function (x, ...) 
 UseMethod("mean")
-&lt;bytecode: 0x000002d5bbc082a8&gt;
+&lt;bytecode: 0x0000017582c382a8&gt;
 &lt;environment: namespace:base&gt;</code></pre>
 </div>
 </div>
