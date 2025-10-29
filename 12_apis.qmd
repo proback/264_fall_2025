@@ -317,11 +317,10 @@ census_api_key <- readLines("~/264_fall_2025/DS2_preview_work/census_api_key.txt
 # Alternatively, load your NPS API key using:
 # census_api_key <- Sys.getenv("CENSUS_API_KEY")
 
-# Finally using httr
 url <- str_c("https://api.census.gov/data/2020/acs/acs5?get=NAME,B01003_001E,B19013_001E&for=tract:*&in=state:27&in=county:053", "&key=", census_api_key)
 acs5 <- GET(url)
 details <- content(acs5, "parsed")
-details 
+# details 
 details[[1]]  # variable names
 details[[2]]  # list with information on 1st tract
 
