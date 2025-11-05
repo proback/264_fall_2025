@@ -198,6 +198,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./12_apis.html">
  <span class="dropdown-text">Data Acquisition with APIs in R</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./13_maps.html">
+ <span class="dropdown-text">Creating informative maps</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -314,6 +318,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Data Acquisition with APIs in R</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Creating informative maps</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -359,10 +369,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.5.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
 ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
 ✔ purrr     1.1.0     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -370,7 +383,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>VACCINE.DATA <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://proback.github.io/264_fall_2025/Data/vaccinations_2021.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>VACCINE.DATA <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://proback.github.io/264_fall_2025/Data/vaccinations_2021.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 3053 Columns: 14
 ── Column specification ────────────────────────────────────────────────────────
@@ -381,14 +394,14 @@ dbl (10): rural_urban_code, perc_complete_vac, tot_pop, votes_Trump, votes_B...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>VACCINE.DATA <span class="sc">|&gt;</span> <span class="fu">filter</span>(state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Minnesota"</span>,<span class="st">"Iowa"</span>,<span class="st">"Wisconsin"</span>,<span class="st">"North Dakota"</span>,<span class="st">"South Dakota"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">state_ordered=</span><span class="fu">fct_reorder2</span>(state,perc_Biden,perc_complete_vac),<span class="at">prop_Biden=</span>perc_Biden<span class="sc">/</span><span class="dv">100</span>,<span class="at">prop_complete_vac=</span>perc_complete_vac<span class="sc">/</span><span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> prop_Biden, <span class="at">y =</span> prop_complete_vac, </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">color =</span> state_ordered)) <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"State"</span>, <span class="at">x =</span> <span class="st">"Proportion of Biden votes"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Proportion completely vaccinated"</span>, <span class="at">title =</span> <span class="st">"The positive relationship between Biden votes and </span><span class="sc">\n</span><span class="st"> vaccination rates by county differs by state"</span>) <span class="sc">+</span>     </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>), <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">12</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>VACCINE.DATA <span class="sc">|&gt;</span> <span class="fu">filter</span>(state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Minnesota"</span>,<span class="st">"Iowa"</span>,<span class="st">"Wisconsin"</span>,<span class="st">"North Dakota"</span>,<span class="st">"South Dakota"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">state_ordered=</span><span class="fu">fct_reorder2</span>(state,perc_Biden,perc_complete_vac),<span class="at">prop_Biden=</span>perc_Biden<span class="sc">/</span><span class="dv">100</span>,<span class="at">prop_complete_vac=</span>perc_complete_vac<span class="sc">/</span><span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> prop_Biden, <span class="at">y =</span> prop_complete_vac, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">color =</span> state_ordered)) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"State"</span>, <span class="at">x =</span> <span class="st">"Proportion of Biden votes"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Proportion completely vaccinated"</span>, <span class="at">title =</span> <span class="st">"The positive relationship between Biden votes and </span><span class="sc">\n</span><span class="st"> vaccination rates by county differs by state"</span>) <span class="sc">+</span>     </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>), <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">12</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
 </div>

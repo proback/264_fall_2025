@@ -50,6 +50,7 @@ website:
         - 10_table_scraping.qmd
         - 11_web_scraping.qmd
         - 12_apis.qmd
+        - 13_maps.qmd
 
     - id: projects
       title: "Projects"
