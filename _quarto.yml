@@ -51,12 +51,14 @@ website:
         - 11_web_scraping.qmd
         - 12_apis.qmd
         - 13_maps.qmd
+        - 14_first_shiny_instructions.qmd
 
     - id: projects
       title: "Projects"
       contents:
         - miniproject01.qmd
         - miniproject02.qmd
+        - miniproject03.qmd
 
 
   page-footer:

@@ -1,0 +1,85 @@
+---
+title: "Mini-Project 3: Building a Personal Quarto Webpage"
+format:
+  html: default
+---
+
+### Overview
+
+We will create our own personal quarto webpages to give you a forum for showing your data science portfolio, featuring projects from SDS 264 in addition to things you've worked on in other classes, independently, etc.
+
+We will follow the [excellent set of instructions](https://ucsb-meds.github.io/creating-quarto-websites/) prepared by Samantha Csik and others as part of the Bren School of Environmental Science & Management’s Master of Environmental Data Science (MEDS) program.
+
+I have found success starting at the top and working my way carefully through the steps outlined.  I cannot emphasize this enough: **be sure to NOT speed through the steps, but follow even the small, subtle suggestions, and stop and appreciate the useful insights given at various points in the process!**  Continue all the way through the end of the website!
+
+
+### Big Picture
+
+- We'll create .qmd files filled with the content of our website, styling the content with markdown (same as Rmd files). 
+- We'll render the .qmd files into .html files that we can host on a web server like GitHub Pages.
+- Most people will create and publish a personal website using GitHub that is named  username.github.io; in that case, you’ll have a website folder and a folder on your own computer both named username.github.io (e.g. proback.github.io). 
+
+
+### Specifics
+
+You will publish a personal quarto webpage that contains:
+
+**Home page:**
+
+Basic information about yourself and at least one image (it could be a picture of you or something else), as well as a menu bar.
+
+**Tab 1 on the menu bar:**
+
+Your work from Mini-Project 1 on text analysis.  You should clean up your original submission to make it suitable for display (e.g., hide or collapse unnecessary code, nice section headers, nicely formatted text, clean and well-labeled plots, etc.).  You can decide if you'd like to display some or all of your code, collapse those sections, or just link to code on GitHub.
+
+**Tab 2 on the menu bar:**
+
+You will produce a page of choropleth maps illustrating two different characteristics -- one numeric and one categorical -- that have been measured for each US state (you can choose to exclude Alaska and Hawaii), like we did in the "Creating Informative Maps" activity.  Just as we found state-level data from both a vaccine data set and the `poliscidata` package, you should find *your own* state-level data that is interesting to you.  
+
+A few additional details for this tab:
+
+1. You should create *two* versions of each plot -- one that is static and one that is interactive.
+
+2. Be sure to include a note on your plots that acknowledges your data source.
+
+3. You should be able to merge your state-level data with the state mapping data sets we used in class.
+
+4. Be sure you label your plot well *and* provide a description of what insights can be gained from each *static* plot. 
+
+**Additional tabs as desired (optional)**
+
+
+### Rubric and Submission
+
+Check out this [rubric](https://drive.google.com/file/d/1Gp9wTfQ0FZbV64KW35ThE-2JAw7ceecS/view?usp=sharing) for Mini-Project 3. 
+ 
+Mini-Project 3 must be submitted on moodle by **11:00 PM on Fri Nov 21**.  All I need is a url for your webpage, which should then have a link to your R code in GitHub.  If you choose not to make your webpage public at this time, please add me as a collaborator to your GitHub repository so that I can see your code and generate your webpage.
+
+
+### Examples
+
+[Here](https://proback.github.io/) is a pretty basic example that I put together.  I'm hoping you'll put together something more impressive -- taking advantage of features in quarto to create a look that you're excited about and an organization and layout that cleanly highlights your good work.  
+
+The following Data Science sites were created with Quarto:
+
+- https://bcheggeseth.github.io/  
+- https://allisonhorst.github.io/
+- https://samanthacsik.github.io/
+- https://www.andreashandel.com/ 
+- https://deepshamenghani.quarto.pub/dmenghani/ [published with Quarto pubs]
+
+Code Examples [if you see something you like in the sites above, try and find their github repo]:
+
+- https://github.com/bcheggeseth/bcheggeseth.github.io 
+- https://github.com/allisonhorst/allisonhorst.github.io
+- https://github.com/samanthacsik/samanthacsik.github.io 
+- https://github.com/andreashandel/andreashandelwebsite 
+
+
+### Additional Information
+
+Quarto Website Resources:
+
+- [Quarto Websites](https://quarto.org/docs/websites/)
+- [YAML basics in Quarto](https://charlotte.quarto.pub/cascadia/2-yaml-markdown-basics/) 
+- [Creating Data Science Portfolios](https://www.youtube.com/watch?v=xtSFXtDf4cM)

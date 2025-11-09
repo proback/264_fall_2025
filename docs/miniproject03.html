@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Why Quarto? – SDS 264: Data Science 2</title>
+<title>Mini-Project 3: Building a Personal Quarto Webpage – SDS 264: Data Science 2</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -242,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./why_quarto.html">Why Quarto?</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./miniproject03.html">Mini-Project 3: Building a Personal Quarto Webpage</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -256,20 +222,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tech_setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tech Setup</span></a>
+  <a href="./miniproject01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mini-Project 1: Text Analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./why_quarto.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Why Quarto?</span></a>
+  <a href="./miniproject02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mini-Project 2: Data Acquisition</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./github_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Intro to GitHub</span></a>
+  <a href="./miniproject03.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Mini-Project 3: Building a Personal Quarto Webpage</span></a>
   </div>
 </li>
     </ul>
@@ -282,7 +248,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#air-quality" id="toc-air-quality" class="nav-link active" data-scroll-target="#air-quality">Air Quality</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#big-picture" id="toc-big-picture" class="nav-link" data-scroll-target="#big-picture">Big Picture</a></li>
+  <li><a href="#specifics" id="toc-specifics" class="nav-link" data-scroll-target="#specifics">Specifics</a></li>
+  <li><a href="#rubric-and-submission" id="toc-rubric-and-submission" class="nav-link" data-scroll-target="#rubric-and-submission">Rubric and Submission</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#additional-information" id="toc-additional-information" class="nav-link" data-scroll-target="#additional-information">Additional Information</a></li>
   </ul>
 </nav>
     </div>
@@ -291,7 +262,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Why Quarto?</h1>
+<h1 class="title">Mini-Project 3: Building a Personal Quarto Webpage</h1>
 </div>
 
 
@@ -308,58 +279,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>As described in the <a href="https://quarto.org/docs/computations/r.html">quarto documentation</a>: Quarto is a new, open-source, scientific, and technical publishing system. It is a multi-language, next generation version of R Markdown from RStudio, with many new features and capabilities. Like R Markdown, Quarto uses Knitr to execute R code, and is therefore able to render most existing Rmd files without modification.</p>
-<p>Data scientists are <a href="https://www.infoworld.com/article/3666743/what-is-quarto-rstudio-quietly-rolls-out-next-generation-r-markdown.html">pretty excited</a> about the introduction of Quarto, and since it represents the future of R Markdown, we will conduct SDS 264 using Quarto. Intriguing Quarto features that have been cited include:</p>
+<section id="overview" class="level3">
+<h3 class="anchored" data-anchor-id="overview">Overview</h3>
+<p>We will create our own personal quarto webpages to give you a forum for showing your data science portfolio, featuring projects from SDS 264 in addition to things you’ve worked on in other classes, independently, etc.</p>
+<p>We will follow the <a href="https://ucsb-meds.github.io/creating-quarto-websites/">excellent set of instructions</a> prepared by Samantha Csik and others as part of the Bren School of Environmental Science &amp; Management’s Master of Environmental Data Science (MEDS) program.</p>
+<p>I have found success starting at the top and working my way carefully through the steps outlined. I cannot emphasize this enough: <strong>be sure to NOT speed through the steps, but follow even the small, subtle suggestions, and stop and appreciate the useful insights given at various points in the process!</strong> Continue all the way through the end of the website!</p>
+</section>
+<section id="big-picture" class="level3">
+<h3 class="anchored" data-anchor-id="big-picture">Big Picture</h3>
 <ul>
-<li>collaborate across coding languages</li>
-<li>open source</li>
-<li>dozens of export types, including websites, books, and blogs</li>
-<li>built-in YAML assistance (since it’s a notoriously finicky language)</li>
-<li>it’s installed like other software and automatically included in new versions of RStudio</li>
-<li>free publishing through quartopub.com</li>
-<li>while Rmd will be maintained and updated, cool new features will appear in Quarto</li>
-<li>there are plans for future simultaneous editing like in google docs</li>
+<li>We’ll create .qmd files filled with the content of our website, styling the content with markdown (same as Rmd files).</li>
+<li>We’ll render the .qmd files into .html files that we can host on a web server like GitHub Pages.</li>
+<li>Most people will create and publish a personal website using GitHub that is named username.github.io; in that case, you’ll have a website folder and a folder on your own computer both named username.github.io (e.g.&nbsp;proback.github.io).</li>
 </ul>
-<p>According to this <a href="https://charlotte.quarto.pub/cascadia/">Intro to Quarto</a> workshop from Posit and the developers of Rstudio and Quarto, Quarto (compared to RMarkdown):</p>
+</section>
+<section id="specifics" class="level3">
+<h3 class="anchored" data-anchor-id="specifics">Specifics</h3>
+<p>You will publish a personal quarto webpage that contains:</p>
+<p><strong>Home page:</strong></p>
+<p>Basic information about yourself and at least one image (it could be a picture of you or something else), as well as a menu bar.</p>
+<p><strong>Tab 1 on the menu bar:</strong></p>
+<p>Your work from Mini-Project 1 on text analysis. You should clean up your original submission to make it suitable for display (e.g., hide or collapse unnecessary code, nice section headers, nicely formatted text, clean and well-labeled plots, etc.). You can decide if you’d like to display some or all of your code, collapse those sections, or just link to code on GitHub.</p>
+<p><strong>Tab 2 on the menu bar:</strong></p>
+<p>You will produce a page of choropleth maps illustrating two different characteristics – one numeric and one categorical – that have been measured for each US state (you can choose to exclude Alaska and Hawaii), like we did in the “Creating Informative Maps” activity. Just as we found state-level data from both a vaccine data set and the <code>poliscidata</code> package, you should find <em>your own</em> state-level data that is interesting to you.</p>
+<p>A few additional details for this tab:</p>
+<ol type="1">
+<li><p>You should create <em>two</em> versions of each plot – one that is static and one that is interactive.</p></li>
+<li><p>Be sure to include a note on your plots that acknowledges your data source.</p></li>
+<li><p>You should be able to merge your state-level data with the state mapping data sets we used in class.</p></li>
+<li><p>Be sure you label your plot well <em>and</em> provide a description of what insights can be gained from each <em>static</em> plot.</p></li>
+</ol>
+<p><strong>Additional tabs as desired (optional)</strong></p>
+</section>
+<section id="rubric-and-submission" class="level3">
+<h3 class="anchored" data-anchor-id="rubric-and-submission">Rubric and Submission</h3>
+<p>Check out this <a href="https://drive.google.com/file/d/1Gp9wTfQ0FZbV64KW35ThE-2JAw7ceecS/view?usp=sharing">rubric</a> for Mini-Project 3.</p>
+<p>Mini-Project 3 must be submitted on moodle by <strong>11:00 PM on Fri Nov 21</strong>. All I need is a url for your webpage, which should then have a link to your R code in GitHub. If you choose not to make your webpage public at this time, please add me as a collaborator to your GitHub repository so that I can see your code and generate your webpage.</p>
+</section>
+<section id="examples" class="level3">
+<h3 class="anchored" data-anchor-id="examples">Examples</h3>
+<p><a href="https://proback.github.io/">Here</a> is a pretty basic example that I put together. I’m hoping you’ll put together something more impressive – taking advantage of features in quarto to create a look that you’re excited about and an organization and layout that cleanly highlights your good work.</p>
+<p>The following Data Science sites were created with Quarto:</p>
 <ul>
-<li>Offers “batteries included” shared syntax across formats, while R Markdown grew into a large ecosystem with varying syntax</li>
-<li>Allows you to choose your own editor and your preferred data science language</li>
-<li>Comes with richer features out of the box</li>
-<li>Is actively developed</li>
+<li>https://bcheggeseth.github.io/<br>
+</li>
+<li>https://allisonhorst.github.io/</li>
+<li>https://samanthacsik.github.io/</li>
+<li>https://www.andreashandel.com/</li>
+<li>https://deepshamenghani.quarto.pub/dmenghani/ [published with Quarto pubs]</li>
 </ul>
-<p>In other words, Quarto unifies and extends R Markdown:</p>
+<p>Code Examples [if you see something you like in the sites above, try and find their github repo]:</p>
 <ul>
-<li>Consistent implementation of attractive and handy features across outputs: tabsets, code-folding, syntax highlighting, etc.</li>
-<li>More accessible defaults as well as better support for accessibility</li>
-<li>Support for other languages like Python, Julia, Observable, and more via Jupyter engine for executable code chunks.</li>
+<li>https://github.com/bcheggeseth/bcheggeseth.github.io</li>
+<li>https://github.com/allisonhorst/allisonhorst.github.io</li>
+<li>https://github.com/samanthacsik/samanthacsik.github.io</li>
+<li>https://github.com/andreashandel/andreashandelwebsite</li>
 </ul>
-<p>Be sure to check out the “Intro to Quarto” slides yourself, including the very <a href="https://charlotte.quarto.pub/cascadia/2-yaml-markdown-basics/">helpful section</a> on rendering Quarto documents as pdfs.</p>
-<p>Here’s a cool example from the Quarto documentation, showing features like cross-referencing of figures, chunk options using the hash-pipe format, collapsed code, and easy figure legends:</p>
-<section id="air-quality" class="level2">
-<h2 class="anchored" data-anchor-id="air-quality">Air Quality</h2>
-<p><a href="#fig-airquality" class="quarto-xref">Figure&nbsp;1</a> further explores the impact of temperature on ozone level.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(airquality, <span class="fu">aes</span>(Temp, Ozone)) <span class="sc">+</span> </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div id="fig-airquality" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-airquality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="why_quarto_files/figure-html/fig-airquality-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-airquality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Temperature and ozone level.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
+</section>
+<section id="additional-information" class="level3">
+<h3 class="anchored" data-anchor-id="additional-information">Additional Information</h3>
+<p>Quarto Website Resources:</p>
+<ul>
+<li><a href="https://quarto.org/docs/websites/">Quarto Websites</a></li>
+<li><a href="https://charlotte.quarto.pub/cascadia/2-yaml-markdown-basics/">YAML basics in Quarto</a></li>
+<li><a href="https://www.youtube.com/watch?v=xtSFXtDf4cM">Creating Data Science Portfolios</a></li>
+</ul>
 
 
 </section>
