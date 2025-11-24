@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>SQL: Exercises – SDS 264: Data Science 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e137d14179fa74b23b5b2b66ff8bbb28.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">SDS 264: Data Science 2</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tech-notes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tech Notes</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tech-notes">    
+        <li>
+    <a class="dropdown-item" href="./tech_setup.html">
+ <span class="dropdown-text">Tech Setup</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./why_quarto.html">
+ <span class="dropdown-text">Why Quarto?</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./github_intro.html">
+ <span class="dropdown-text">Intro to GitHub</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-activities" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Activities</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-activities">    
+        <li>
+    <a class="dropdown-item" href="./01_review164.html">
+ <span class="dropdown-text">Review of Data Science 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./02_strings_part1.html">
+ <span class="dropdown-text">Strings: In-class Exercises (Part 1)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./03_strings_part2.html">
+ <span class="dropdown-text">Strings: In-class Exercises (Part 2)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./04_strings_part3.html">
+ <span class="dropdown-text">Strings: Extra Practice (Part 3)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./05_text_analysis.html">
+ <span class="dropdown-text">Text analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./06_code_quality.html">
+ <span class="dropdown-text">Code quality</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./07_data_types.html">
+ <span class="dropdown-text">Data types</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./08_functions.html">
+ <span class="dropdown-text">Functions and tidy evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./09_iteration.html">
+ <span class="dropdown-text">Iteration</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./10_table_scraping.html">
+ <span class="dropdown-text">Table Scraping in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./11_web_scraping.html">
+ <span class="dropdown-text">Web Scraping in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./12_apis.html">
+ <span class="dropdown-text">Data Acquisition with APIs in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./13_maps.html">
+ <span class="dropdown-text">Creating informative maps</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./14_first_shiny_instructions.html">
+ <span class="dropdown-text">First Shiny instructions</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./16_SQL_exercises.html">
+ <span class="dropdown-text">SQL: Exercises</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
+        <li>
+    <a class="dropdown-item" href="./miniproject01.html">
+ <span class="dropdown-text">Mini-Project 1: Text Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./miniproject02.html">
+ <span class="dropdown-text">Mini-Project 2: Data Acquisition</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./miniproject03.html">
+ <span class="dropdown-text">Mini-Project 3: Building a Personal Quarto Webpage</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./finalproject.html">
+ <span class="dropdown-text">Final Project: Interactive Data Storytelling</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./rtipoftheday.html"> 
+<span class="menu-text">R Tip of the Day</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./16_SQL_exercises.html">SQL: Exercises</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_review164.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Review of Data Science 1</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_strings_part1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 1)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_strings_part2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: In-class Exercises (Part 2)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_strings_part3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Strings: Extra Practice (Part 3)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_text_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_code_quality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Code quality</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_data_types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data types</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functions and tidy evaluation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_iteration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Iteration</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10_table_scraping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Table Scraping in R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_web_scraping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Web Scraping in R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_apis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Acquisition with APIs in R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Creating informative maps</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14_first_shiny_instructions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">First Shiny instructions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16_SQL_exercises.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">SQL: Exercises</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#on-your-own---extended-example-from-mdsr" id="toc-on-your-own---extended-example-from-mdsr" class="nav-link active" data-scroll-target="#on-your-own---extended-example-from-mdsr">On Your Own - Extended Example from MDSR</a></li>
+  <li><a href="#on-your-own---adapting-164-code" id="toc-on-your-own---adapting-164-code" class="nav-link" data-scroll-target="#on-your-own---adapting-164-code">On Your Own - Adapting 164 Code</a></li>
+  <li><a href="#on-your-own---noninvasive-auditory-diagnostic-tools" id="toc-on-your-own---noninvasive-auditory-diagnostic-tools" class="nav-link" data-scroll-target="#on-your-own---noninvasive-auditory-diagnostic-tools">On Your Own - Noninvasive Auditory Diagnostic Tools</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">SQL: Exercises</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>You can download this .qmd file from <a href="https://github.com/proback/264_fall_2025/blob/main/SQL_code/16_SQL_exercises.qmd">here</a>. Just hit the Download Raw File button.</p>
+<p>The code in <a href="https://github.com/proback/264_fall_2025/blob/main/SQL_code/15_SQL.qmd">15_SQL.qmd</a> walked us through many of the examples in MDSR Chapter 15; now, we present a set of practice exercises in converting from the tidyverse to SQL.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mdsr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to the database which lives on a remote server maintained by</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   St. Olaf's IT department</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>my_password <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/DS2_preview_work/olaf_db_password.txt"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RMariaDB)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">MariaDB</span>(), <span class="at">host =</span> <span class="st">"mdb.stolaf.edu"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">user =</span> <span class="st">"ruser"</span>, <span class="at">password =</span> my_password, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">"flight_data"</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="on-your-own---extended-example-from-mdsr" class="level2">
+<h2 class="anchored" data-anchor-id="on-your-own---extended-example-from-mdsr">On Your Own - Extended Example from MDSR</h2>
+<p>Refer to <a href="https://mdsr-book.github.io/mdsr3e/15-sqlI.html#sec-ft8-flights">Section 15.5</a> in MDSR, where they attempt to replicate some of FiveThirtyEight’s analyses. The MDSR authors provide a mix of SQL and R code to perform their analyses, but the code will not work if you simply cut-and-paste as-is into R. Your task is to convert the book code into something that actually runs, and then <em>apply it to data from 2024</em>. Very little of the code needs to be adjusted; it mostly needs to be repackaged.</p>
+<p>Hints:</p>
+<ul>
+<li>use <code>dbGetQuery()</code></li>
+<li>note that what they call <code>carrier</code> is just called <code>Reporting_Airline</code> in the <code>flightdata</code> table; you don’t have to merge in a <code>carrier</code> table, although it’s unfortunate that the <code>Reporting_Airline</code> codes are a bit cryptic</li>
+</ul>
+<ol type="1">
+<li>Below Figure 15.1, the MDSR authors first describe how to plot slowest and fastest airports. Instead of using <em>target time</em>, which has a complex definition, we will use <em>arrival time</em>, which oversimplifies the situation but gets us in the ballpark. Duplicate the equivalent of the table below for 2024 using the code in MDSR:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A tibble: 30 × 3</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   dest  avgDepartDelay avgArrivalDelay</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>          <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>           <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a> <span class="dv">1</span> ORD            <span class="fl">14.3</span>            <span class="fl">13.1</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a> <span class="dv">2</span> MDW            <span class="fl">12.8</span>             <span class="fl">7.40</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a> <span class="dv">3</span> DEN            <span class="fl">11.3</span>             <span class="fl">7.60</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a> <span class="dv">4</span> IAD            <span class="fl">11.3</span>             <span class="fl">7.45</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a> <span class="dv">5</span> HOU            <span class="fl">11.3</span>             <span class="fl">8.07</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a> <span class="dv">6</span> DFW            <span class="fl">10.7</span>             <span class="fl">9.00</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a> <span class="dv">7</span> BWI            <span class="fl">10.2</span>             <span class="fl">6.04</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a> <span class="dv">8</span> BNA             <span class="fl">9.47</span>            <span class="fl">8.94</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a> <span class="dv">9</span> EWR             <span class="fl">8.70</span>            <span class="fl">9.61</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span> IAH             <span class="fl">8.41</span>            <span class="fl">6.75</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 20 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="1">
+<li>Following the table above, the MDSR authors mimic one more FiveThirtyEight table which ranks carriers by time added vs.&nbsp;typical and time added vs.&nbsp;target. In this case, we will find average arrival delay after controlling for the routes flown. Again, duplicate the equivalent of the table below for 2024 using the code in MDSR:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A tibble: 14 × 5</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   carrier carrier_name                numRoutes numFlights wAvgDelay</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">&lt;</span>chr<span class="sc">&gt;</span>   <span class="er">&lt;</span>chr<span class="sc">&gt;</span>                           <span class="er">&lt;</span>int<span class="sc">&gt;</span>      <span class="er">&lt;</span>dbl<span class="sc">&gt;</span>     <span class="er">&lt;</span>dbl<span class="sc">&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a> <span class="dv">1</span> VX      Virgin America                     <span class="dv">72</span>      <span class="dv">57510</span>   <span class="sc">-</span><span class="fl">2.69</span>  </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a> <span class="dv">2</span> FL      AirTran Airways Corporation       <span class="dv">170</span>      <span class="dv">79495</span>   <span class="sc">-</span><span class="fl">1.55</span>  </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a> <span class="dv">3</span> AS      Alaska Airlines Inc.              <span class="dv">242</span>     <span class="dv">160257</span>   <span class="sc">-</span><span class="fl">1.44</span>  </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a> <span class="dv">4</span> US      US Airways Inc.                   <span class="dv">378</span>     <span class="dv">414665</span>   <span class="sc">-</span><span class="fl">1.31</span>  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a> <span class="dv">5</span> DL      Delta Air Lines Inc.              <span class="dv">900</span>     <span class="dv">800375</span>   <span class="sc">-</span><span class="fl">1.01</span>  </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a> <span class="dv">6</span> UA      United Air Lines Inc.             <span class="dv">621</span>     <span class="dv">493528</span>   <span class="sc">-</span><span class="fl">0.982</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a> <span class="dv">7</span> MQ      Envoy Air                         <span class="dv">442</span>     <span class="dv">392701</span>   <span class="sc">-</span><span class="fl">0.455</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a> <span class="dv">8</span> AA      American Airlines Inc.            <span class="dv">390</span>     <span class="dv">537697</span>   <span class="sc">-</span><span class="fl">0.0340</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a> <span class="dv">9</span> HA      Hawaiian Airlines Inc.             <span class="dv">56</span>      <span class="dv">74732</span>    <span class="fl">0.272</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span> OO      SkyWest Airlines Inc.            <span class="dv">1250</span>     <span class="dv">613030</span>    <span class="fl">0.358</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="dv">11</span> B6      JetBlue Airways                   <span class="dv">316</span>     <span class="dv">249693</span>    <span class="fl">0.767</span> </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="dv">12</span> EV      ExpressJet Airlines Inc.         <span class="dv">1534</span>     <span class="dv">686021</span>    <span class="fl">0.845</span> </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="dv">13</span> WN      Southwest Airlines Co.           <span class="dv">1284</span>    <span class="dv">1174633</span>    <span class="fl">1.13</span>  </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="dv">14</span> F9      Frontier Airlines Inc.            <span class="dv">326</span>      <span class="dv">85474</span>    <span class="fl">2.29</span>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="on-your-own---adapting-164-code" class="level2">
+<h2 class="anchored" data-anchor-id="on-your-own---adapting-164-code">On Your Own - Adapting 164 Code</h2>
+<p>These problems are based on class exercises from SDS 164, so you’ve already solved them in R! Now we’re going to try to duplicate those solutions in SQL (but with 2023 data instead of 2013).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in 2013 NYC flights data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>flights_nyc13 <span class="ot">&lt;-</span> nycflights13<span class="sc">::</span>flights</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>planes_nyc13 <span class="ot">&lt;-</span> nycflights13<span class="sc">::</span>planes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="1">
+<li>Summarize carriers flying to MSP by number of flights and proportion that are cancelled (assuming that a missing arrival time indicates a cancelled flight). [This was #4 in 17_longer_pipelines.Rmd.]</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original solution from SDS 164</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>flights_nyc13 <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">carrier =</span> <span class="fu">fct_collapse</span>(carrier, <span class="st">"Delta +"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"DL"</span>, <span class="st">"9E"</span>), </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"American +"</span><span class="ot">=</span> <span class="fu">c</span>(<span class="st">"AA"</span>, <span class="st">"MQ"</span>), </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"United +"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"EV"</span>, <span class="st">"OO"</span>, <span class="st">"UA"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dest <span class="sc">==</span> <span class="st">"MSP"</span>) <span class="sc">|&gt;</span>   </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin, carrier) <span class="sc">|&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n_flights =</span> <span class="fu">n</span>(), </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">num_cancelled =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(arr_time)),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">prop_cancelled =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(arr_time)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+# Groups:   origin [3]
+  origin carrier    n_flights num_cancelled prop_cancelled
+  &lt;chr&gt;  &lt;fct&gt;          &lt;int&gt;         &lt;int&gt;          &lt;dbl&gt;
+1 EWR    Delta +          598            10         0.0167
+2 EWR    United +        1779           105         0.0590
+3 JFK    Delta +         1095            41         0.0374
+4 LGA    Delta +         2420            25         0.0103
+5 LGA    American +      1293            62         0.0480</code></pre>
+</div>
+</div>
+<p>First duplicate the output above, then check trends in 2023 across all origins. Here are a few hints:</p>
+<ul>
+<li>use flightdata instead of flights_nyc13</li>
+<li>remember that flights_nyc13 only contained 2013 and 3 NYC origin airports (EWR, JFK, LGA)</li>
+<li>is.na can be replaced with CASE WHEN ArrTime IS NULL THEN 1 ELSE 0 END or with CASE WHEN cancelled = 1 THEN 1 ELSE 0 END</li>
+<li>CASE WHEN can also be used replace fct_collapse</li>
+</ul>
+<ol start="2" type="1">
+<li>Plot number of flights vs.&nbsp;proportion cancelled for every origin-destination pair (assuming that a missing arrival time indicates a cancelled flight). [This was #7 in 17_longer_pipelines.Rmd.]</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original solution from SDS 164</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>flights_nyc13 <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin, dest) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">prop_cancelled =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(arr_time))) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(prop_cancelled <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(n, prop_cancelled)) <span class="sc">+</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16_SQL_exercises_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>First duplicate the plot above for 2023 data, then check trends across all origins. Do all of the data wrangling in SQL. Here are a few hints:</p>
+<ul>
+<li>use flightdata instead of flights_nyc13</li>
+<li>remember that flights_nyc13 only contained 2013 and 3 NYC origin airports (EWR, JFK, LGA)</li>
+<li>use an <code>sql</code> chunk and an <code>r</code> chunk</li>
+<li>include <code>connection =</code> and <code>output.var =</code> in your sql chunk header (this doesn’t seem to work with dbGetQuery()…)</li>
+</ul>
+<ol start="3" type="1">
+<li>Produce a table of weighted plane age by carrier, where weights are based on number of flights per plane. [This was #6 in 26_more_joins.Rmd.]</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Original solution from SDS 164</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>flights_nyc13 <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(planes_nyc13, <span class="fu">join_by</span>(tailnum)) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">plane_age =</span> <span class="dv">2013</span> <span class="sc">-</span> year.y) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">unique_planes =</span> <span class="fu">n_distinct</span>(tailnum),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_weighted_age =</span> <span class="fu">mean</span>(plane_age, <span class="at">na.rm =</span><span class="cn">TRUE</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_weighted_age =</span> <span class="fu">sd</span>(plane_age, <span class="at">na.rm =</span><span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean_weighted_age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 4
+   carrier unique_planes mean_weighted_age sd_weighted_age
+   &lt;chr&gt;           &lt;int&gt;             &lt;dbl&gt;           &lt;dbl&gt;
+ 1 HA                 14              1.55            1.14
+ 2 AS                 84              3.34            3.07
+ 3 VX                 53              4.47            2.14
+ 4 F9                 26              4.88            3.67
+ 5 B6                193              6.69            3.29
+ 6 OO                 28              6.84            2.41
+ 7 9E                204              7.10            2.67
+ 8 US                290              9.10            4.88
+ 9 WN                583              9.15            4.63
+10 YV                 58              9.31            1.93
+11 EV                316             11.3             2.29
+12 FL                129             11.4             2.16
+13 UA                621             13.2             5.83
+14 DL                629             16.4             5.49
+15 AA                601             25.9             5.42
+16 MQ                238             35.3             3.13</code></pre>
+</div>
+</div>
+<p>First duplicate the output above for 2023, then check trends across all origins. Do all of the data wrangling in SQL. Here are a few hints:</p>
+<ul>
+<li>use flightdata instead of flights_nyc13</li>
+<li>remember that flights_nyc13 only contained 2013 and 3 NYC origin airports (EWR, JFK, LGA)</li>
+<li>you’ll have to merge the flights dataset with the planes dataset</li>
+<li>you can use DISTINCT inside a COUNT()</li>
+<li>investigate SQL clauses for calculating a standard deviation</li>
+<li>you cannot use a derived variable inside a summary clause in SELECT</li>
+</ul>
+<p>For bonus points, also merge the airlines dataset and include the name of each carrier and not just the abbreviation!</p>
+</section>
+<section id="on-your-own---noninvasive-auditory-diagnostic-tools" class="level2">
+<h2 class="anchored" data-anchor-id="on-your-own---noninvasive-auditory-diagnostic-tools">On Your Own - Noninvasive Auditory Diagnostic Tools</h2>
+<p>You will use SQL to query the <a href="https://www.science.smith.edu/wai-database/">Wideband Acoustic Immittance (WAI) Database</a> hosted by Smith College. WAI measurements are being developed as noninvasive auditory diagnostic tools for people of all ages, and the WAI Database hosts WAI ear measurements that have been published in peer-review articles. The goal of the database is to “enable auditory researchers to share WAI measurements and combine analyses over multiple datasets.”</p>
+<p>You have two primary goals:</p>
+<ol type="1">
+<li><p>duplicate Figure 1 from a <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093226/">2019 manuscript</a> by Susan Voss. You will need to query the WAI Database to build a dataset which you can pipe into <code>ggplot()</code> to recreate Figure 1 <em>as closely as possible</em>.</p></li>
+<li><p>Find a study where subjects of different sex, race, ethnicity, or age groups were enrolled, and produce plots of frequency vs.&nbsp;mean absorption by group.</p></li>
+</ol>
+<p>You should be using JOINs in both (1) and (2).</p>
+<p><strong>Hints:</strong></p>
+<ul>
+<li>Parse the caption from Figure 1 carefully to determine how mean absorbances are calculated: “Mean absorbances for the 12 studies within the WAI database as of July 1, 2019. Noted in the legend are the peer-reviewed publications associated with the datasets, the number of individual ears, and the equipment used in the study. When multiple measurements were made on the same ear, the average from those measurements was used in the calculation across subjects for a given study. Some subjects have measurements on both a right and a left ear, and some subjects have measurements from only one ear; this figure includes every ear in the database and does not control for the effect of number of ears from each subject.”</li>
+<li>filter for only the 12 studies shown in Figure 1 (and also for frequencies shown in Figure 1)</li>
+<li>study the patterns of frequencies. It seems that most researchers used the same set of frequencies for each subject, ear, and session.</li>
+<li>note the scale of the x-axis</li>
+<li>the key labels contain AuthorsShortList, Year, and Instrument, in addition to the number of unique ears (I think Werner’s N may be incorrect?)</li>
+</ul>
+<p><strong>Starter Code for Part 1:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mdsr)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RMariaDB)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">MariaDB</span>(), <span class="at">host =</span> <span class="st">"scidb.smith.edu"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">user =</span> <span class="st">"waiuser"</span>, <span class="at">password =</span> <span class="st">"smith_waiDB"</span>, </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">"wai"</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>Measurements <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"Measurements"</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>PI_Info <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"PI_Info"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>Subjects <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"Subjects"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># collect(Measurements)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Run the following queries in a chunk with {sql, connection = con}:</p>
+<ul>
+<li>SHOW TABLES;</li>
+<li>DESCRIBE Measurements;</li>
+<li>SELECT * FROM PI_Info LIMIT 0,1;</li>
+</ul>
+<p>Let’s start to explore what this data looks like, starting with the Measurements table for one study:</p>
+<p>Using Abur_2014 we can explore counts per subject/ear:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">Identifier</span>, SubjectNumber, <span class="kw">Session</span>, Ear, Frequency</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Measurements</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">Identifier</span> <span class="op">=</span> <span class="st">'Abur_2014'</span> <span class="kw">AND</span> Frequency <span class="op">&lt;</span> <span class="dv">8000</span> <span class="kw">AND</span> Frequency <span class="op">&gt;</span> <span class="dv">200</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> SubjectNumber <span class="op">=</span> <span class="dv">1</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Identifier</th>
+<th style="text-align: right;">SubjectNumber</th>
+<th style="text-align: right;">Session</th>
+<th style="text-align: left;">Ear</th>
+<th style="text-align: right;">Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">210.938</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">234.375</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">257.812</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">281.250</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">304.688</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">328.125</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">351.562</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">375.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">398.438</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abur_2014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">421.875</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For Subject 1, there are 248 frequencies per session per ear (in the desired range), the frequencies are always the same, and 7 total sessions. Thus, it appears any averaging must be across sessions. We’ll confirm some of these values below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> SubjectNumber, <span class="kw">Session</span>, Ear,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">SUM</span>(<span class="dv">1</span>) <span class="kw">AS</span> N,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">AVG</span>(Absorbance) <span class="kw">AS</span> mean_absorbance</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Measurements</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">Identifier</span> <span class="op">=</span> <span class="st">'Abur_2014'</span> <span class="kw">AND</span> Frequency <span class="op">&lt;</span> <span class="dv">8000</span> <span class="kw">AND</span> Frequency <span class="op">&gt;</span> <span class="dv">200</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> SubjectNumber <span class="kw">IN</span> (<span class="dv">1</span>, <span class="dv">3</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> SubjectNumber, <span class="kw">Session</span>, Ear;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">SubjectNumber</th>
+<th style="text-align: right;">Session</th>
+<th style="text-align: left;">Ear</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">mean_absorbance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5257449</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5743758</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5323120</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.6114478</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5418992</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.6145605</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.4567001</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5136930</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5258554</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">248</td>
+<td style="text-align: right;">0.5737305</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For Subjects 1 and 3, there are 248 frequencies per session per ear.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a># Note that variables can be used <span class="kw">in</span> <span class="kw">WHERE</span> but <span class="kw">not</span> <span class="kw">SELECT</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> SubjectNumber, Ear, Frequency,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">SUM</span>(<span class="dv">1</span>) <span class="kw">AS</span> N,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">AVG</span>(Absorbance) <span class="kw">AS</span> mean_absorbance</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Measurements</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">Identifier</span> <span class="op">=</span> <span class="st">'Abur_2014'</span> <span class="kw">AND</span> Frequency <span class="op">=</span> <span class="dv">1500</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> SubjectNumber, Ear, Frequency;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">SubjectNumber</th>
+<th style="text-align: left;">Ear</th>
+<th style="text-align: right;">Frequency</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">mean_absorbance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.5646144</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.6530876</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.5346824</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.6708667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.8018977</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0.7468426</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0.6689936</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0.5893204</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Left</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.5188966</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Right</td>
+<td style="text-align: right;">1500</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.5936866</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>There are a variable number of sessions per subject (4-8).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Frequency,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">SUM</span>(<span class="dv">1</span>) <span class="kw">AS</span> N,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">AVG</span>(Absorbance) <span class="kw">AS</span> mean_absorbance</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Measurements</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">Identifier</span> <span class="op">=</span> <span class="st">'Abur_2014'</span> <span class="kw">AND</span> Frequency <span class="op">&lt;</span> <span class="dv">8000</span> <span class="kw">AND</span> Frequency <span class="op">&gt;</span> <span class="dv">200</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> Frequency;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Frequency</th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">mean_absorbance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">210.938</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.0784746</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">234.375</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.0826420</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">257.812</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.0948482</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">281.250</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1031472</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">304.688</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1137576</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">328.125</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1221205</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">351.562</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1334329</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">375.000</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1447725</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">398.438</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1563874</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">421.875</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0.1806973</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>And it seems to always be the same 248 frequencies!</p>
+<p>So let’s create a data base with mean absorbance for each combination of study, subject, ear, and frequency:</p>
+<div class="cell" data-output.var="temp">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">Identifier</span>, SubjectNumber, Ear, Frequency,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">SUM</span>(<span class="dv">1</span>) <span class="kw">AS</span> N,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">AVG</span>(Absorbance) <span class="kw">AS</span> mean_absorbance</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Measurements</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">Identifier</span> <span class="kw">IN</span> (<span class="st">'Abur_2014'</span>, <span class="st">'Feeney_2017'</span>, <span class="st">'Groon_2015'</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">'Lewis_2015'</span>, <span class="st">'Liu_2008'</span>, <span class="st">'Rosowski_2012'</span>, <span class="st">'Shahnaz_2006'</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>              <span class="st">'Shaver_2013'</span>, <span class="st">'Sun_2016'</span>, <span class="st">'Voss_1994'</span>, <span class="st">'Voss_2010'</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>              <span class="st">'Werner_2010'</span>) <span class="kw">AND</span> Frequency <span class="op">&lt;</span> <span class="dv">8000</span> <span class="kw">AND</span> Frequency <span class="op">&gt;</span> <span class="dv">200</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> <span class="kw">Identifier</span>, SubjectNumber, Ear, Frequency;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 155103 x 6 data set</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># head(temp, 300)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This creates Figure 1 without the informative legend:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>temp <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">logFrequency =</span> <span class="fu">log10</span>(Frequency)) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> logFrequency, <span class="at">y =</span> mean_absorbance, <span class="at">color =</span> Identifier)) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16_SQL_exercises_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now use JOIN to create <code>temp2</code> which will include the information you need to produce the informative labels: author (short list), year published, sample size, and instrument used for measurements. Then produce an improved version of the plot above using <code>temp</code> (for smooth curves) and <code>temp2</code> (for labels).</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Paul Roback, 2025<br> All content licensed under <img src="https://static.thenounproject.com/png/70967-200.png" height="20"> (<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Site built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

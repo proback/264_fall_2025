@@ -206,6 +206,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./14_first_shiny_instructions.html">
  <span class="dropdown-text">First Shiny instructions</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./16_SQL_exercises.html">
+ <span class="dropdown-text">SQL: Exercises</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -224,6 +228,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="./miniproject03.html">
  <span class="dropdown-text">Mini-Project 3: Building a Personal Quarto Webpage</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./finalproject.html">
+ <span class="dropdown-text">Final Project: Interactive Data Storytelling</span></a>
   </li>  
     </ul>
   </li>
@@ -336,6 +344,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./14_first_shiny_instructions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">First Shiny instructions</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16_SQL_exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SQL: Exercises</span></a>
   </div>
 </li>
     </ul>
@@ -511,16 +525,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>title_temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{xml_nodeset (10)}
- [1] &lt;h3 class="thumbnail-teaser__heading"&gt;HHS Doubles AI-Backed Childhood Ca ...
- [2] &lt;h3 class="thumbnail-teaser__heading"&gt;Secretary Kennedy Swears in Dr. An ...
- [3] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH establishes nation's first ded ...
- [4] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH launches $50M Autism Data Scie ...
- [5] &lt;h3 class="thumbnail-teaser__heading"&gt;Repeated head impacts cause early  ...
- [6] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH launches landmark project on w ...
- [7] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH launches consortium to reduce  ...
- [8] &lt;h3 class="thumbnail-teaser__heading"&gt;Acupuncture treatment improves dis ...
- [9] &lt;h3 class="thumbnail-teaser__heading"&gt;Treating opioid addiction in jails ...
-[10] &lt;h3 class="thumbnail-teaser__heading"&gt;One dose of antibiotic treats earl ...</code></pre>
+ [1] &lt;h3 class="thumbnail-teaser__heading"&gt;Dr. Kyle Walsh selected to lead th ...
+ [2] &lt;h3 class="thumbnail-teaser__heading"&gt;HHS Doubles AI-Backed Childhood Ca ...
+ [3] &lt;h3 class="thumbnail-teaser__heading"&gt;Secretary Kennedy Swears in Dr. An ...
+ [4] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH establishes nation's first ded ...
+ [5] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH launches $50M Autism Data Scie ...
+ [6] &lt;h3 class="thumbnail-teaser__heading"&gt;Repeated head impacts cause early  ...
+ [7] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH launches landmark project on w ...
+ [8] &lt;h3 class="thumbnail-teaser__heading"&gt;NIH launches consortium to reduce  ...
+ [9] &lt;h3 class="thumbnail-teaser__heading"&gt;Acupuncture treatment improves dis ...
+[10] &lt;h3 class="thumbnail-teaser__heading"&gt;Treating opioid addiction in jails ...</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Extract content from nodes with html_text(), html_name(), </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    html_attrs(), html_children(), html_table(), etc.</span></span>
@@ -528,16 +542,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>title_vec <span class="ot">&lt;-</span> <span class="fu">html_text</span>(title_temp)</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>title_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "HHS Doubles AI-Backed Childhood Cancer Research Funding"                                                       
- [2] "Secretary Kennedy Swears in Dr. Anthony Letai as Director of the National Cancer Institute"                    
- [3] "NIH establishes nation's first dedicated organoid development center to reduce reliance on animal modeling"    
- [4] "NIH launches $50M Autism Data Science Initiative to unlock causes and improve outcomes"                        
- [5] "Repeated head impacts cause early neuron loss and inflammation in young athletes"                              
- [6] "NIH launches landmark project on whole-person health and function"                                             
- [7] "NIH launches consortium to reduce risk of stillbirth in the U.S."                                              
- [8] "Acupuncture treatment improves disabling effects of chronic low back pain in older adults"                     
- [9] "Treating opioid addiction in jails improves treatment engagement, reduces overdose deaths and reincarceration "
-[10] "One dose of antibiotic treats early syphilis as well as three doses&nbsp;"                                          </code></pre>
+<pre><code> [1] "Dr. Kyle Walsh selected to lead the National Institute of Environmental Health Sciences"                       
+ [2] "HHS Doubles AI-Backed Childhood Cancer Research Funding"                                                       
+ [3] "Secretary Kennedy Swears in Dr. Anthony Letai as Director of the National Cancer Institute"                    
+ [4] "NIH establishes nation's first dedicated organoid development center to reduce reliance on animal modeling"    
+ [5] "NIH launches $50M Autism Data Science Initiative to unlock causes and improve outcomes"                        
+ [6] "Repeated head impacts cause early neuron loss and inflammation in young athletes"                              
+ [7] "NIH launches landmark project on whole-person health and function"                                             
+ [8] "NIH launches consortium to reduce risk of stillbirth in the U.S."                                              
+ [9] "Acupuncture treatment improves disabling effects of chronic low back pain in older adults"                     
+[10] "Treating opioid addiction in jails improves treatment engagement, reduces overdose deaths and reincarceration "</code></pre>
 </div>
 </div>
 <p>You can also write this all together with a pipe:</p>
@@ -554,16 +568,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".thumbnail-teaser__heading"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "HHS Doubles AI-Backed Childhood Cancer Research Funding"                                                       
- [2] "Secretary Kennedy Swears in Dr. Anthony Letai as Director of the National Cancer Institute"                    
- [3] "NIH establishes nation's first dedicated organoid development center to reduce reliance on animal modeling"    
- [4] "NIH launches $50M Autism Data Science Initiative to unlock causes and improve outcomes"                        
- [5] "Repeated head impacts cause early neuron loss and inflammation in young athletes"                              
- [6] "NIH launches landmark project on whole-person health and function"                                             
- [7] "NIH launches consortium to reduce risk of stillbirth in the U.S."                                              
- [8] "Acupuncture treatment improves disabling effects of chronic low back pain in older adults"                     
- [9] "Treating opioid addiction in jails improves treatment engagement, reduces overdose deaths and reincarceration "
-[10] "One dose of antibiotic treats early syphilis as well as three doses&nbsp;"                                          </code></pre>
+<pre><code> [1] "Dr. Kyle Walsh selected to lead the National Institute of Environmental Health Sciences"                       
+ [2] "HHS Doubles AI-Backed Childhood Cancer Research Funding"                                                       
+ [3] "Secretary Kennedy Swears in Dr. Anthony Letai as Director of the National Cancer Institute"                    
+ [4] "NIH establishes nation's first dedicated organoid development center to reduce reliance on animal modeling"    
+ [5] "NIH launches $50M Autism Data Science Initiative to unlock causes and improve outcomes"                        
+ [6] "Repeated head impacts cause early neuron loss and inflammation in young athletes"                              
+ [7] "NIH launches landmark project on whole-person health and function"                                             
+ [8] "NIH launches consortium to reduce risk of stillbirth in the U.S."                                              
+ [9] "Acupuncture treatment improves disabling effects of chronic low back pain in older adults"                     
+[10] "Treating opioid addiction in jails improves treatment engagement, reduces overdose deaths and reincarceration "</code></pre>
 </div>
 </div>
 <p>And finally we wrap the 4 steps above into the <code>bow</code> and <code>scrape</code> functions from the <code>polite</code> package:</p>
@@ -575,16 +589,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>nih_title</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "HHS Doubles AI-Backed Childhood Cancer Research Funding"                                                       
- [2] "Secretary Kennedy Swears in Dr. Anthony Letai as Director of the National Cancer Institute"                    
- [3] "NIH establishes nation's first dedicated organoid development center to reduce reliance on animal modeling"    
- [4] "NIH launches $50M Autism Data Science Initiative to unlock causes and improve outcomes"                        
- [5] "Repeated head impacts cause early neuron loss and inflammation in young athletes"                              
- [6] "NIH launches landmark project on whole-person health and function"                                             
- [7] "NIH launches consortium to reduce risk of stillbirth in the U.S."                                              
- [8] "Acupuncture treatment improves disabling effects of chronic low back pain in older adults"                     
- [9] "Treating opioid addiction in jails improves treatment engagement, reduces overdose deaths and reincarceration "
-[10] "One dose of antibiotic treats early syphilis as well as three doses&nbsp;"                                          </code></pre>
+<pre><code> [1] "Dr. Kyle Walsh selected to lead the National Institute of Environmental Health Sciences"                       
+ [2] "HHS Doubles AI-Backed Childhood Cancer Research Funding"                                                       
+ [3] "Secretary Kennedy Swears in Dr. Anthony Letai as Director of the National Cancer Institute"                    
+ [4] "NIH establishes nation's first dedicated organoid development center to reduce reliance on animal modeling"    
+ [5] "NIH launches $50M Autism Data Science Initiative to unlock causes and improve outcomes"                        
+ [6] "Repeated head impacts cause early neuron loss and inflammation in young athletes"                              
+ [7] "NIH launches landmark project on whole-person health and function"                                             
+ [8] "NIH launches consortium to reduce risk of stillbirth in the U.S."                                              
+ [9] "Acupuncture treatment improves disabling effects of chronic low back pain in older adults"                     
+[10] "Treating opioid addiction in jails improves treatment engagement, reduces overdose deaths and reincarceration "</code></pre>
 </div>
 </div>
 </section>

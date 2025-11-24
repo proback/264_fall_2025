@@ -18,7 +18,7 @@ editor_options:
 #| knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2025/blob/main/SQL_code/15_SQL.qmd).  Just hit the Download Raw File button.
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/SQL_code/15_SQL.qmd).  Just hit the Download Raw File button.
 
 In this activity, we will follow closely to Ch 15 in MDSR.  When doing database queries I often allow chunk output to occur inline.
 
@@ -30,7 +30,7 @@ library(dbplyr)
 library(DBI)
 ```
 
-Connect to St. Olaf's database server, where the flight_data database lives:
+Connect to St. Olaf's database server, where the flight_data database lives (note: if you are off-campus, you must first establish a VPN connection):
 
 ```{r}
 library(RMariaDB)
@@ -41,7 +41,7 @@ con <- dbConnect(
 )
 ```
 
-Right now there is only one "table" called `flightdata` in the `flight_data` database.  Notice that this is actually a SQL chunk which uses SQL commands...
+Notice that the code chunk below is actually a SQL chunk which uses SQL commands!  Running this chunk should tell us that there are 11 tables in the `flight_data` database.  These tables emulate several of the data sets found in the `nycflights13` package, except over many more years and many more airports!
 
 ```{sql, connection = con}
 SHOW TABLES;
@@ -87,7 +87,7 @@ head(q, 4)
 show_query(q)
 ```
 
-However, there is no chunk preview option with SQL code, so you have to (a) knit the document to check that it works, or (b) select "chunk output inline" under the settings button to get a "run chunk" button in the sql chunk.  The code below will show sql results if you leave off output.var, otherwise you need to actually print mydataframe in an R chunk.  
+However, there is no chunk preview option with SQL code, so you have to (a) knit the document to check that it works, or (b) select "chunk output inline" under the settings button to get a "run chunk" button in the sql chunk.  The code below will show sql results if you leave off output.var, otherwise you need to actually print `mydataframe` in an R chunk.  
 
 This post is helpful:  https://irene.rbind.io/post/using-sql-in-rstudio/
 
@@ -151,19 +151,19 @@ translate_sql(my_paste("this", "is", "a", "string"),
               con = con)
 
 # will throw an error even though a valid R expression
-flights %>%
+flights |>
   mutate(dest_code = my_paste(dest, "(", destcityname, ")"))
 
 # how to make it work - use CONCAT, the MySQL equivalent to paste0, or
 # use collect to break the MySQL connection and return a tbl_df
 class(flights)
 
-flights %>%
+flights |>
   mutate(dest_code = CONCAT(dest, "(", destcityname, ")"))
 
 # Not working - flights too big to collect?
-#flights %>%
-#  collect() %>%
+#flights |>
+#  collect() |>
 #  mutate(dest_code = my_paste(dest, "(", destcityname, ")"))
 ```
 
@@ -173,13 +173,13 @@ flights %>%
 Objects take up MUCH less space in memory when still lives on the server vs. collected into R
 
 ```{r}
-airports %>%
-  object.size() %>%
+airports |>
+  object.size() |>
   print(units = "Kb") 
 
-airports %>%
-  collect() %>%
-  object.size() %>%
+airports |>
+  collect() |>
+  object.size() |>
   print(units = "Kb")
 
 # data sets get big quickly - already 3/4 Gb
@@ -212,7 +212,7 @@ LIMIT 0, 10;
 Be sure to set limit so it doesn't run forever
 
 ```{sql, connection = con}
-SELECT origin origincityname FROM flightdata
+SELECT origin, origincityname FROM flightdata
 LIMIT 0, 100;
 ```
 
@@ -485,18 +485,24 @@ FROM flightdata
 LIMIT 0, 6;
 ```
 
+```{sql, connection = con}
+SELECT *
+FROM airlines
+LIMIT 0, 6;
+```
+
 Join in carrier info as well
 
 ```{sql, connection = con}
-#SELECT 
-#  dest, a.name AS dest_name,
-#  o.carrier, c.name AS carrier_name
-#FROM flights AS o
-#JOIN airports AS a ON o.dest = a.faa
-#JOIN carriers AS c ON o.carrier = c.carrier
-#WHERE year = 2013 AND month = 6 AND day = 26
-#  AND origin = 'BDL'
-#IMIT 0, 6;
+SELECT 
+  dest, a.name AS dest_name,
+  o.Reporting_Airline as carrier, 
+  c.name AS carrier_name
+FROM flightdata AS o
+JOIN airports AS a ON o.dest = a.faa
+JOIN airlines AS c ON o.Reporting_Airline = c.carrier
+WHERE Year = 2019 AND Month = 6 AND DayOfMonth = 26 AND origin = 'BDL'
+LIMIT 0, 6;
 ```
 
 Join onto same table more than once to get both airports.  
@@ -504,32 +510,33 @@ Join onto same table more than once to get both airports.
 See book for nice discussion about why it's much more efficient to store things in multiple data sets connected by keys
 
 ```{sql, connection = con}
-#SELECT 
-#  flight,
-#  a2.name AS orig_name,
-#  a1.name AS dest_name,
-#  c.name AS carrier_name
-#FROM flights AS o
-#OIN airports AS a1 ON o.dest = a1.faa
-#JOIN airports AS a2 ON o.origin = a2.faa
-#JOIN carriers AS c ON o.carrier = c.carrier
-#WHERE year = 2013 AND month = 6 AND day = 26
-# AND origin = 'BDL'
-#LIMIT 0, 6;
+SELECT 
+  o.flight_number_reporting_airline AS flight,
+  a2.name AS orig_name,
+  a1.name AS dest_name,
+  c.name AS carrier_name
+FROM flightdata AS o
+JOIN airports AS a1 ON o.dest = a1.faa
+JOIN airports AS a2 ON o.origin = a2.faa
+JOIN airlines AS c ON o.Reporting_Airline = c.carrier
+WHERE Year = 2019 AND Month = 6 AND DayOfMonth = 26
+ AND origin = 'BDL'
+LIMIT 0, 6;
 ```
 
-The result from a LEFT JOIN is always a superset of the result of a (inner, regular, natural) JOIN - every row in the first data set is returned.  Here we find which flights have airports without info in the airports dataset.
+The result from a LEFT JOIN is always a superset of the result of a (inner, regular, natural) JOIN - every row in the first data set is returned.  Here we find which flights have airports without info in the airports dataset (looks like `airports` is more complete than the airports data set in `nycflights13`).
 
 ```{sql, connection = con}
-#SELECT 
-#  year, month, day, origin, dest, 
-#  a.name AS dest_name,
-#  flight, carrier
-#FROM flights AS o
-#LEFT JOIN airports AS a ON o.dest = a.faa
-#WHERE year = 2013 AND month = 6 AND day = 26
-#  AND a.name is null
-#LIMIT 0, 6;
+SELECT 
+  Year, Month, DayOfMonth, origin, dest, 
+  a.name AS dest_name,
+  o.Reporting_Airline AS carrier,
+  o.flight_number_reporting_airline AS flight
+FROM flightdata AS o
+LEFT JOIN airports AS a ON o.dest = a.faa
+WHERE Year = 2019 AND Month = 6 AND DayOfMonth = 26
+  AND a.name is null
+LIMIT 0, 6;
 ```
 
 ### Section 15.4.8: UNION
@@ -560,9 +567,9 @@ LIMIT 0,10;
 Treat the table from an initial query as a database for the next query (note that these are often inefficient in their use of indices)
 
 ```{sql, connection = con}
-SELECT IATA, Timezone, City, `Airport Name` AS name 
-FROM airports AS a
-WHERE Timezone < -6
+SELECT faa, name, city, tzone, tz
+FROM airports 
+WHERE tz < -6
 LIMIT 0, 6;
 ```
 
@@ -571,18 +578,18 @@ Use the query from above (airports in Mountain time zone or further west) as sub
 ```{sql, connection = con}
 SELECT 
   dest, 
-  a.`Airport Name` AS dest_name, 
+  a.name AS dest_name, 
   SUM(1) AS N, 
   COUNT(distinct Reporting_Airline) AS numCarriers
 FROM flightdata AS f
-LEFT JOIN airports AS a ON f.origin = a.IATA
+LEFT JOIN airports AS a ON f.dest = a.faa
 WHERE Year = 2019 
-  AND dest = 'BDL' 
-  AND origin IN 
-  (SELECT IATA
-    FROM airports
-    WHERE Timezone < -6)
-GROUP BY origin;
+  AND origin = 'BDL' 
+  AND dest IN 
+  (SELECT faa
+    FROM airports 
+    WHERE tz < -6)
+GROUP BY dest;
 ```
 
 Below is another way to have done the same query
@@ -590,15 +597,15 @@ Below is another way to have done the same query
 ```{sql, connection = con}
 SELECT 
   dest, 
-  a.`Airport Name` AS dest_name, 
+  a.name AS dest_name, 
   SUM(1) AS N, 
   COUNT(distinct Reporting_Airline) AS numCarriers
 FROM flightdata AS f
-LEFT JOIN airports AS a ON f.origin = a.IATA
+LEFT JOIN airports AS a ON f.dest = a.faa
 WHERE Year = 2019 
-  AND dest = 'BDL' 
-  AND Timezone < -6
-GROUP BY origin;
+  AND origin = 'BDL' 
+  AND tz < -6
+GROUP BY dest;
 ```
 
 
@@ -670,32 +677,32 @@ ORDER BY shortDelay DESC
 ')
 
 # Remove extra junk from carrier names
-#res <- res %>%
-#  as_tibble() %>%
+#res <- res |>
+#  as_tibble() |>
 #  mutate(
 #    name = str_remove_all(name, "Air(lines|ways| Lines)"),
 #    name = str_remove_all(name, "(Inc\\.|Co\\.|Corporation)"),
 #    name = str_remove_all(name, "\\(.*\\)"),
 #    name = str_remove_all(name, " *$")
 #  )
-#res %>%
+#res |>
 #  pull(name)
 
 # Handle carrier name changes then calculate proportions for plot
-carriers_2024 <- res %>%
+carriers_2024 <- res |>
 #  mutate(
 #    groupName = case_when(
 #      name %in% c("Envoy Air", "American Eagle") ~ "American",
 #      name == "AirTran" ~ "Southwest", 
 #      TRUE ~ name
 #    )
-#  ) %>%
-  group_by(Reporting_Airline) %>%
+#  ) |>
+  group_by(Reporting_Airline) |>
   summarize(
     numFlights = sum(numFlights), 
     wShortDelay = sum(shortDelay), 
     wLongDelay = sum(longDelay)
-  ) %>%
+  ) |>
   mutate(
     wShortDelayPct = wShortDelay / numFlights,
     wLongDelayPct = wLongDelay / numFlights,
@@ -707,8 +714,8 @@ carriers_2024
 # tidy using pivot_longer before plotting
 # carriers_2024 is 15x8 (one row per carrier) while carriers_tidy is 30x4
 # (one row per carrier and delay type)
-carriers_tidy <- carriers_2024 %>%
-  select(Reporting_Airline, wShortDelayPct, wLongDelayPct, delayed) %>%
+carriers_tidy <- carriers_2024 |>
+  select(Reporting_Airline, wShortDelayPct, wLongDelayPct, delayed) |>
   pivot_longer(
     -c(Reporting_Airline, delayed), 
     names_to = "delay_type", 
