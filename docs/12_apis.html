@@ -498,7 +498,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>coco               <span class="co"># Status of 200 is good!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Response [http://www.omdbapi.com/?t=Coco&amp;y=2017&amp;apikey=4671c2d5]
-  Date: 2025-11-24 03:01
+  Date: 2025-12-01 21:09
   Status: 200
   Content-Type: application/json; charset=utf-8
   Size: 1.04 kB</code></pre>
@@ -683,6 +683,7 @@ dbl (3): Acres, Latitude, Longitude
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>park_code <span class="ot">&lt;-</span> np_kaggle<span class="sc">$</span><span class="st">`</span><span class="at">Park Code</span><span class="st">`</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Notice how far we have to drill down to find addresses and activities!</p>
+<p><strong>Note: On 12/1/25 scraping from the NPS webpage with an API key was not working, so I changed the R chunks below to <code>eval: FALSE</code></strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Try grabbing elements for one park</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>url1 <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://developer.nps.gov/api/v1/parks?parkCode="</span></span>
@@ -743,22 +744,6 @@ dbl (3): Acres, Latitude, Longitude
 <span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>park_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(park_code, parks_address, activity_list)</span>
 <span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>park_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 56 × 3
-   park_code parks_address                                         activity_list
-   &lt;chr&gt;     &lt;chr&gt;                                                 &lt;chr&gt;        
- 1 ACAD      25 Visitor Center Road  Hulls Cove Visitor Center Ba… Arts and Cul…
- 2 ARCH      5 miles north of Moab, Utah, on US 191   Moab UT, 84… Arts and Cul…
- 3 BADL      25216 Ben Reifel Road   Interior SD, 57750            Auto and ATV…
- 4 BIBE      1 Panther Junction   Big Bend National Park TX, 79834 Auto and ATV…
- 5 BISC      9700 SW 328th Street  Sir Lancelot Jones Way Homeste… Boating, Mot…
- 6 BLCA      South Rim Visitor Center  9800 Highway 347 Montrose … Astronomy, S…
- 7 BRCA      Highway 63  Bryce Canyon National Park Bryce UT, 847… Astronomy, S…
- 8 CANY      Island in the Sky - 33 miles from Moab on UT 313 The… Astronomy, S…
- 9 CARE      52 West Headquarters Drive   Torrey UT, 84775         Arts and Cul…
-10 CAVE      727 Carlsbad Caverns Highway   Carlsbad NM, 88220     Astronomy, S…
-# ℹ 46 more rows</code></pre>
-</div>
 </div>
 </section>
 <section id="us-census-bureau-data" class="level2">
@@ -817,17 +802,17 @@ dbl (3): Acres, Latitude, Longitude
 <p>Typically, each of these URL components will be specified in the API documentation. Sometimes, the scheme, hostname, and path (<code>https://api.census.gov/data/2019/acs/acs1</code>) will be referred to as the <strong><a href="https://en.wikipedia.org/wiki/Web_API#Endpoints">endpoint</a></strong> for the API call.</p>
 <p>All right, let’s try this! Let’s grab total population and median household income for all census tracts in MN using httr:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load in your API key</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>census_api_key <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/DS2_preview_work/census_api_key.txt"</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, load your NPS API key using:</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># census_api_key &lt;- Sys.getenv("CENSUS_API_KEY")</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://api.census.gov/data/2020/acs/acs5?get=NAME,B01003_001E,B19013_001E&amp;for=tract:*&amp;in=state:27&amp;in=county:053"</span>, <span class="st">"&amp;key="</span>, census_api_key)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>acs5 <span class="ot">&lt;-</span> <span class="fu">GET</span>(url)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>details <span class="ot">&lt;-</span> <span class="fu">content</span>(acs5, <span class="st">"parsed"</span>)</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># details </span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">1</span>]]  <span class="co"># variable names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load in your API key</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>census_api_key <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"~/264_fall_2025/DS2_preview_work/census_api_key.txt"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively, load your NPS API key using:</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># census_api_key &lt;- Sys.getenv("CENSUS_API_KEY")</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">"https://api.census.gov/data/2020/acs/acs5?get=NAME,B01003_001E,B19013_001E&amp;for=tract:*&amp;in=state:27&amp;in=county:053"</span>, <span class="st">"&amp;key="</span>, census_api_key)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>acs5 <span class="ot">&lt;-</span> <span class="fu">GET</span>(url)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>details <span class="ot">&lt;-</span> <span class="fu">content</span>(acs5, <span class="st">"parsed"</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># details </span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">1</span>]]  <span class="co"># variable names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
 [1] "NAME"
@@ -847,7 +832,7 @@ dbl (3): Acres, Latitude, Longitude
 [[6]]
 [1] "tract"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">2</span>]]  <span class="co"># list with information on 1st tract</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>details[[<span class="dv">2</span>]]  <span class="co"># list with information on 1st tract</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
 [1] "Census Tract 1.01, Hennepin County, Minnesota"
@@ -867,24 +852,24 @@ dbl (3): Acres, Latitude, Longitude
 [[6]]
 [1] "000101"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>name <span class="ot">=</span> <span class="fu">character</span>()</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>population <span class="ot">=</span> <span class="fu">double</span>()</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>median_income <span class="ot">=</span> <span class="fu">double</span>()</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>tract <span class="ot">=</span> <span class="fu">character</span>()</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">330</span>) {</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  name[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  population[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">2</span>]][<span class="dv">1</span>]</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  median_income[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">3</span>]][<span class="dv">1</span>]</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  tract[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">6</span>]][<span class="dv">1</span>]</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>hennepin_httr <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> name,</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">population =</span> <span class="fu">parse_number</span>(population),</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">median_income =</span> <span class="fu">parse_number</span>(median_income),</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">tract =</span> tract</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>hennepin_httr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>name <span class="ot">=</span> <span class="fu">character</span>()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>population <span class="ot">=</span> <span class="fu">double</span>()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>median_income <span class="ot">=</span> <span class="fu">double</span>()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>tract <span class="ot">=</span> <span class="fu">character</span>()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">330</span>) {</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  name[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  population[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">2</span>]][<span class="dv">1</span>]</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  median_income[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">3</span>]][<span class="dv">1</span>]</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  tract[i<span class="dv">-1</span>] <span class="ot">&lt;-</span> details[[i]][[<span class="dv">6</span>]][<span class="dv">1</span>]</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>hennepin_httr <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> name,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">population =</span> <span class="fu">parse_number</span>(population),</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">median_income =</span> <span class="fu">parse_number</span>(median_income),</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">tract =</span> tract</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>hennepin_httr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 329 × 4
    name                                          population median_income tract 
@@ -929,16 +914,16 @@ dbl (3): Acres, Latitude, Longitude
 </ul>
 <p><code>get_acs()</code> is one of the functions that is part of <code>tidycensus</code>. Here we use <code>get_acs()</code> to obtain the same variables we acquired above using <code>httr</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus <span class="ot">&lt;-</span> tidycensus<span class="sc">::</span><span class="fu">get_acs</span>(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="dv">2021</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> <span class="st">"MN"</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">geography =</span> <span class="st">"tract"</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">"B01003_001"</span>, <span class="st">"B19013_001"</span>),</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">output =</span> <span class="st">"wide"</span>,</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">geometry =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">county =</span> <span class="st">"Hennepin"</span>,   <span class="co"># specify county in call</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_call =</span> <span class="cn">TRUE</span>       <span class="co"># see resulting query</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus <span class="ot">&lt;-</span> tidycensus<span class="sc">::</span><span class="fu">get_acs</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="dv">2021</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> <span class="st">"MN"</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">geography =</span> <span class="st">"tract"</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">"B01003_001"</span>, <span class="st">"B19013_001"</span>),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">output =</span> <span class="st">"wide"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">geometry =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">county =</span> <span class="st">"Hennepin"</span>,   <span class="co"># specify county in call</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_call =</span> <span class="cn">TRUE</span>       <span class="co"># see resulting query</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Getting data from the 2017-2021 5-year ACS</code></pre>
 </div>
@@ -953,29 +938,19 @@ dbl (3): Acres, Latitude, Longitude
   |                                                                            
   |                                                                      |   0%
   |                                                                            
-  |==                                                                    |   2%
+  |=                                                                     |   1%
   |                                                                            
   |==                                                                    |   3%
   |                                                                            
   |===                                                                   |   4%
   |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
   |====                                                                  |   5%
   |                                                                            
   |====                                                                  |   6%
   |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
   |======                                                                |   8%
   |                                                                            
-  |======                                                                |   9%
-  |                                                                            
   |=======                                                               |  10%
-  |                                                                            
-  |========                                                              |  11%
   |                                                                            
   |========                                                              |  12%
   |                                                                            
@@ -983,15 +958,11 @@ dbl (3): Acres, Latitude, Longitude
   |                                                                            
   |==========                                                            |  14%
   |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
   |===========                                                           |  15%
   |                                                                            
   |===========                                                           |  16%
   |                                                                            
   |============                                                          |  17%
-  |                                                                            
-  |=============                                                         |  18%
   |                                                                            
   |=============                                                         |  19%
   |                                                                            
@@ -999,107 +970,109 @@ dbl (3): Acres, Latitude, Longitude
   |                                                                            
   |===============                                                       |  21%
   |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
   |================                                                      |  23%
   |                                                                            
-  |=================                                                     |  25%
+  |=================                                                     |  24%
   |                                                                            
-  |==================                                                    |  26%
+  |==================                                                    |  25%
   |                                                                            
-  |====================                                                  |  28%
+  |===================                                                   |  27%
+  |                                                                            
+  |====================                                                  |  29%
   |                                                                            
   |=====================                                                 |  30%
   |                                                                            
-  |======================                                                |  31%
+  |======================                                                |  32%
   |                                                                            
   |=======================                                               |  33%
   |                                                                            
-  |========================                                              |  34%
+  |========================                                              |  35%
   |                                                                            
-  |=========================                                             |  36%
+  |==========================                                            |  37%
   |                                                                            
-  |==========================                                            |  38%
+  |===========================                                           |  38%
   |                                                                            
-  |===========================                                           |  39%
+  |============================                                          |  40%
   |                                                                            
-  |============================                                          |  41%
+  |=============================                                         |  41%
   |                                                                            
-  |==============================                                        |  42%
+  |==============================                                        |  43%
   |                                                                            
   |===============================                                       |  44%
   |                                                                            
-  |================================                                      |  45%
+  |===============================                                       |  45%
   |                                                                            
-  |=================================                                     |  47%
+  |================================                                      |  46%
+  |                                                                            
+  |=================================                                     |  48%
   |                                                                            
   |==================================                                    |  49%
   |                                                                            
-  |===================================                                   |  50%
+  |====================================                                  |  51%
   |                                                                            
-  |====================================                                  |  52%
+  |=====================================                                 |  52%
   |                                                                            
-  |=====================================                                 |  53%
+  |======================================                                |  54%
   |                                                                            
-  |=======================================                               |  55%
+  |=======================================                               |  56%
   |                                                                            
   |========================================                              |  57%
   |                                                                            
-  |=========================================                             |  58%
+  |=========================================                             |  59%
   |                                                                            
   |==========================================                            |  60%
   |                                                                            
-  |===========================================                           |  61%
+  |===========================================                           |  62%
   |                                                                            
-  |============================================                          |  63%
+  |=============================================                         |  64%
   |                                                                            
-  |=============================================                         |  65%
+  |==============================================                        |  65%
   |                                                                            
-  |==============================================                        |  66%
+  |===============================================                       |  67%
   |                                                                            
-  |===============================================                       |  68%
+  |================================================                      |  68%
   |                                                                            
-  |=================================================                     |  69%
+  |=================================================                     |  70%
   |                                                                            
-  |==================================================                    |  71%
+  |==================================================                    |  72%
   |                                                                            
   |===================================================                   |  73%
   |                                                                            
-  |====================================================                  |  74%
+  |====================================================                  |  75%
   |                                                                            
   |=====================================================                 |  76%
   |                                                                            
-  |======================================================                |  77%
+  |=======================================================               |  78%
   |                                                                            
-  |=======================================================               |  79%
+  |========================================================              |  80%
   |                                                                            
-  |========================================================              |  81%
+  |=========================================================             |  81%
   |                                                                            
-  |=========================================================             |  82%
+  |==========================================================            |  83%
   |                                                                            
   |===========================================================           |  84%
   |                                                                            
-  |============================================================          |  85%
+  |============================================================          |  86%
   |                                                                            
-  |=============================================================         |  87%
+  |=============================================================         |  88%
   |                                                                            
-  |==============================================================        |  88%
+  |==============================================================        |  89%
   |                                                                            
-  |===============================================================       |  90%
+  |===============================================================       |  91%
   |                                                                            
-  |================================================================      |  92%
+  |=================================================================     |  92%
   |                                                                            
-  |=================================================================     |  93%
+  |==================================================================    |  94%
   |                                                                            
-  |==================================================================    |  95%
+  |===================================================================   |  95%
   |                                                                            
-  |===================================================================   |  96%
+  |====================================================================  |  97%
   |                                                                            
-  |===================================================================== |  98%
+  |===================================================================== |  99%
   |                                                                            
   |======================================================================| 100%</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 329 features and 6 fields
 Geometry type: MULTIPOLYGON
@@ -1134,18 +1107,18 @@ First 10 features:
 <p>Obtaining raw data from the Census Bureau was that easy! Often we will have to obtain and use a secret API key to access the data, but that’s not always necessary with <code>tidycensus</code>. (Note: most wrappers DO require an API key!)</p>
 <p>Now we can tidy that data and produce plots and analyses.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename cryptic variables from the census form</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus <span class="ot">&lt;-</span> hennepin_tidycensus <span class="sc">|&gt;</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">population =</span> B01003_001E,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">population_moe =</span> B01003_001M,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_income =</span> B19013_001E,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_income_moe =</span> B19013_001M)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Look for relationships between variables with 1 row per tract</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(hennepin_tidycensus) <span class="sc">|&gt;</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> population, <span class="at">y =</span> median_income)) <span class="sc">+</span> </span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename cryptic variables from the census form</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>hennepin_tidycensus <span class="ot">&lt;-</span> hennepin_tidycensus <span class="sc">|&gt;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">population =</span> B01003_001E,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">population_moe =</span> B01003_001M,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_income =</span> B19013_001E,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_income_moe =</span> B19013_001M)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Look for relationships between variables with 1 row per tract</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(hennepin_tidycensus) <span class="sc">|&gt;</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> population, <span class="at">y =</span> median_income)) <span class="sc">+</span> </span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1153,11 +1126,11 @@ First 10 features:
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Since census data comes with the geometry of census tracts, we can </span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   plot with geom_sf</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> hennepin_tidycensus) <span class="sc">+</span> </span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> median_income), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Since census data comes with the geometry of census tracts, we can </span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   plot with geom_sf</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> hennepin_tidycensus) <span class="sc">+</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> median_income), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

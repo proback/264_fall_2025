@@ -454,25 +454,25 @@ window.Quarto = {
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
-        a      b       c      d
-    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
- 1 -0.609  0.131 -0.223   0.703
- 2 -2.02   2.67  -1.17   -1.02 
- 3  0.456  0.712 -0.806   1.62 
- 4 -0.966 -0.785  1.42   -0.447
- 5 -0.258 -1.26  -0.418   1.24 
- 6  0.994 -1.11  -0.0746 -1.29 
- 7 -2.73   0.234 -0.198   1.04 
- 8 -0.705 -2.23  -1.05    1.31 
- 9  2.05   1.03  -1.04   -1.50 
-10 -0.458 -0.332  0.335  -0.917</code></pre>
+        a       b       c       d
+    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1  0.844 -0.239   0.855  -0.440 
+ 2  0.493 -2.50   -0.0637  0.304 
+ 3  1.11  -1.36   -0.263   0.0311
+ 4 -1.56  -0.0478  0.320   0.946 
+ 5 -0.245  0.455  -0.350  -1.00  
+ 6 -2.11  -1.09   -2.13    0.168 
+ 7  0.300  0.484  -1.84   -0.380 
+ 8 -1.20  -0.788  -0.0574 -1.29  
+ 9  0.214 -1.75    0.145  -0.901 
+10  0.343 -0.829  -0.608  -0.307 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># want median of each column (w/o cutting and pasting)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   Be careful using square brackets vs double square brackets when</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   selecting elements</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(df[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5336517</code></pre>
+<pre><code>[1] 0.2570714</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(df[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
@@ -483,21 +483,21 @@ window.Quarto = {
 <pre><code># A tibble: 10 × 1
         a
     &lt;dbl&gt;
- 1 -0.609
- 2 -2.02 
- 3  0.456
- 4 -0.966
- 5 -0.258
- 6  0.994
- 7 -2.73 
- 8 -0.705
- 9  2.05 
-10 -0.458</code></pre>
+ 1  0.844
+ 2  0.493
+ 3  1.11 
+ 4 -1.56 
+ 5 -0.245
+ 6 -2.11 
+ 7  0.300
+ 8 -1.20 
+ 9  0.214
+10  0.343</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -0.6092731 -2.0205896  0.4564101 -0.9657493 -0.2582836  0.9943422
- [7] -2.7281043 -0.7054132  2.0458779 -0.4580302</code></pre>
+<pre><code> [1]  0.8443223  0.4934876  1.1109899 -1.5575638 -0.2454001 -2.1052933
+ [7]  0.2997658 -1.2015385  0.2143771  0.3432318</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -514,7 +514,7 @@ window.Quarto = {
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5336517 -0.1004865 -0.3205110  0.1281861</code></pre>
+<pre><code>[1]  0.2570714 -0.8084130 -0.1636184 -0.3432923</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ?seq_along - a safer option if had zero length vectors</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>output <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"double"</span>, <span class="fu">ncol</span>(df))  <span class="co"># 1. output</span></span>
@@ -523,7 +523,7 @@ window.Quarto = {
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5336517 -0.1004865 -0.3205110  0.1281861</code></pre>
+<pre><code>[1]  0.2570714 -0.8084130 -0.1636184 -0.3432923</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use [[.]] even if don't have to signal working with single elements</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -534,7 +534,7 @@ window.Quarto = {
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5336517 -0.1004865 -0.3205110  0.1281861</code></pre>
+<pre><code>[1]  0.2570714 -0.8084130 -0.1636184 -0.3432923</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># another approach - no double square brackets since df not a tibble</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(df)</span>
@@ -544,7 +544,7 @@ window.Quarto = {
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5336517 -0.1004865 -0.3205110  0.1281861</code></pre>
+<pre><code>[1]  0.2570714 -0.8084130 -0.1636184 -0.3432923</code></pre>
 </div>
 </div>
 <p>One advantage of <code>seq_along()</code>: works with unknown output length. However, the second approach below is much more efficient, since each iteration doesn’t copy all data from previous iterations.</p>
@@ -560,7 +560,7 @@ window.Quarto = {
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(output)        <span class="do">## inefficient</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> num [1:212] 1.2019 0.0785 -0.5794 1.8489 -0.1054 ...</code></pre>
+<pre><code> num [1:115] -0.734 1.719 -0.643 1.25 0.215 ...</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="fu">length</span>(means))</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(means)) {</span>
@@ -570,13 +570,13 @@ window.Quarto = {
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(out)           <span class="do">## more efficient</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
- $ : num [1:7] -2.2036 -0.2645 -0.471 0.0731 0.7 ...
- $ : num [1:77] 0.674 -0.148 -0.495 0.362 -0.315 ...
- $ : num [1:43] 2.214 0.623 0.223 2.242 2.345 ...</code></pre>
+ $ : num [1:62] 0.6039 0.5157 -1.5428 -0.0104 1.8158 ...
+ $ : num [1:15] 1.64 1.3208 0.8928 0.0103 0.3152 ...
+ $ : num [1:43] 1.34 2.56 3.11 1.61 2.57 ...</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">unlist</span>(out))   <span class="do">## flatten list of vectors into single vector</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> num [1:127] -2.2036 -0.2645 -0.471 0.0731 0.7 ...</code></pre>
+<pre><code> num [1:120] 0.6039 0.5157 -1.5428 -0.0104 1.8158 ...</code></pre>
 </div>
 </div>
 <p>Finally, the <code>while()</code> loop can be used with unknown sequence length. This is used more in simulation than in data analysis.</p>
@@ -656,11 +656,11 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `sample()` can be used to shuffle the treatments among the 30 subjects</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sample</span>(dolphin_data<span class="sc">$</span>treatment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "Control" "Control" "Dolphin" "Dolphin" "Dolphin" "Dolphin" "Control"
- [8] "Dolphin" "Dolphin" "Control" "Control" "Dolphin" "Control" "Dolphin"
-[15] "Dolphin" "Dolphin" "Dolphin" "Control" "Dolphin" "Control" "Dolphin"
-[22] "Control" "Control" "Control" "Control" "Dolphin" "Dolphin" "Control"
-[29] "Control" "Control"</code></pre>
+<pre><code> [1] "Dolphin" "Dolphin" "Control" "Control" "Dolphin" "Control" "Control"
+ [8] "Control" "Control" "Dolphin" "Control" "Dolphin" "Control" "Dolphin"
+[15] "Dolphin" "Dolphin" "Dolphin" "Control" "Dolphin" "Control" "Control"
+[22] "Dolphin" "Control" "Control" "Control" "Control" "Dolphin" "Dolphin"
+[29] "Dolphin" "Dolphin"</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -713,15 +713,15 @@ window.Quarto = {
 <span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="fu">col_summary</span>(df, median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.2634615 -0.5795865 -0.1291665  0.1876664</code></pre>
+<pre><code>[1] -0.36343403 -0.06931525  0.06522092 -0.12606800</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">col_summary</span>(df, mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  0.24987178 -0.43282886 -0.05687382  0.26620607</code></pre>
+<pre><code>[1] -0.47844923  0.01101867  0.08606635  0.02239062</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">col_summary</span>(df, IQR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.9441422 1.5823596 0.5128204 1.0220111</code></pre>
+<pre><code>[1] 1.3658588 0.6926059 0.8179389 1.4326974</code></pre>
 </div>
 </div>
 <p>The <code>purrr</code> package provides <code>map</code> functions to eliminate need for for loops, plus it makes code easier to read!</p>
@@ -730,22 +730,22 @@ window.Quarto = {
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(df, mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          a           b           c           d 
- 0.24987178 -0.43282886 -0.05687382  0.26620607 </code></pre>
+-0.47844923  0.01101867  0.08606635  0.02239062 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(df, median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>         a          b          c          d 
--0.2634615 -0.5795865 -0.1291665  0.1876664 </code></pre>
+<pre><code>          a           b           c           d 
+-0.36343403 -0.06931525  0.06522092 -0.12606800 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(df, sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        a         b         c         d 
-1.3771671 1.0392933 1.6204636 0.7834109 </code></pre>
+0.9682184 0.5901705 1.0259709 1.3260466 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(df, mean, <span class="at">trim =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>         a          b          c          d 
--0.2634615 -0.5795865 -0.1291665  0.1876664 </code></pre>
+<pre><code>          a           b           c           d 
+-0.36343403 -0.06931525  0.06522092 -0.12606800 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># map_dbl means make a double vector</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># can also do map() for list, map_lgl(), map_int(), and map_chr()</span></span>
@@ -754,17 +754,17 @@ window.Quarto = {
 <span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">map_dbl</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          a           b           c           d 
- 0.24987178 -0.43282886 -0.05687382  0.26620607 </code></pre>
+-0.47844923  0.01101867  0.08606635  0.02239062 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">map_dbl</span>(median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>         a          b          c          d 
--0.2634615 -0.5795865 -0.1291665  0.1876664 </code></pre>
+<pre><code>          a           b           c           d 
+-0.36343403 -0.06931525  0.06522092 -0.12606800 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">map_dbl</span>(sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        a         b         c         d 
-1.3771671 1.0392933 1.6204636 0.7834109 </code></pre>
+0.9682184 0.5901705 1.0259709 1.3260466 </code></pre>
 </div>
 </div>
 <p>The across() function from dplyr also works well:</p>
@@ -777,7 +777,7 @@ window.Quarto = {
 <pre><code># A tibble: 1 × 5
       n median_a median_b median_c median_d
   &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1    10   -0.263   -0.580   -0.129    0.188</code></pre>
+1    10   -0.363  -0.0693   0.0652   -0.126</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># other ways to repeat across the numeric columns of df:</span></span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">summarize</span>(</span>
@@ -788,7 +788,7 @@ window.Quarto = {
 <pre><code># A tibble: 1 × 5
   median_a median_b median_c median_d     n
      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-1   -0.263   -0.580   -0.129    0.188    10</code></pre>
+1   -0.363  -0.0693   0.0652   -0.126    10</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">summarize</span>(</span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), median, <span class="at">.names =</span> <span class="st">"median_{.col}"</span>),</span>
@@ -798,7 +798,7 @@ window.Quarto = {
 <pre><code># A tibble: 1 × 5
   median_a median_b median_c median_d     n
      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-1   -0.263   -0.580   -0.129    0.188    10</code></pre>
+1   -0.363  -0.0693   0.0652   -0.126    10</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Here "across" effectively expands to the following code.  Note that </span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   across() will write over old columns unless you change the name!</span></span>
@@ -814,7 +814,7 @@ window.Quarto = {
 <pre><code># A tibble: 1 × 5
   median_a median_b median_c median_d     n
      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-1   -0.263   -0.580   -0.129    0.188    10</code></pre>
+1   -0.363  -0.0693   0.0652   -0.126    10</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># And if we're worried about NAs, we can't call median directly, we</span></span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   must create a new function that we can pass options into</span></span>
@@ -824,18 +824,18 @@ window.Quarto = {
 <span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>df_miss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
-        a      b       c      d
-    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
- 1 -0.409  0.776  2.58    1.52 
- 2 NA     -0.278  0.257  -0.310
- 3 -0.509 -0.596 -0.255   0.810
- 4  0.803 NA     -0.290  -0.202
- 5  1.94  NA     -0.235   0.563
- 6 -0.410  1.24   1.40    0.606
- 7 -0.118 -0.564 -0.320  -0.188
- 8 -1.96  -0.902  0.155   1.15 
- 9 -0.832 -1.24  -3.83   -1.00 
-10  2.31  -1.54  -0.0230 -0.284</code></pre>
+         a        b      c       d
+     &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+ 1 -0.0148  0.332   -0.128 -0.830 
+ 2 NA       0.0656   0.309 -1.74  
+ 3 -1.18   -0.190   -1.14   0.479 
+ 4 -0.0293 NA       -1.46   2.67  
+ 5  0.289  NA       -0.415  0.524 
+ 6 -1.08   -0.00722  1.82  -0.202 
+ 7 -1.93   -0.765    0.259 -0.0499
+ 8  0.403   1.07     1.47   1.48  
+ 9 -1.61   -0.569   -0.314 -1.16  
+10  1.06   -0.507    0.468 -0.950 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>df_miss <span class="sc">|&gt;</span> </span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
@@ -853,7 +853,7 @@ window.Quarto = {
 <pre><code># A tibble: 1 × 9
   median_a n_miss_a median_b n_miss_b median_c n_miss_c median_d n_miss_d     n
      &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;    &lt;int&gt; &lt;int&gt;
-1   -0.409        1   -0.580        2   -0.129        0    0.188        0    10</code></pre>
+1  -0.0293        1  -0.0985        2   0.0652        0   -0.126        0    10</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># where \ is shorthand for an anonymous function - i.e. you could</span></span>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   replace "\" with "function" if you like typing more letters :)</span></span>
@@ -864,11 +864,11 @@ window.Quarto = {
 <span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>df_miss <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">if_any</span>(a<span class="sc">:</span>d, is.na))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 4
-       a      b      c      d
-   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-1 NA     -0.278  0.257 -0.310
-2  0.803 NA     -0.290 -0.202
-3  1.94  NA     -0.235  0.563</code></pre>
+        a       b      c      d
+    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 NA       0.0656  0.309 -1.74 
+2 -0.0293 NA      -1.46   2.67 
+3  0.289  NA      -0.415  0.524</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same as df_miss |&gt; filter(is.na(a) &amp; is.na(b) &amp; is.na(c) &amp; is.na(d))</span></span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>df_miss <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">if_all</span>(a<span class="sc">:</span>d, is.na))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -951,12 +951,12 @@ window.Quarto = {
 <span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
-  name  median    mean
-  &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-1 a     -0.263  0.250 
-2 b     -0.580 -0.433 
-3 c     -0.129 -0.0569
-4 d      0.188  0.266 </code></pre>
+  name   median    mean
+  &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 a     -0.363  -0.478 
+2 b     -0.0693  0.0110
+3 c      0.0652  0.0861
+4 d     -0.126   0.0224</code></pre>
 </div>
 </div>
 <p>Here are a couple of other nice features of <code>map</code> functions: - perform analyses (like fitting a line) by subgroup - extracting components from a model or elements by position</p>
@@ -1081,7 +1081,7 @@ Coefficients:
   .. .. ..- attr(*, "order")= int 1
   .. .. ..- attr(*, "intercept")= int 1
   .. .. ..- attr(*, "response")= int 1
-  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b0b118&gt; 
+  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b0a8c8&gt; 
   .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1098,7 +1098,7 @@ Coefficients:
   .. .. .. ..- attr(*, "order")= int 1
   .. .. .. ..- attr(*, "intercept")= int 1
   .. .. .. ..- attr(*, "response")= int 1
-  .. .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b0b118&gt; 
+  .. .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b0a8c8&gt; 
   .. .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1138,7 +1138,7 @@ Coefficients:
   .. .. ..- attr(*, "order")= int 1
   .. .. ..- attr(*, "intercept")= int 1
   .. .. ..- attr(*, "response")= int 1
-  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b8b038&gt; 
+  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b797e8&gt; 
   .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1155,7 +1155,7 @@ Coefficients:
   .. .. .. ..- attr(*, "order")= int 1
   .. .. .. ..- attr(*, "intercept")= int 1
   .. .. .. ..- attr(*, "response")= int 1
-  .. .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b8b038&gt; 
+  .. .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b797e8&gt; 
   .. .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1195,7 +1195,7 @@ Coefficients:
   .. .. ..- attr(*, "order")= int 1
   .. .. ..- attr(*, "intercept")= int 1
   .. .. ..- attr(*, "response")= int 1
-  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49d0a8c8&gt; 
+  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7cb2a88&gt; 
   .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1212,7 +1212,7 @@ Coefficients:
   .. .. .. ..- attr(*, "order")= int 1
   .. .. .. ..- attr(*, "intercept")= int 1
   .. .. .. ..- attr(*, "response")= int 1
-  .. .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49d0a8c8&gt; 
+  .. .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7cb2a88&gt; 
   .. .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1255,7 +1255,7 @@ Coefficients:
   .. ..- attr(*, "order")= int 1
   .. ..- attr(*, "intercept")= int 1
   .. ..- attr(*, "response")= int 1
-  .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b0b118&gt; 
+  .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b0a8c8&gt; 
   .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1272,7 +1272,7 @@ Coefficients:
   .. .. ..- attr(*, "order")= int 1
   .. .. ..- attr(*, "intercept")= int 1
   .. .. ..- attr(*, "response")= int 1
-  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b0b118&gt; 
+  .. .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b0a8c8&gt; 
   .. .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1292,7 +1292,7 @@ Coefficients:
   .. ..- attr(*, "order")= int 1
   .. ..- attr(*, "intercept")= int 1
   .. ..- attr(*, "response")= int 1
-  .. ..- attr(*, ".Environment")=&lt;environment: 0x0000021e49b0b118&gt; 
+  .. ..- attr(*, ".Environment")=&lt;environment: 0x00000106f7b0a8c8&gt; 
   .. ..- attr(*, "predvars")= language list(mpg, wt)
   .. ..- attr(*, "dataClasses")= Named chr [1:2] "numeric" "numeric"
   .. .. ..- attr(*, "names")= chr [1:2] "mpg" "wt"
@@ -1599,23 +1599,23 @@ Coefficients:
 <span id="cb120-6"><a href="#cb120-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb120-7"><a href="#cb120-7" aria-hidden="true" tabindex="-1"></a>out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  [1]  0.6610538  0.8563725  1.3534726  1.9100316  2.8676595  3.0714146
-  [7]  3.7957777  4.7297240  5.0881371  5.2005235  5.3472288  6.1275123
- [13]  6.8664801  7.5992123  8.0747913  8.5041772  9.1459660 10.0753928
- [19] 10.9777078 11.4728622 11.9210647 12.4052853 13.1388944 13.3943537
- [25] 13.9897413 14.1557484 14.7637119 15.1442756 15.3550887 15.6799883
- [31] 15.9954001 16.8328243 17.2350417 17.5536241 18.1488740 18.5518407
- [37] 18.8423701 19.7390794 20.0792258 20.8288002 21.2012211 22.1282402
- [43] 22.6597477 22.7970204 23.1667175 23.9855466 24.5807031 25.5718993
- [49] 26.4366174 26.6042572 26.9587974 27.3128028 27.7984634 28.7238730
- [55] 29.1730986 29.4197146 29.4593708 29.6348353 29.7391286 29.9557238
- [61] 30.5249080 30.6945405 31.0060595 31.8652526 32.7800994 32.9797536
- [67] 33.7803896 34.3391678 35.2815199 36.2067036 36.4200833 37.1055229
- [73] 37.2139591 38.1554071 38.8028666 39.2022824 40.1347765 41.1280474
- [79] 41.3422577 42.3197848 42.7093434 42.9612748 43.7134545 44.5191669
- [85] 45.4695056 46.1396024 47.1081930 47.8249092 47.8948748 47.9695875
- [91] 48.3428618 48.6253122 49.2134404 50.2092139 51.0757449 51.9396064
- [97] 52.8183116 53.6487333 53.9745277 54.5644802</code></pre>
+<pre><code>  [1]  0.2461575  0.6070094  1.1232550  1.9589053  1.9802507  2.2608320
+  [7]  2.9118567  3.8744368  4.7767416  5.5837709  5.7214097  6.4175455
+ [13]  6.6653740  7.1496222  7.3434544  7.6630181  8.4214574  9.4099773
+ [19] 10.1434065 10.4174818 11.2664370 11.9250385 11.9707008 12.9627137
+ [25] 12.9893732 13.2403825 13.9781619 14.6671552 15.4341118 16.2385452
+ [31] 16.7551955 17.4557508 17.9499866 18.3200952 19.0472020 19.2319851
+ [37] 19.3156769 19.8395550 20.4844071 21.0248349 21.7878826 22.2576169
+ [43] 22.8614138 23.4047606 23.6505821 24.2933177 24.5415938 24.8069190
+ [49] 25.3459014 26.2657375 27.2623698 27.4313102 27.7705017 28.1019552
+ [55] 28.1856544 29.1192513 29.7391835 29.8154088 30.3113027 30.8743257
+ [61] 31.3126998 31.3886569 31.5806945 31.7189206 32.1224392 32.9256346
+ [67] 33.7020039 33.9875655 34.9649826 35.4563058 36.4138560 36.4903835
+ [73] 37.0128535 37.2336224 38.0838893 38.7575828 38.9601542 39.2798991
+ [79] 39.8522697 40.4166816 40.8190506 41.0177229 41.5349322 41.8609591
+ [85] 42.4873683 42.7825375 43.2255665 43.9065075 44.4661302 45.4283332
+ [91] 45.8057600 45.8150078 46.4570331 46.5019988 46.6860609 47.0850608
+ [97] 47.7888129 48.6225902 49.3718433 49.5866591</code></pre>
 </div>
 </div>
 <ol start="4" type="1">

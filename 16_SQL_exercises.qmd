@@ -10,7 +10,7 @@ editor_options:
   chunk_output_type: inline
 ---
   
-You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/SQL_code/16_SQL_exercises.qmd).  Just hit the Download Raw File button.
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/16_SQL_exercises.qmd).  Just hit the Download Raw File button.
 
 The code in [15_SQL.qmd](https://github.com/proback/264_fall_2025/blob/main/SQL_code/15_SQL.qmd) walked us through many of the examples in MDSR Chapter 15; now, we present a set of practice exercises in converting from the tidyverse to SQL.
 

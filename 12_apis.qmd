@@ -197,7 +197,11 @@ park_code <- np_kaggle$`Park Code`
 
 Notice how far we have to drill down to find addresses and activities!
 
+**Note: On 12/1/25 scraping from the NPS webpage with an API key was not working, so I changed the R chunks below to `eval: FALSE`**
+
 ```{r}
+#| eval: FALSE
+
 # Try grabbing elements for one park
 url1 <- str_c("https://developer.nps.gov/api/v1/parks?parkCode="
                 , park_code[1], "&api_key=", nps_api_key)
@@ -226,6 +230,8 @@ for (j in 2:length(details$data[[1]]$activities)) {
 Once we figure out how to get the desired elements for one park, we can use a for loop with changing park_code to get those elements for all 56 parks:
 
 ```{r}  
+#| eval: FALSE
+
 # Now get addresses for all 56 parks
 parks_address <- vector("character", length = length(park_code))
 for (i in 1:56) {
